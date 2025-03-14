@@ -20,6 +20,8 @@ func main() {
 	flag.StringVar(&cfg.Format, "format", "hex", "Color output format")
 	flag.BoolVar(&cfg.StripSpaces, "s", false, "Strip spaces in output")
 	flag.BoolVar(&cfg.StripSpaces, "strip-spaces", false, "Strip spaces in output")
+	flag.BoolVar(&cfg.Accents, "a", false, "Generate accent files")
+	flag.BoolVar(&cfg.Accents, "accents", false, "Generate accent files")
 
 	help := flag.Bool("help", false, "Show help")
 	flag.Bool("h", false, "Show help")
