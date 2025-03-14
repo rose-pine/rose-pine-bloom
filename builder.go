@@ -37,10 +37,19 @@ func generateVariants(cfg *Config) error {
 		{"rose-pine-moon", "Rosé Pine Moon", "dark", MoonVariant},
 		{"rose-pine-dawn", "Rosé Pine Dawn", "light", DawnVariant},
 	}
+	accents := []string{"love", "gold", "rose", "pine", "foam", "iris"}
 
 	for _, v := range variants {
-		if err := processVariant(cfg, templateContent, v); err != nil {
-			return fmt.Errorf("failed to process %s: %w", v.id, err)
+		if cfg.Accents {
+			for _, a := range accents {
+				if err := processVariant(cfg, templateContent, a, v); err != nil {
+					return fmt.Errorf("failed to process %s: %w", v.id, err)
+				}
+			}
+		} else {
+			if err := processVariant(cfg, templateContent, "accent", v); err != nil {
+				return fmt.Errorf("failed to process %s: %w", v.id, err)
+			}
 		}
 	}
 
@@ -49,7 +58,7 @@ func generateVariants(cfg *Config) error {
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func processVariant(cfg *Config, templateContent []byte, v struct {
+func processVariant(cfg *Config, templateContent []byte, a string, v struct {
 	id, name, variantType string
 	colors                Variant
 }) error {
@@ -61,6 +70,7 @@ func processVariant(cfg *Config, templateContent []byte, v struct {
 	result = strings.ReplaceAll(result, cfg.Prefix+"description",
 		"All natural pine, faux fur and a bit of soho vibes for the classy minimalist")
 
+	result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+a)
 	for colorName, color := range v.colors.Colors {
 		varName := cfg.Prefix + colorName
 
@@ -102,7 +112,13 @@ func processVariant(cfg *Config, templateContent []byte, v struct {
 		}
 		result = prettyJSON.String()
 	}
+	var outputPath string
+	if cfg.Accents {
+		outputPath = filepath.Join(cfg.Output+"/"+v.id, v.id+"-"+a+ext)
+	} else {
+		outputPath = filepath.Join(cfg.Output, v.id+ext)
+	}
+	os.MkdirAll(filepath.Dir(outputPath), 0777)
 
-	outputPath := filepath.Join(cfg.Output, v.id+ext)
-	return os.WriteFile(outputPath, []byte(result), 0644)
+	return os.WriteFile(outputPath, []byte(result), 0666)
 }

@@ -5,6 +5,7 @@ type Config struct {
 	Output      string
 	Prefix      string
 	Format      string
+	Accents     bool
 	StripSpaces bool
 }
 
