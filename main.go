@@ -9,7 +9,6 @@ import (
 
 func main() {
 	cfg := &Config{}
-
 	flag.StringVar(&cfg.Template, "t", "template.json", "Path to template file")
 	flag.StringVar(&cfg.Template, "template", "template.json", "Path to template file")
 	flag.StringVar(&cfg.Output, "o", "dist", "Directory for generated files")
