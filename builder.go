@@ -24,10 +24,6 @@ func Build(cfg *Config) error {
 }
 
 func generateVariants(cfg *Config) error {
-	templateContent, err := os.ReadFile(cfg.Template)
-	if err != nil {
-		return fmt.Errorf("failed to read template: %w", err)
-	}
 
 	variants := []struct {
 		id, name, variantType string
@@ -37,18 +33,50 @@ func generateVariants(cfg *Config) error {
 		{"rose-pine-moon", "Rosé Pine Moon", "dark", MoonVariant},
 		{"rose-pine-dawn", "Rosé Pine Dawn", "light", DawnVariant},
 	}
-	accents := []string{"love", "gold", "rose", "pine", "foam", "iris"}
+	accents := []string{
+		"love", "gold", "rose", "pine", "foam", "iris",
+	}
 
-	for _, v := range variants {
-		if cfg.Accents {
-			for _, a := range accents {
-				if err := processVariant(cfg, templateContent, a, v); err != nil {
-					return fmt.Errorf("failed to process %s: %w", v.id, err)
-				}
+	templateFileInfo, err := os.Stat(cfg.Template)
+	if err != nil {
+		return fmt.Errorf("failed to open template: %w", err)
+	}
+
+	var templates []string
+
+	if templateFileInfo.IsDir() {
+		filepath.Walk(cfg.Template, func(path string, info os.FileInfo, err error) error {
+			if !info.IsDir() {
+				templates = append(templates, path)
 			}
-		} else {
-			if err := processVariant(cfg, templateContent, "accent", v); err != nil {
-				return fmt.Errorf("failed to process %s: %w", v.id, err)
+			return nil
+		})
+
+	} else {
+		templates = append(templates, cfg.Template)
+	}
+
+	for _, template := range templates {
+		templateFileInfo, _ := os.Stat(template)
+		if templateFileInfo.IsDir() {
+			continue
+		} // skip if dir (redudant)
+
+		templateContent, err := os.ReadFile(template)
+		if err != nil {
+			return fmt.Errorf("failed to read template: %w", err)
+		}
+		for _, variant := range variants {
+			if cfg.Accents {
+				for _, accent := range accents {
+					if err := processVariant(cfg, template, templateContent, accent, variant); err != nil {
+						return fmt.Errorf("failed to process %s: %w", variant.id, err)
+					}
+				}
+			} else {
+				if err := processVariant(cfg, template, templateContent, "accent", variant); err != nil {
+					return fmt.Errorf("failed to process %s: %w", variant.id, err)
+				}
 			}
 		}
 	}
@@ -58,20 +86,21 @@ func generateVariants(cfg *Config) error {
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func processVariant(cfg *Config, templateContent []byte, a string, v struct {
+func processVariant(cfg *Config, template string, templateContent []byte, accent string, variant struct {
 	id, name, variantType string
 	colors                Variant
 }) error {
 	result := string(templateContent)
 
-	result = strings.ReplaceAll(result, cfg.Prefix+"id", v.id)
-	result = strings.ReplaceAll(result, cfg.Prefix+"name", v.name)
-	result = strings.ReplaceAll(result, cfg.Prefix+"type", v.variantType)
+	result = strings.ReplaceAll(result, cfg.Prefix+"id", variant.id)
+	result = strings.ReplaceAll(result, cfg.Prefix+"name", variant.name)
+	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.variantType)
 	result = strings.ReplaceAll(result, cfg.Prefix+"description",
 		"All natural pine, faux fur and a bit of soho vibes for the classy minimalist")
 
-	result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+a)
-	for colorName, color := range v.colors.Colors {
+	result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+accent)
+
+	for colorName, color := range variant.colors.Colors {
 		varName := cfg.Prefix + colorName
 
 		alphaRegex := regexp.MustCompile(regexp.QuoteMeta(varName) + `/(\d+)`)
@@ -92,7 +121,7 @@ func processVariant(cfg *Config, templateContent []byte, a string, v struct {
 			return match
 		}
 
-		switch v.id {
+		switch variant.id {
 		case "rose-pine":
 			return parts[1]
 		case "rose-pine-moon":
@@ -104,7 +133,7 @@ func processVariant(cfg *Config, templateContent []byte, a string, v struct {
 		}
 	})
 
-	ext := filepath.Ext(cfg.Template)
+	ext := filepath.Ext(template) // tmp
 	if ext == ".json" {
 		var prettyJSON bytes.Buffer
 		if err := json.Indent(&prettyJSON, []byte(result), "", "  "); err != nil {
@@ -112,13 +141,33 @@ func processVariant(cfg *Config, templateContent []byte, a string, v struct {
 		}
 		result = prettyJSON.String()
 	}
-	var outputPath string
+	var outputFile, outputDir string
 	if cfg.Accents {
-		outputPath = filepath.Join(cfg.Output+"/"+v.id, v.id+"-"+a+ext)
+		outputDir = cfg.Output + "/" + variant.id
+		outputFile = variant.id + "-" + accent + ext
 	} else {
-		outputPath = filepath.Join(cfg.Output, v.id+ext)
+		outputDir = cfg.Output
+		outputFile = variant.id + ext
 	}
-	os.MkdirAll(filepath.Dir(outputPath), 0777)
 
-	return os.WriteFile(outputPath, []byte(result), 0666)
+	templateFileInfo, _ := os.Stat(cfg.Template)
+
+	if templateFileInfo.IsDir() {
+		dir, _ := strings.CutPrefix(filepath.Dir(template), filepath.Clean(cfg.Template))
+		if cfg.Accents {
+			outputDir += "/" + accent
+		} else {
+			outputDir += "/" + variant.id
+		}
+		outputDir += dir
+		outputFile = filepath.Base(template)
+	}
+
+	outputPath := filepath.Join(outputDir, outputFile)
+
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	return os.WriteFile(outputPath, []byte(result), 0644)
 }
