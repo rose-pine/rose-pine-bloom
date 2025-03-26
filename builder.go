@@ -98,6 +98,7 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 	result = strings.ReplaceAll(result, cfg.Prefix+"description",
 		"All natural pine, faux fur and a bit of soho vibes for the classy minimalist")
 
+	result = strings.ReplaceAll(result, cfg.Prefix+"accentname", accent)
 	result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+accent)
 
 	for colorName, color := range variant.colors.Colors {
