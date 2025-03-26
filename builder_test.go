@@ -404,6 +404,89 @@ func TestAccents(t *testing.T) {
 	}
 }
 
+func TestAccentNames(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	templateContent := `{
+        "accentname": "$accentname"
+    }`
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := &Config{
+		Template:    templatePath,
+		Output:      tmpDir,
+		Format:      "hex",
+		Prefix:      "$",
+		StripSpaces: false,
+		Accents:     true,
+	}
+
+	if err := Build(cfg); err != nil {
+		t.Fatal(err)
+	}
+
+	variants := []struct {
+		filename   string
+		accentname string
+	}{
+		{filename: "rose-pine/rose-pine-foam.json", accentname: "foam"},
+		{filename: "rose-pine/rose-pine-gold.json", accentname: "gold"},
+		{filename: "rose-pine/rose-pine-iris.json", accentname: "iris"},
+		{filename: "rose-pine/rose-pine-love.json", accentname: "love"},
+		{filename: "rose-pine/rose-pine-pine.json", accentname: "pine"},
+		{filename: "rose-pine/rose-pine-rose.json", accentname: "rose"},
+
+		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accentname: "foam"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accentname: "gold"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accentname: "love"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accentname: "pine"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accentname: "rose"},
+
+		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accentname: "foam"},
+		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accentname: "gold"},
+		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accentname: "iris"},
+		{filename: "rose-pine-moon/rose-pine-moon-love.json", accentname: "love"},
+		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accentname: "pine"},
+		{filename: "rose-pine-moon/rose-pine-moon-rose.json", accentname: "rose"},
+	}
+
+	for _, v := range variants {
+		t.Run(v.filename, func(t *testing.T) {
+			content, err := os.ReadFile(filepath.Join(tmpDir, v.filename))
+			if err != nil {
+				t.Fatalf("Failed to read generated file: %v", err)
+			}
+
+			var result map[string]interface{}
+			if err := json.Unmarshal(content, &result); err != nil {
+				t.Fatalf("Failed to parse JSON: %v", err)
+			}
+
+			tests := []struct {
+				field string
+				want  string
+			}{
+				{"accentname", v.accentname},
+			}
+
+			for _, tt := range tests {
+				if got := result[tt.field]; got != tt.want {
+					t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
+				}
+			}
+		})
+	}
+}
+
 func TestDirectories(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
 	if err != nil {
