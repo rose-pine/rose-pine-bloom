@@ -141,6 +141,8 @@ When using the flag, a file for every accent will be made.
 "accent": "#d7827e"
 ```
 
+> You can also use `accentname` to output the name of the accent color, instead of the actual color
+
 ## Custom values per variant
 
 > Use different values for each variant, formatted as `$(main|moon|dawn)`
