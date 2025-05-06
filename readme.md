@@ -181,4 +181,4 @@ When using the flag, a file for every accent will be made.
 
 ## Related
 
-- [build](https://github.com/rose-pine/build) - Old Node-based theme generator for Rosé Pine
+- [build](https://github.com/rose-pine/build) - JavaScript-based theme generator for Rosé Pine
