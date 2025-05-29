@@ -11,7 +11,7 @@
     </a>
 </p>
 
-> Experimental Theme builder for Rosé Pine
+> Theme builder for Rosé Pine
 
 ## Usage
 
