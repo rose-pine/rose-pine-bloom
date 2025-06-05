@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"text/tabwriter"
 )
 
 func Build(cfg *Config) error {
@@ -16,49 +17,135 @@ func Build(cfg *Config) error {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
-	if err := generateVariants(cfg); err != nil {
-		return fmt.Errorf("failed to generate variants: %w", err)
+	if cfg.Create != "" {
+		if err := generateTemplates(cfg); err != nil {
+			return fmt.Errorf("failed to create template: %w", err)
+		}
+	} else {
+		if err := generateVariants(cfg); err != nil {
+			return fmt.Errorf("failed to generate variants: %w", err)
+		}
 	}
 
 	return nil
 }
 
-func generateVariants(cfg *Config) error {
-	variants := []struct {
-		id, name, variantType string
-		colors                Variant
-	}{
-		{"rose-pine", "Rosé Pine", "dark", MainVariant},
-		{"rose-pine-moon", "Rosé Pine Moon", "dark", MoonVariant},
-		{"rose-pine-dawn", "Rosé Pine Dawn", "light", DawnVariant},
+func generateTemplates(cfg *Config) error {
+
+	var files []string
+	files, err := getFiles(cfg.Template)
+	if err != nil {
+		return err
 	}
 
-	templateFileInfo, err := os.Stat(cfg.Template)
-	if err != nil {
-		return fmt.Errorf("failed to open template: %w", err)
+	for _, file := range files {
+		fileContent, err := os.ReadFile(file)
+		if err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+		if err := createTemplate(cfg, file, fileContent); err != nil {
+			return fmt.Errorf("failed to create template from file %s: %w", file, err)
+		}
 	}
-	accents := []string{"love", "gold", "rose", "pine", "foam", "iris"}
+
+	return nil
+}
+
+type format struct {
+	Name    string
+	Example string
+}
+
+func printFormats() {
+	formats := [...]format{
+		{Name: "hex", Example: "#ebbcba"},
+		{Name: "hex-ns", Example: "ebbcba"},
+		{Name: "rgb", Example: "235, 188, 186"},
+		{Name: "rbg-ansi", Example: "235;188;186"},
+		{Name: "rgb-array", Example: "[235, 188, 186]"},
+		{Name: "rgb-function", Example: "rgb(235, 188, 186)"},
+		{Name: "hsl", Example: "2, 55%, 83%"},
+		{Name: "hsl-array", Example: "[2, 55%, 83%]"},
+		{Name: "hsl-function", Example: "hsl(2, 55%, 83%)"},
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+	for _, f := range formats {
+		fmt.Fprintln(w, "    ", "- ", f.Name, "\t", f.Example)
+	}
+	w.Flush()
+}
+
+var variants = []struct {
+	id, name, variantType string
+	colors                Variant
+}{
+	{"rose-pine", "Rosé Pine", "dark", MainVariant},
+	{"rose-pine-moon", "Rosé Pine Moon", "dark", MoonVariant},
+	{"rose-pine-dawn", "Rosé Pine Dawn", "light", DawnVariant},
+}
+
+var accents = []string{
+	"love", "gold", "rose", "pine", "foam", "iris",
+}
+
+func createTemplate(cfg *Config, file string, fileContent []byte) error {
+	result := string(fileContent)
+
+	matchFound := false
+
+	variant := variants[0]
+	switch cfg.Create {
+	case "main":
+		variant = variants[0]
+	case "moon":
+		variant = variants[1]
+	case "dawn":
+		variant = variants[2]
+	}
+	snapshot := result
+
+	for colorName, color := range variant.colors.Colors {
+		result = strings.ReplaceAll(result, formatColor(color, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces), cfg.Prefix+colorName)
+		if snapshot != result {
+			matchFound = true
+		}
+	}
+	result = strings.ReplaceAll(result, variant.id, cfg.Prefix+"id")
+	result = strings.ReplaceAll(result, variant.name, cfg.Prefix+"name")
+	// result = strings.ReplaceAll(result, variant.variantType, cfg.Prefix+"type") // likely not a good idea
+	result = strings.ReplaceAll(result, "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
+		cfg.Prefix+"description")
+
+	if !matchFound {
+		var Yellow = "\033[33m"
+		var Reset = "\033[0m"
+		fmt.Printf(Yellow+"No matches for specified format (%s). Available formats:\n"+Reset, ColorFormat(cfg.Format))
+		printFormats()
+	}
+
+	var outputFile, outputDir string
+	outputDir = cfg.Output
+	outputFile = filepath.Base(file)
+
+	outputPath := filepath.Join(outputDir, outputFile)
+
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	return os.WriteFile(outputPath, []byte(result), 0644)
+}
+
+func generateVariants(cfg *Config) error {
 
 	var templates []string
-
-	if templateFileInfo.IsDir() {
-		filepath.Walk(cfg.Template, func(path string, info os.FileInfo, err error) error {
-			if !info.IsDir() {
-				templates = append(templates, path)
-			}
-			return nil
-		})
-
-	} else {
-		templates = append(templates, cfg.Template)
+	templates, err := getFiles(cfg.Template)
+	if err != nil {
+		return err
 	}
 
 	for _, template := range templates {
-		templateFileInfo, _ := os.Stat(template)
-		if templateFileInfo.IsDir() {
-			continue
-		} // skip if dir (redudant)
-
 		templateContent, err := os.ReadFile(template)
 		if err != nil {
 			return fmt.Errorf("failed to read template: %w", err)
@@ -169,4 +256,26 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 	}
 
 	return os.WriteFile(outputPath, []byte(result), 0644)
+}
+
+func getFiles(basefile string) ([]string, error) {
+	var files []string
+
+	templateFileInfo, err := os.Stat(basefile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open template: %w", err)
+	}
+
+	if templateFileInfo.IsDir() {
+		filepath.Walk(basefile, func(path string, info os.FileInfo, err error) error {
+			if !info.IsDir() {
+				files = append(files, path)
+			}
+			return nil
+		})
+
+	} else {
+		files = append(files, basefile)
+	}
+	return files, nil
 }

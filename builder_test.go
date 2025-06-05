@@ -624,3 +624,78 @@ func TestDirectories(t *testing.T) {
 		})
 	}
 }
+
+func TestCreate(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	fileContent := `{
+  "base": "#232136",
+  "surface": "#2a273f",
+  "overlay": "#393552",
+  "muted": "#6e6a86",
+  "subtle": "#908caa",
+  "text": "#e0def4",
+  "love": "#eb6f92",
+  "gold": "#f6c177",
+  "rose": "#ea9a97",
+  "pine": "#3e8fb0",
+  "foam": "#9ccfd8",
+  "iris": "#c4a7e7",
+  "id": "rose-pine-moon",
+  "name": "Rosé Pine Moon",
+  "description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
+  "regular-id": "rose-pine",
+  "dawn-name": "Rosé Pine Dawn"
+}`
+	expected := `{
+  "base": "$base",
+  "surface": "$surface",
+  "overlay": "$overlay",
+  "muted": "$muted",
+  "subtle": "$subtle",
+  "text": "$text",
+  "love": "$love",
+  "gold": "$gold",
+  "rose": "$rose",
+  "pine": "$pine",
+  "foam": "$foam",
+  "iris": "$iris",
+  "id": "$id",
+  "name": "$name",
+  "description": "$description",
+  "regular-id": "rose-pine",
+  "dawn-name": "Rosé Pine Dawn"
+}`
+
+	filePath := filepath.Join(tmpDir, "template.json")
+	if err := os.WriteFile(filePath, []byte(fileContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := &Config{
+		Template: filePath,
+		Create:   "moon",
+		Output:   tmpDir,
+		Format:   "hex",
+		Prefix:   "$",
+		Spaces:   true,
+	}
+
+	if err := Build(cfg); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("template.json", func(t *testing.T) {
+		content, err := os.ReadFile(filepath.Join(tmpDir, "template.json"))
+		if err != nil {
+			t.Fatalf("Failed to read generated file: %v", err)
+		}
+		if string(content) != expected {
+			t.Errorf("want %s\n\n got %s", expected, string(content))
+		}
+	})
+}
