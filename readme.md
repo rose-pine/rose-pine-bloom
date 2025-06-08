@@ -32,6 +32,8 @@ Usage:
   -h	Show help
   -help
     	Show help
+  -no-spaces
+    	Remove spaces from color values
   -o string
     	Directory for generated files (default "dist")
   -output string
@@ -40,9 +42,6 @@ Usage:
     	Variable prefix (default "$")
   -prefix string
     	Variable prefix (default "$")
-  -s	Strip spaces in output
-  -strip-spaces
-    	Strip spaces in output
   -t string
     	Path to template file (default "template.json")
   -template string

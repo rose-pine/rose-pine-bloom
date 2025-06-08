@@ -15,35 +15,33 @@ func TestColorFormatting(t *testing.T) {
 	}
 
 	tests := []struct {
-		name        string
-		format      ColorFormat
-		stripSpaces bool
-		want        string
+		name   string
+		format ColorFormat
+		Spaces bool
+		want   string
 	}{
-		{"hex", FormatHex, false, "#ebbcba"},
-		{"hex-ns", FormatHexNS, false, "ebbcba"},
-		{"rgb", FormatRGB, false, "235, 188, 186"},
-		{"rgb stripped", FormatRGB, true, "235,188,186"},
-		{"rgb-ns", FormatRGBNS, false, "235 188 186"},
-		{"rgb-ns stripped", FormatRGBNS, true, "235188186"},
-		{"rgb-ansi", FormatRGBAnsi, false, "235;188;186"},
-		{"rgb-array", FormatRGBArray, false, "[235, 188, 186]"},
-		{"rgb-array stripped", FormatRGBArray, true, "[235,188,186]"},
-		{"rgb-function", FormatRGBFunc, false, "rgb(235, 188, 186)"},
-		{"rgb-function stripped", FormatRGBFunc, true, "rgb(235,188,186)"},
-		{"hsl", FormatHSL, false, "2, 55%, 83%"},
-		{"hsl stripped", FormatHSL, true, "2,55%,83%"},
-		{"hsl-ns", FormatHSLNS, false, "2 55% 83%"},
-		{"hsl-ns stripped", FormatHSLNS, true, "255%83%"},
-		{"hsl-array", FormatHSLArray, false, "[2, 55%, 83%]"},
-		{"hsl-array stripped", FormatHSLArray, true, "[2,55%,83%]"},
-		{"hsl-function", FormatHSLFunc, false, "hsl(2, 55%, 83%)"},
-		{"hsl-function stripped", FormatHSLFunc, true, "hsl(2,55%,83%)"},
+		{"hex", FormatHex, true, "#ebbcba"},
+		{"hex-ns", FormatHexNS, true, "ebbcba"},
+		{"rgb", FormatRGB, true, "235, 188, 186"},
+		{"rgb", FormatRGB, false, "235,188,186"},
+		{"rgb-ns", FormatRGBNS, true, "235 188 186"},
+		{"rgb-ansi", FormatRGBAnsi, true, "235;188;186"},
+		{"rgb-array", FormatRGBArray, true, "[235, 188, 186]"},
+		{"rgb-array", FormatRGBArray, false, "[235,188,186]"},
+		{"rgb-function", FormatRGBFunc, true, "rgb(235, 188, 186)"},
+		{"rgb-function", FormatRGBFunc, false, "rgb(235,188,186)"},
+		{"hsl", FormatHSL, true, "2, 55%, 83%"},
+		{"hsl", FormatHSL, false, "2,55%,83%"},
+		{"hsl-ns", FormatHSLNS, true, "2 55% 83%"},
+		{"hsl-array", FormatHSLArray, true, "[2, 55%, 83%]"},
+		{"hsl-array", FormatHSLArray, false, "[2,55%,83%]"},
+		{"hsl-function", FormatHSLFunc, true, "hsl(2, 55%, 83%)"},
+		{"hsl-function", FormatHSLFunc, false, "hsl(2,55%,83%)"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.stripSpaces)
+			got := formatColor(color, tt.format, tt.Spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -61,28 +59,28 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 	}
 
 	tests := []struct {
-		name        string
-		format      ColorFormat
-		stripSpaces bool
-		want        string
+		name   string
+		format ColorFormat
+		Spaces bool
+		want   string
 	}{
-		{"rgb with alpha", FormatRGB, false, "235, 188, 186, 0.5"},
-		{"rgb-ns with alpha", FormatRGBNS, false, "235 188 186 0.5"},
-		{"rgb-ansi with alpha", FormatRGBAnsi, false, "235;188;186;0.5"},
-		{"rgb-array with alpha", FormatRGBArray, false, "[235, 188, 186, 0.5]"},
-		{"rgb-function with alpha", FormatRGBFunc, false, "rgba(235, 188, 186, 0.5)"},
-		{"hsl with alpha", FormatHSL, false, "2, 55%, 83%, 0.5"},
-		{"hsl-ns with alpha", FormatHSLNS, false, "2 55% 83% 0.5"},
-		{"hsl-array with alpha", FormatHSLArray, false, "[2, 55%, 83%, 0.5]"},
-		{"hsl-function with alpha", FormatHSLFunc, false, "hsla(2, 55%, 83%, 0.5)"},
+		{"rgb with alpha", FormatRGB, true, "235, 188, 186, 0.5"},
+		{"rgb-ns with alpha", FormatRGBNS, true, "235 188 186 0.5"},
+		{"rgb-ansi with alpha", FormatRGBAnsi, true, "235;188;186;0.5"},
+		{"rgb-array with alpha", FormatRGBArray, true, "[235, 188, 186, 0.5]"},
+		{"rgb-function with alpha", FormatRGBFunc, true, "rgba(235, 188, 186, 0.5)"},
+		{"hsl with alpha", FormatHSL, true, "2, 55%, 83%, 0.5"},
+		{"hsl-ns with alpha", FormatHSLNS, true, "2 55% 83% 0.5"},
+		{"hsl-array with alpha", FormatHSLArray, true, "[2, 55%, 83%, 0.5]"},
+		{"hsl-function with alpha", FormatHSLFunc, true, "hsla(2, 55%, 83%, 0.5)"},
 
-		{"rgb-array with alpha stripped", FormatRGBArray, true, "[235,188,186,0.5]"},
-		{"hsl-array with alpha stripped", FormatHSLArray, true, "[2,55%,83%,0.5]"},
+		{"rgb-array with alpha stripped", FormatRGBArray, false, "[235,188,186,0.5]"},
+		{"hsl-array with alpha stripped", FormatHSLArray, false, "[2,55%,83%,0.5]"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.stripSpaces)
+			got := formatColor(color, tt.format, tt.Spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -110,11 +108,11 @@ func TestAlphaVariables(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
-		Output:      tmpDir,
-		Format:      "rgb",
-		Prefix:      "$",
-		StripSpaces: false,
+		Template: templatePath,
+		Output:   tmpDir,
+		Format:   "rgb",
+		Prefix:   "$",
+		Spaces:   true,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -126,7 +124,7 @@ func TestAlphaVariables(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(content, &result); err != nil {
 		t.Fatal(err)
 	}
@@ -176,11 +174,11 @@ func TestVariantGeneration(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
-		Output:      tmpDir,
-		Format:      "hex",
-		Prefix:      "$",
-		StripSpaces: false,
+		Template: templatePath,
+		Output:   tmpDir,
+		Format:   "hex",
+		Prefix:   "$",
+		Spaces:   false,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -228,7 +226,7 @@ func TestVariantGeneration(t *testing.T) {
 				t.Fatalf("Failed to read generated file: %v", err)
 			}
 
-			var result map[string]interface{}
+			var result map[string]any
 			if err := json.Unmarshal(content, &result); err != nil {
 				t.Fatalf("Failed to parse JSON: %v", err)
 			}
@@ -249,7 +247,7 @@ func TestVariantGeneration(t *testing.T) {
 				}
 			}
 
-			colors := result["colors"].(map[string]interface{})
+			colors := result["colors"].(map[string]any)
 			if got := colors["base"]; got != v.baseHex {
 				t.Errorf("base color = %v, want %v", got, v.baseHex)
 			}
@@ -303,7 +301,7 @@ func TestVariantSpecificValues(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var result map[string]interface{}
+			var result map[string]any
 			if err := json.Unmarshal(content, &result); err != nil {
 				t.Fatal(err)
 			}
@@ -338,12 +336,12 @@ func TestAccents(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
-		Output:      tmpDir,
-		Format:      "hex",
-		Prefix:      "$",
-		StripSpaces: false,
-		Accents:     true,
+		Template: templatePath,
+		Output:   tmpDir,
+		Format:   "hex",
+		Prefix:   "$",
+		Spaces:   true,
+		Accents:  true,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -383,7 +381,7 @@ func TestAccents(t *testing.T) {
 				t.Fatalf("Failed to read generated file: %v", err)
 			}
 
-			var result map[string]interface{}
+			var result map[string]any
 			if err := json.Unmarshal(content, &result); err != nil {
 				t.Fatalf("Failed to parse JSON: %v", err)
 			}
@@ -421,12 +419,12 @@ func TestAccentNames(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
-		Output:      tmpDir,
-		Format:      "hex",
-		Prefix:      "$",
-		StripSpaces: false,
-		Accents:     true,
+		Template: templatePath,
+		Output:   tmpDir,
+		Format:   "hex",
+		Prefix:   "$",
+		Spaces:   true,
+		Accents:  true,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -466,7 +464,7 @@ func TestAccentNames(t *testing.T) {
 				t.Fatalf("Failed to read generated file: %v", err)
 			}
 
-			var result map[string]interface{}
+			var result map[string]any
 			if err := json.Unmarshal(content, &result); err != nil {
 				t.Fatalf("Failed to parse JSON: %v", err)
 			}
@@ -518,11 +516,11 @@ func TestDirectories(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    filepath.Join(tmpDir, "template"),
-		Output:      tmpDir,
-		Format:      "hex",
-		Prefix:      "$",
-		StripSpaces: false,
+		Template: filepath.Join(tmpDir, "template"),
+		Output:   tmpDir,
+		Format:   "hex",
+		Prefix:   "$",
+		Spaces:   true,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -594,7 +592,7 @@ func TestDirectories(t *testing.T) {
 				t.Fatalf("Failed to read generated file: %v", err)
 			}
 
-			var result map[string]interface{}
+			var result map[string]any
 			if err := json.Unmarshal(content, &result); err != nil {
 				t.Fatalf("Failed to parse JSON: %v", err)
 			}
@@ -615,7 +613,7 @@ func TestDirectories(t *testing.T) {
 				}
 			}
 
-			colors := result["colors"].(map[string]interface{})
+			colors := result["colors"].(map[string]any)
 			if got := colors["base"]; got != v.baseHex {
 				t.Errorf("base color = %v, want %v", got, v.baseHex)
 			}
