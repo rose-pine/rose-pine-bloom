@@ -1,7 +1,7 @@
 package main
 
 type Config struct {
-	Template    string
+	File        string
 	Output      string
 	Prefix      string
 	Format      string

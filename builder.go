@@ -37,7 +37,7 @@ func generateVariants(cfg *Config) error {
 		"love", "gold", "rose", "pine", "foam", "iris",
 	}
 
-	templateFileInfo, err := os.Stat(cfg.Template)
+	templateFileInfo, err := os.Stat(cfg.File)
 	if err != nil {
 		return fmt.Errorf("failed to open template: %w", err)
 	}
@@ -45,7 +45,7 @@ func generateVariants(cfg *Config) error {
 	var templates []string
 
 	if templateFileInfo.IsDir() {
-		filepath.Walk(cfg.Template, func(path string, info os.FileInfo, err error) error {
+		filepath.Walk(cfg.File, func(path string, info os.FileInfo, err error) error {
 			if !info.IsDir() {
 				templates = append(templates, path)
 			}
@@ -53,7 +53,7 @@ func generateVariants(cfg *Config) error {
 		})
 
 	} else {
-		templates = append(templates, cfg.Template)
+		templates = append(templates, cfg.File)
 	}
 
 	for _, template := range templates {
@@ -151,10 +151,10 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 		outputFile = variant.id + ext
 	}
 
-	templateFileInfo, _ := os.Stat(cfg.Template)
+	templateFileInfo, _ := os.Stat(cfg.File)
 
 	if templateFileInfo.IsDir() {
-		dir, _ := strings.CutPrefix(filepath.Dir(template), filepath.Clean(cfg.Template))
+		dir, _ := strings.CutPrefix(filepath.Dir(template), filepath.Clean(cfg.File))
 		if cfg.Accents {
 			outputDir += "/" + accent
 		} else {

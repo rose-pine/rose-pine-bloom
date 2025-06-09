@@ -22,31 +22,30 @@ $ rose-pine-bloom --help
 🌱 Bloom - The Rosé Pine theme generator
 
 Usage:
-  -a	Generate accent files
+  Positional Arguments: (note: they must be specified last)
+        [File] - the file to use
+
+  -a    Generate accent files
   -accents
-    	Generate accent files
+        Generate accent files
   -f string
-    	Color output format (default "hex")
+        Color output format (default "hex")
   -format string
-    	Color output format (default "hex")
-  -h	Show help
+        Color output format (default "hex")
+  -h    Show help
   -help
-    	Show help
+        Show help
   -o string
-    	Directory for generated files (default "dist")
+        Directory for generated files (default "dist")
   -output string
-    	Directory for generated files (default "dist")
+        Directory for generated files (default "dist")
   -p string
-    	Variable prefix (default "$")
+        Variable prefix (default "$")
   -prefix string
-    	Variable prefix (default "$")
-  -s	Strip spaces in output
+        Variable prefix (default "$")
+  -s    Strip spaces in output
   -strip-spaces
-    	Strip spaces in output
-  -t string
-    	Path to template file (default "template.json")
-  -template string
-    	Path to template file (default "template.json")
+        Strip spaces in output
 ```
 
 ## Color formats

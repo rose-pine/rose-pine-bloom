@@ -9,8 +9,6 @@ import (
 
 func main() {
 	cfg := &Config{}
-	flag.StringVar(&cfg.Template, "t", "template.json", "Path to template file")
-	flag.StringVar(&cfg.Template, "template", "template.json", "Path to template file")
 	flag.StringVar(&cfg.Output, "o", "dist", "Directory for generated files")
 	flag.StringVar(&cfg.Output, "output", "dist", "Directory for generated files")
 	flag.StringVar(&cfg.Prefix, "p", "$", "Variable prefix")
@@ -23,15 +21,25 @@ func main() {
 	flag.BoolVar(&cfg.Accents, "accents", false, "Generate accent files")
 
 	help := flag.Bool("help", false, "Show help")
-	flag.Bool("h", false, "Show help")
+	help = flag.Bool("h", false, "Show help")
 
 	flag.Parse()
 
 	if *help {
 		fmt.Println("🌱 Bloom - The Rosé Pine theme generator")
 		fmt.Println("\nUsage:")
+		fmt.Println("  Positional Arguments: (note: they must be specified last)")
+		fmt.Println("\t[File] - the file to use")
+		fmt.Println()
 		flag.PrintDefaults()
 		os.Exit(0)
+	}
+
+	if flag.NArg() != 1 {
+		fmt.Println("Required 1 positional argument \"file\", Got", flag.NArg())
+		os.Exit(1)
+	} else {
+		cfg.File = flag.Args()[0]
 	}
 
 	if err := Build(cfg); err != nil {

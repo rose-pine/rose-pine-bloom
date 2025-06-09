@@ -110,7 +110,7 @@ func TestAlphaVariables(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
+		File:        templatePath,
 		Output:      tmpDir,
 		Format:      "rgb",
 		Prefix:      "$",
@@ -176,7 +176,7 @@ func TestVariantGeneration(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
+		File:        templatePath,
 		Output:      tmpDir,
 		Format:      "hex",
 		Prefix:      "$",
@@ -276,9 +276,9 @@ func TestVariantSpecificValues(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Prefix:   "$",
+		File:   templatePath,
+		Output: tmpDir,
+		Prefix: "$",
 	}
 
 	if err := Build(cfg); err != nil {
@@ -338,7 +338,7 @@ func TestAccents(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
+		File:        templatePath,
 		Output:      tmpDir,
 		Format:      "hex",
 		Prefix:      "$",
@@ -421,7 +421,7 @@ func TestAccentNames(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    templatePath,
+		File:        templatePath,
 		Output:      tmpDir,
 		Format:      "hex",
 		Prefix:      "$",
@@ -518,7 +518,7 @@ func TestDirectories(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template:    filepath.Join(tmpDir, "template"),
+		File:        filepath.Join(tmpDir, "template"),
 		Output:      tmpDir,
 		Format:      "hex",
 		Prefix:      "$",
