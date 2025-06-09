@@ -1,12 +1,12 @@
 package main
 
 type Config struct {
-	Template    string
-	Output      string
-	Prefix      string
-	Format      string
-	Accents     bool
-	StripSpaces bool
+	Template string
+	Output   string
+	Prefix   string
+	Format   string
+	Accents  bool
+	Spaces   bool
 }
 
 type ColorFormat string

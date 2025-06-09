@@ -24,7 +24,6 @@ func Build(cfg *Config) error {
 }
 
 func generateVariants(cfg *Config) error {
-
 	variants := []struct {
 		id, name, variantType string
 		colors                Variant
@@ -33,14 +32,12 @@ func generateVariants(cfg *Config) error {
 		{"rose-pine-moon", "Rosé Pine Moon", "dark", MoonVariant},
 		{"rose-pine-dawn", "Rosé Pine Dawn", "light", DawnVariant},
 	}
-	accents := []string{
-		"love", "gold", "rose", "pine", "foam", "iris",
-	}
 
 	templateFileInfo, err := os.Stat(cfg.Template)
 	if err != nil {
 		return fmt.Errorf("failed to open template: %w", err)
 	}
+	accents := []string{"love", "gold", "rose", "pine", "foam", "iris"}
 
 	var templates []string
 
@@ -66,6 +63,7 @@ func generateVariants(cfg *Config) error {
 		if err != nil {
 			return fmt.Errorf("failed to read template: %w", err)
 		}
+
 		for _, variant := range variants {
 			if cfg.Accents {
 				for _, accent := range accents {
@@ -110,10 +108,10 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 			colorCopy := *color
 			normalizedAlpha := alpha / 100
 			colorCopy.Alpha = &normalizedAlpha
-			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.StripSpaces)
+			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Spaces)
 		})
 
-		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.StripSpaces))
+		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Spaces))
 	}
 
 	result = variantValueRegex.ReplaceAllStringFunc(result, func(match string) string {

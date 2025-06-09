@@ -12,7 +12,7 @@ type Color struct {
 	Alpha *float64   `json:"alpha,omitempty"`
 }
 
-func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
+func formatColor(c *Color, format ColorFormat, spaces bool) string {
 	formatAlpha := func(alpha float64) string {
 		s := fmt.Sprintf("%.2f", alpha)
 		s = strings.TrimRight(s, "0")
@@ -30,7 +30,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(rgb, " ", "")
 		}
 		return rgb
@@ -39,7 +39,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(" %s", formatAlpha(*c.Alpha))
 		}
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(rgb, " ", "")
 		}
 		return rgb
@@ -54,7 +54,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
 		rgb += "]"
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(rgb, " ", "")
 		}
 		return rgb
@@ -68,7 +68,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
 		rgb += ")"
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(rgb, " ", "")
 		}
 		return rgb
@@ -77,7 +77,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 		if c.Alpha != nil {
 			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(hsl, " ", "")
 		}
 		return hsl
@@ -86,7 +86,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 		if c.Alpha != nil {
 			hsl += fmt.Sprintf(" %s", formatAlpha(*c.Alpha))
 		}
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(hsl, " ", "")
 		}
 		return hsl
@@ -96,7 +96,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
 		hsl += "]"
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(hsl, " ", "")
 		}
 		return hsl
@@ -110,7 +110,7 @@ func formatColor(c *Color, format ColorFormat, stripSpaces bool) string {
 			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
 		hsl += ")"
-		if stripSpaces {
+		if spaces == false {
 			return strings.ReplaceAll(hsl, " ", "")
 		}
 		return hsl
