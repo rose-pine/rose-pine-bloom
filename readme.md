@@ -65,8 +65,6 @@ Usage:
 | hsl-array    | `[2, 55%, 83%]`      |
 | hsl-function | `hsl(2, 55%, 83%)`   |
 
-> Formats can be suffixed with `" Stripped"` to be stripped of spaces when applicable
-
 ## Variables
 
 > By default, variables are prefixed with `$`
@@ -110,6 +108,7 @@ All values from [@rose-pine/palette](https://github.com/rose-pine/palette) are a
 ```
 
 ### Accents
+
 > Enable accents by passing the --accents / -a flag
 
 When using the flag, a file for every accent will be made.
