@@ -10,6 +10,7 @@ import (
 
 var (
 	cfg      = &Config{}
+	noCommas bool
 	noSpaces bool
 	showHelp bool
 )
@@ -54,6 +55,7 @@ func printHelp() {
     -p, --prefix <string>  Color variable prefix (default: $)
     -f, --format <format>  Color output format (default: hex)
 
+    --no-commas            Remove commas from color values
     --no-spaces            Remove spaces from color values
 
     -h, --help             Show help
@@ -63,12 +65,10 @@ func printHelp() {
     hex-ns        c4a7e7
 
     hsl           267, 57%%, 78%%
-    hsl-ns        267 57%% 78%%
     hsl-array     [267, 57%%, 78%%]
     hsl-function  hsl(267, 57%%, 78%%)
 
     rgb           196, 167, 231
-    rgb-ns        196 167 231
     rgb-ansi      196;167;231
     rgb-array     [196, 167, 231]
     rgb-function  rgb(196, 167, 231)
@@ -94,6 +94,7 @@ func main() {
 	flag.BoolVar(&cfg.Accents, "a", false, "")
 	flag.BoolVar(&cfg.Accents, "accents", false, "")
 
+	flag.BoolVar(&noCommas, "no-commas", false, "")
 	flag.BoolVar(&noSpaces, "no-spaces", false, "")
 
 	flag.BoolVar(&showHelp, "h", false, "")
@@ -115,6 +116,7 @@ func main() {
 	}
 
 	cfg.Template = template
+	cfg.Commas = !noCommas
 	cfg.Spaces = !noSpaces
 
 	if err := Build(cfg); err != nil {

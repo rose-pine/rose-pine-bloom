@@ -108,10 +108,10 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 			colorCopy := *color
 			normalizedAlpha := alpha / 100
 			colorCopy.Alpha = &normalizedAlpha
-			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Spaces)
+			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces)
 		})
 
-		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Spaces))
+		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces))
 	}
 
 	result = variantValueRegex.ReplaceAllStringFunc(result, func(match string) string {

@@ -6,6 +6,7 @@ type Config struct {
 	Prefix   string
 	Format   string
 	Accents  bool
+	Commas   bool
 	Spaces   bool
 }
 
@@ -15,12 +16,10 @@ const (
 	FormatHex      ColorFormat = "hex"
 	FormatHexNS    ColorFormat = "hex-ns"
 	FormatRGB      ColorFormat = "rgb"
-	FormatRGBNS    ColorFormat = "rgb-ns"
 	FormatRGBAnsi  ColorFormat = "rgb-ansi"
 	FormatRGBArray ColorFormat = "rgb-array"
 	FormatRGBFunc  ColorFormat = "rgb-function"
 	FormatHSL      ColorFormat = "hsl"
-	FormatHSLNS    ColorFormat = "hsl-ns"
 	FormatHSLArray ColorFormat = "hsl-array"
 	FormatHSLFunc  ColorFormat = "hsl-function"
 )
