@@ -10,11 +10,33 @@ permissions:
   contents: write
   pull-requests: write
 
-
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
     steps:
+      - uses: actions/checkout@v4
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
-          release-type: simple
+          release-type: go
+      - uses: actions/setup-go@v5
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          go-version: 1.24.4
+      - name: Upload
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p dist
+          ext=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/bloom-${{ matrix.goos }}-${{ matrix.goarch }}${ext}
+          cd dist
+          zip bloom-${{ matrix.goos }}-${{ matrix.goarch }}.zip bloom-${{ matrix.goos }}-${{ matrix.goarch }}${ext}
+          cd ..
+          gh release upload ${{ steps.release.outputs.tag_name }} dist/bloom-${{ matrix.goos }}-${{ matrix.goarch }}.zip
