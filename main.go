@@ -5,37 +5,117 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 )
 
-var noSpaces bool
+var (
+	cfg      = &Config{}
+	noSpaces bool
+	showHelp bool
+)
+
+func detectTemplate(args []string) (string, error) {
+	switch len(args) {
+	case 0:
+		files, err := os.ReadDir(".")
+		if err != nil {
+			return "", fmt.Errorf("failed to read current directory: %w", err)
+		}
+
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+			name := file.Name()
+			base := name[:len(name)-len(filepath.Ext(name))]
+			if base == "template" {
+				return name, nil
+			}
+		}
+		return "", fmt.Errorf("unable to find template")
+
+	case 1:
+		return args[0], nil
+
+	default:
+		return "", fmt.Errorf("multiple positional arguments detected, ensure all flags come before the template")
+	}
+}
+
+func printHelp() {
+	helpMessage := fmt.Sprintf(`
+  🌱 Bloom - The Rosé Pine theme generator
+
+  Usage
+    $ %s [options] <template>
+
+  Options
+    -o, --output <path>    Directory for generated files (default: dist)
+    -p, --prefix <string>  Color variable prefix (default: $)
+    -f, --format <format>  Color output format (default: hex)
+
+    --no-spaces            Remove spaces from color values
+
+    -h, --help             Show help
+
+  Formats
+    hex           #c4a7e7
+    hex-ns        c4a7e7
+
+    hsl           267, 57%%, 78%%
+    hsl-ns        267 57%% 78%%
+    hsl-array     [267, 57%%, 78%%]
+    hsl-function  hsl(267, 57%%, 78%%)
+
+    rgb           196, 167, 231
+    rgb-ns        196 167 231
+    rgb-ansi      196;167;231
+    rgb-array     [196, 167, 231]
+    rgb-function  rgb(196, 167, 231)
+
+  Examples
+    $ build template.yaml
+    $ build -f hsl -o dist template.json
+
+`, os.Args[0])
+	fmt.Fprint(os.Stderr, helpMessage)
+}
 
 func main() {
-	cfg := &Config{}
-	flag.StringVar(&cfg.Template, "t", "template.json", "Path to template file")
-	flag.StringVar(&cfg.Template, "template", "template.json", "Path to template file")
-	flag.StringVar(&cfg.Output, "o", "dist", "Directory for generated files")
-	flag.StringVar(&cfg.Output, "output", "dist", "Directory for generated files")
-	flag.StringVar(&cfg.Prefix, "p", "$", "Variable prefix")
-	flag.StringVar(&cfg.Prefix, "prefix", "$", "Variable prefix")
-	flag.StringVar(&cfg.Format, "f", "hex", "Color output format")
-	flag.StringVar(&cfg.Format, "format", "hex", "Color output format")
-	flag.BoolVar(&noSpaces, "no-spaces", false, "Remove spaces from color values")
-	flag.BoolVar(&cfg.Accents, "a", false, "Generate accent files")
-	flag.BoolVar(&cfg.Accents, "accents", false, "Generate accent files")
+	flag.StringVar(&cfg.Output, "o", "dist", "")
+	flag.StringVar(&cfg.Output, "output", "dist", "")
 
-	help := flag.Bool("help", false, "Show help")
-	flag.Bool("h", false, "Show help")
+	flag.StringVar(&cfg.Prefix, "p", "$", "")
+	flag.StringVar(&cfg.Prefix, "prefix", "$", "")
+
+	flag.StringVar(&cfg.Format, "f", "hex", "")
+	flag.StringVar(&cfg.Format, "format", "hex", "")
+
+	flag.BoolVar(&cfg.Accents, "a", false, "")
+	flag.BoolVar(&cfg.Accents, "accents", false, "")
+
+	flag.BoolVar(&noSpaces, "no-spaces", false, "")
+
+	flag.BoolVar(&showHelp, "h", false, "")
+	flag.BoolVar(&showHelp, "help", false, "")
 
 	flag.Parse()
 
-	cfg.Spaces = !noSpaces
-
-	if *help {
-		fmt.Println("🌱 Bloom - The Rosé Pine theme generator")
-		fmt.Println("\nUsage:")
-		flag.PrintDefaults()
-		os.Exit(0)
+	if showHelp {
+		printHelp()
+		return
 	}
+
+	args := flag.Args()
+
+	template, err := detectTemplate(args)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
+	}
+
+	cfg.Template = template
+	cfg.Spaces = !noSpaces
 
 	if err := Build(cfg); err != nil {
 		log.Fatal(err)

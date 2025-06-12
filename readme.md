@@ -18,51 +18,41 @@
 Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`.
 
 ```
-$ rose-pine-bloom --help
-🌱 Bloom - The Rosé Pine theme generator
+$ bloom --help
 
-Usage:
-  -a	Generate accent files
-  -accents
-    	Generate accent files
-  -f string
-    	Color output format (default "hex")
-  -format string
-    	Color output format (default "hex")
-  -h	Show help
-  -help
-    	Show help
-  -no-spaces
-    	Remove spaces from color values
-  -o string
-    	Directory for generated files (default "dist")
-  -output string
-    	Directory for generated files (default "dist")
-  -p string
-    	Variable prefix (default "$")
-  -prefix string
-    	Variable prefix (default "$")
-  -t string
-    	Path to template file (default "template.json")
-  -template string
-    	Path to template file (default "template.json")
+  🌱 Bloom - The Rosé Pine theme generator
+
+  Usage
+    $ rose-pine-bloom <template> [options]
+
+  Options
+    -o, --output <path>    Directory for generated files (default: dist)
+    -p, --prefix <string>  Color variable prefix (default: $)
+    -f, --format <format>  Color output format (default: hex)
+
+    --no-spaces            Remove spaces from color values
+
+    -h, --help             Show help
+
+  Formats
+    hex           #c4a7e7
+    hex-ns        c4a7e7
+
+    hsl           267, 57%, 78%
+    hsl-ns        267 57% 78%
+    hsl-array     [267, 57%, 78%]
+    hsl-function  hsl(267, 57%, 78%)
+
+    rgb           196, 167, 231
+    rgb-ns        196 167 231
+    rgb-ansi      196;167;231
+    rgb-array     [196, 167, 231]
+    rgb-function  rgb(196, 167, 231)
+
+  Examples
+    $ build template.yaml
+    $ build -f hsl -o dist template.json
 ```
-
-## Color formats
-
-| Name         | Example              |
-| ------------ | -------------------- |
-| hex          | `#ebbcba`            |
-| hex-ns       | `ebbcba`             |
-| rgb          | `235, 188, 186`      |
-| rgb-ns       | `235 188 186`        |
-| rgb-ansi     | `235;188;186`        |
-| rgb-array    | `[235, 188, 186]`    |
-| rgb-function | `rgb(235, 188, 186)` |
-| hsl          | `2, 55%, 83%`        |
-| hsl-ns       | `2 55% 83%`          |
-| hsl-array    | `[2, 55%, 83%]`      |
-| hsl-function | `hsl(2, 55%, 83%)`   |
 
 ## Variables
 
@@ -179,4 +169,4 @@ When using the flag, a file for every accent will be made.
 
 ## Related
 
-- [build](https://github.com/rose-pine/build) - JavaScript-based theme generator for Rosé Pine
+- [rose-pine/build](https://github.com/rose-pine/build) - Node.js-based theme generator for Rosé Pine
