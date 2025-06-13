@@ -17,31 +17,33 @@ func TestColorFormatting(t *testing.T) {
 	tests := []struct {
 		name   string
 		format ColorFormat
+		Commas bool
 		Spaces bool
 		want   string
 	}{
-		{"hex", FormatHex, true, "#ebbcba"},
-		{"hex-ns", FormatHexNS, true, "ebbcba"},
-		{"rgb", FormatRGB, true, "235, 188, 186"},
-		{"rgb", FormatRGB, false, "235,188,186"},
-		{"rgb-ns", FormatRGBNS, true, "235 188 186"},
-		{"rgb-ansi", FormatRGBAnsi, true, "235;188;186"},
-		{"rgb-array", FormatRGBArray, true, "[235, 188, 186]"},
-		{"rgb-array", FormatRGBArray, false, "[235,188,186]"},
-		{"rgb-function", FormatRGBFunc, true, "rgb(235, 188, 186)"},
-		{"rgb-function", FormatRGBFunc, false, "rgb(235,188,186)"},
-		{"hsl", FormatHSL, true, "2, 55%, 83%"},
-		{"hsl", FormatHSL, false, "2,55%,83%"},
-		{"hsl-ns", FormatHSLNS, true, "2 55% 83%"},
-		{"hsl-array", FormatHSLArray, true, "[2, 55%, 83%]"},
-		{"hsl-array", FormatHSLArray, false, "[2,55%,83%]"},
-		{"hsl-function", FormatHSLFunc, true, "hsl(2, 55%, 83%)"},
-		{"hsl-function", FormatHSLFunc, false, "hsl(2,55%,83%)"},
+		{"hex", FormatHex, true, true, "#ebbcba"},
+		{"hex-ns", FormatHexNS, true, true, "ebbcba"},
+		{"rgb", FormatRGB, true, true, "235, 188, 186"},
+		{"rgb no-spaces", FormatRGB, true, false, "235,188,186"},
+		{"rgb no-commas", FormatRGB, false, true, "235 188 186"},
+		{"rgb-ansi", FormatRGBAnsi, true, true, "235;188;186"},
+		{"rgb-array", FormatRGBArray, true, true, "[235, 188, 186]"},
+		{"rgb-array", FormatRGBArray, true, false, "[235,188,186]"},
+		{"rgb-function", FormatRGBFunc, true, true, "rgb(235, 188, 186)"},
+		{"rgb-function no-commas", FormatRGBFunc, false, true, "rgb(235 188 186)"},
+		{"rgb-function", FormatRGBFunc, true, false, "rgb(235,188,186)"},
+		{"hsl", FormatHSL, true, true, "2, 55%, 83%"},
+		{"hsl no-spaces", FormatHSL, true, false, "2,55%,83%"},
+		{"hsl no-commas", FormatHSL, false, true, "2 55% 83%"},
+		{"hsl-array", FormatHSLArray, true, true, "[2, 55%, 83%]"},
+		{"hsl-array", FormatHSLArray, true, false, "[2,55%,83%]"},
+		{"hsl-function", FormatHSLFunc, true, true, "hsl(2, 55%, 83%)"},
+		{"hsl-function no-spaces", FormatHSLFunc, true, false, "hsl(2,55%,83%)"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.Spaces)
+			got := formatColor(color, tt.format, tt.Commas, tt.Spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -61,26 +63,27 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 	tests := []struct {
 		name   string
 		format ColorFormat
+		Commas bool
 		Spaces bool
 		want   string
 	}{
-		{"rgb with alpha", FormatRGB, true, "235, 188, 186, 0.5"},
-		{"rgb-ns with alpha", FormatRGBNS, true, "235 188 186 0.5"},
-		{"rgb-ansi with alpha", FormatRGBAnsi, true, "235;188;186;0.5"},
-		{"rgb-array with alpha", FormatRGBArray, true, "[235, 188, 186, 0.5]"},
-		{"rgb-function with alpha", FormatRGBFunc, true, "rgba(235, 188, 186, 0.5)"},
-		{"hsl with alpha", FormatHSL, true, "2, 55%, 83%, 0.5"},
-		{"hsl-ns with alpha", FormatHSLNS, true, "2 55% 83% 0.5"},
-		{"hsl-array with alpha", FormatHSLArray, true, "[2, 55%, 83%, 0.5]"},
-		{"hsl-function with alpha", FormatHSLFunc, true, "hsla(2, 55%, 83%, 0.5)"},
+		{"rgb with alpha", FormatRGB, true, true, "235, 188, 186, 0.5"},
+		{"rgb no-commas with alpha", FormatRGB, false, true, "235 188 186 0.5"},
+		{"rgb-ansi with alpha", FormatRGBAnsi, true, true, "235;188;186;0.5"},
+		{"rgb-array with alpha", FormatRGBArray, true, true, "[235, 188, 186, 0.5]"},
+		{"rgb-function with alpha", FormatRGBFunc, true, true, "rgba(235, 188, 186, 0.5)"},
+		{"hsl with alpha", FormatHSL, true, true, "2, 55%, 83%, 0.5"},
+		{"hsl no-commas with alpha", FormatHSL, false, true, "2 55% 83% 0.5"},
+		{"hsl-array with alpha", FormatHSLArray, true, true, "[2, 55%, 83%, 0.5]"},
+		{"hsl-function with alpha", FormatHSLFunc, true, true, "hsla(2, 55%, 83%, 0.5)"},
 
-		{"rgb-array with alpha stripped", FormatRGBArray, false, "[235,188,186,0.5]"},
-		{"hsl-array with alpha stripped", FormatHSLArray, false, "[2,55%,83%,0.5]"},
+		{"rgb-array no-spaces with alpha", FormatRGBArray, true, false, "[235,188,186,0.5]"},
+		{"hsl-array no-spaces with alpha", FormatHSLArray, true, false, "[2,55%,83%,0.5]"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.Spaces)
+			got := formatColor(color, tt.format, tt.Commas, tt.Spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -112,6 +115,7 @@ func TestAlphaVariables(t *testing.T) {
 		Output:   tmpDir,
 		Format:   "rgb",
 		Prefix:   "$",
+		Commas:   true,
 		Spaces:   true,
 	}
 
