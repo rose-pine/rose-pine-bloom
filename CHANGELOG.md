@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/rose-pine/rose-pine-bloom/compare/v2.0.0...v2.0.1) (2025-06-14)
+
+
+### Bug Fixes
+
+* add missing `--create` flag ([#24](https://github.com/rose-pine/rose-pine-bloom/issues/24)) ([0ba4e58](https://github.com/rose-pine/rose-pine-bloom/commit/0ba4e587e86db5500a480c61457b36653e42e7c7))
+
 ## [2.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v1.0.0...v2.0.0) (2025-06-14)
 
 
