@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 )
 
 func Build(cfg *Config) error {
@@ -49,31 +48,6 @@ func generateTemplates(cfg *Config) error {
 	}
 
 	return nil
-}
-
-type format struct {
-	Name    string
-	Example string
-}
-
-func printFormats() {
-	formats := [...]format{
-		{Name: "hex", Example: "#ebbcba"},
-		{Name: "hex-ns", Example: "ebbcba"},
-		{Name: "rgb", Example: "235, 188, 186"},
-		{Name: "rbg-ansi", Example: "235;188;186"},
-		{Name: "rgb-array", Example: "[235, 188, 186]"},
-		{Name: "rgb-function", Example: "rgb(235, 188, 186)"},
-		{Name: "hsl", Example: "2, 55%, 83%"},
-		{Name: "hsl-array", Example: "[2, 55%, 83%]"},
-		{Name: "hsl-function", Example: "hsl(2, 55%, 83%)"},
-	}
-
-	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
-	for _, f := range formats {
-		fmt.Fprintln(w, "    ", "- ", f.Name, "\t", f.Example)
-	}
-	w.Flush()
 }
 
 var variants = []struct {
@@ -121,7 +95,7 @@ func createTemplate(cfg *Config, file string, fileContent []byte) error {
 		var Yellow = "\033[33m"
 		var Reset = "\033[0m"
 		fmt.Printf(Yellow+"No matches for specified format (%s). Available formats:\n"+Reset, ColorFormat(cfg.Format))
-		printFormats()
+		PrintFormatsTable()
 	}
 
 	var outputFile, outputDir string

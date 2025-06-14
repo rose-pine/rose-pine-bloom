@@ -17,13 +17,16 @@
 
 Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`. Already have a theme? You can [create a template](#create-a-template) from an existing theme.
 
+<!-- HELP_START -->
+<!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
+
 ```
-$ rose-pine-bloom --help
+$ ./rose-pine-bloom --help
 
   🌱 Bloom - The Rosé Pine theme generator
 
   Usage
-    $ rose-pine-bloom <template> [options]
+    $ ./rose-pine-bloom [options] <template>
 
   Options
     -o, --output <path>     Directory for generated files (default: dist)
@@ -39,23 +42,23 @@ $ rose-pine-bloom --help
     -h, --help              Show help
 
   Formats
-    hex           #c4a7e7
-    hex-ns        c4a7e7
-
-    hsl           267, 57%, 78%
-    hsl-array     [267, 57%, 78%]
-    hsl-function  hsl(267, 57%, 78%)
-
-    rgb           196, 167, 231
-    rgb-ansi      196;167;231
-    rgb-array     [196, 167, 231]
-    rgb-function  rgb(196, 167, 231)
+    hex           #ebbcba
+    hex-ns        ebbcba
+    hsl           2, 55%, 83%
+    hsl-array     [2, 55%, 83%]
+    hsl-function  hsl(2, 55%, 83%)
+    rgb           235, 188, 186
+    rgb-ansi      235;188;186
+    rgb-array     [235, 188, 186]
+    rgb-function  rgb(235, 188, 186)
 
   Examples
-    $ rose-pine-bloom template.yaml
-    $ rose-pine-bloom -f hsl -o dist template.json
-    $ rose-pine-bloom -c dawn my-theme.toml
+    $ ./rose-pine-bloom template.yaml
+    $ ./rose-pine-bloom -f hsl -o dist template.json
+    $ ./rose-pine-bloom -c dawn my-theme.toml
+
 ```
+<!-- HELP_END -->
 
 ## Create a template
 
