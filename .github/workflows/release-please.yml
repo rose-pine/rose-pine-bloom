@@ -44,10 +44,10 @@ jobs:
           ext=""
           if [ "${{ matrix.os }}" = "windows" ]; then ext=".exe"; fi
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o dist/${FILENAME}${ext}
-          cd dist
-          zip ${FILENAME}.zip ${FILENAME}${ext}
-          cd ..
       - name: Upload to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ needs.release-please.outputs.tag_name }} dist/${FILENAME}.zip
+        run: |
+          ext=""
+          if [ "${{ matrix.os }}" = "windows" ]; then ext=".exe"; fi
+          gh release upload ${{ needs.release-please.outputs.tag_name }} dist/${FILENAME}${ext}
