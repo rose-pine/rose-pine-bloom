@@ -51,14 +51,17 @@ func printHelp() {
     $ %s [options] <template>
 
   Options
-    -o, --output <path>    Directory for generated files (default: dist)
-    -p, --prefix <string>  Color variable prefix (default: $)
-    -f, --format <format>  Color output format (default: hex)
+    -o, --output <path>     Directory for generated files (default: dist)
+    -p, --prefix <string>   Color variable prefix (default: $)
+    -f, --format <format>   Color output format (default: hex)
+    -c, --create <variant>  Create template from existing theme (default: main)
+                            Variants: main, moon, dawn
 
-    --no-commas            Remove commas from color values
-    --no-spaces            Remove spaces from color values
+    --accents               Create themes for each accent color
+    --no-commas             Remove commas from color values
+    --no-spaces             Remove spaces from color values
 
-    -h, --help             Show help
+    -h, --help              Show help
 
   Formats
     hex           #c4a7e7
@@ -74,8 +77,9 @@ func printHelp() {
     rgb-function  rgb(196, 167, 231)
 
   Examples
-    $ build template.yaml
-    $ build -f hsl -o dist template.json
+    $ rose-pine-bloom template.yaml
+    $ rose-pine-bloom -f hsl -o dist template.json
+    $ rose-pine-bloom -c dawn my-theme.toml
 
 `, os.Args[0])
 	fmt.Fprint(os.Stderr, helpMessage)

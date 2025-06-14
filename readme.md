@@ -15,10 +15,10 @@
 
 ## Usage
 
-Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`.
+Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`. Already have a theme? You can [create a template](#create-a-template) from an existing theme.
 
 ```
-$ bloom --help
+$ rose-pine-bloom --help
 
   🌱 Bloom - The Rosé Pine theme generator
 
@@ -26,14 +26,17 @@ $ bloom --help
     $ rose-pine-bloom <template> [options]
 
   Options
-    -o, --output <path>    Directory for generated files (default: dist)
-    -p, --prefix <string>  Color variable prefix (default: $)
-    -f, --format <format>  Color output format (default: hex)
+    -o, --output <path>     Directory for generated files (default: dist)
+    -p, --prefix <string>   Color variable prefix (default: $)
+    -f, --format <format>   Color output format (default: hex)
+    -c, --create <variant>  Create template from existing theme (default: main)
+                            Variants: main, moon, dawn
 
-    --no-commas            Remove commas from color values
-    --no-spaces            Remove spaces from color values
+    --accents               Create themes for each accent color
+    --no-commas             Remove commas from color values
+    --no-spaces             Remove spaces from color values
 
-    -h, --help             Show help
+    -h, --help              Show help
 
   Formats
     hex           #c4a7e7
@@ -49,108 +52,70 @@ $ bloom --help
     rgb-function  rgb(196, 167, 231)
 
   Examples
-    $ build template.yaml
-    $ build -f hsl -o dist template.json
+    $ rose-pine-bloom template.yaml
+    $ rose-pine-bloom -f hsl -o dist template.json
+    $ rose-pine-bloom -c dawn my-theme.toml
 ```
 
-## Variables
+## Create a template
+
+If you have an existing theme:
+
+```sh
+rose-pine-bloom --create dawn --format hex my-theme.toml
+```
+
+### Variables
 
 > By default, variables are prefixed with `$`
 
-All values from [@rose-pine/palette](https://github.com/rose-pine/palette) are available as well as the following.
+Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "love" or "highlightMed", as well as metadata related values mentioned below.
 
-### Metadata
-
-```jsonc
-// template.json
-{
-	"id": "$id",
-	"name": "$name",
-	"description": "$description",
-	"type": "$type",
-}
-
-// rose-pine.json
-{
-	"id": "rose-pine",
-	"name": "Rosé Pine",
-	"description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
-	"type": "dark",
-}
-
-// rose-pine-moon.json
-{
-	"id": "rose-pine-moon",
-	"name": "Rosé Pine Moon",
-	"description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
-	"type": "dark",
-}
-
-// rose-pine-dawn.json
-{
-	"id": "rose-pine-dawn",
-	"name": "Rosé Pine Dawn",
-	"description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
-	"type": "light",
-}
-```
+| Variable    | Value <main,moon,dawn>                                                       |
+| ----------- | ---------------------------------------------------------------------------- |
+| id          | rose-pine<-moon,-dawn>                                                       |
+| name        | Rosé Pine <Moon,Dawn>                                                        |
+| description | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
+| type        | <dark,dark,light>                                                            |
 
 ### Accents
 
-> Enable accents by passing the --accents / -a flag
+> Enable accents by passing the `--accents` / `-a` flag
 
 When using the flag, a file for every accent will be made.
 
 ```jsonc
 // template.json
-"accent": "$accent"
+{ "accent": "$accent" }
 
 // rose-pine/rose-pine-foam.json
-"accent": "#9ccfd8"
+{ "accent": "#9ccfd8" }
 
 // rose-pine/rose-pine-gold.json
-"accent": "#f6c177"
+{ "accent": "#f6c177" }
 
 ...
 
 // rose-pine-moon/rose-pine-moon-iris.json
-"accent": "#c4a7e7"
+{ "accent": "#c4a7e7" }
 
 // rose-pine-moon/rose-pine-moon-love.json
-"accent": "#eb6f92"
+{ "accent": "#eb6f92" }
 
 ...
 
 // rose-pine-dawn/rose-pine-dawn-pine.json
-"accent": "#286983"
+{ "accent": "#286983" }
 
 // rose-pine-dawn/rose-pine-dawn-rose.json
-"accent": "#d7827e"
+{ "accent": "#d7827e" }
 ```
 
 > You can also use `accentname` to output the name of the accent color, instead of the actual color
 
-## Custom values per variant
+### Using custom values per variant
 
-> Use different values for each variant, formatted as `$(main|moon|dawn)`
-
-### Named colors
-
-```jsonc
-// template.json
-{ "accent": "$($rose|$iris|$pine)" }
-
-// rose-pine.json
-{ "accent": "#ebbcba" }
-
-// rose-pine-moon.json
-{ "accent": "#c4a7e7" }
-
-// rose-pine-dawn.json
-{ "accent": "#286983" }
-```
-
-### Strings
+Use different values for each variant, formatted as `$(main|moon|dawn)`, e.g.:
 
 ```jsonc
 // template.json
@@ -164,6 +129,12 @@ When using the flag, a file for every accent will be made.
 
 // rose-pine-dawn.json
 { "order": "Marocchino" }
+```
+
+It is possible to use variables inside of this syntax as well:
+
+```jsonc
+{ "background": "$($rose|$foam|$iris)" }
 ```
 
 ## Related
