@@ -47,6 +47,9 @@ func main() {
 	flag.StringVar(&cfg.Output, "o", "dist", "")
 	flag.StringVar(&cfg.Output, "output", "dist", "")
 
+	flag.StringVar(&cfg.Create, "c", "", "")
+	flag.StringVar(&cfg.Create, "create", "", "")
+
 	flag.StringVar(&cfg.Prefix, "p", "$", "")
 	flag.StringVar(&cfg.Prefix, "prefix", "$", "")
 
