@@ -43,48 +43,6 @@ func detectTemplate(args []string) (string, error) {
 	}
 }
 
-func printHelp() {
-	helpMessage := fmt.Sprintf(`
-  🌱 Bloom - The Rosé Pine theme generator
-
-  Usage
-    $ %s [options] <template>
-
-  Options
-    -o, --output <path>     Directory for generated files (default: dist)
-    -p, --prefix <string>   Color variable prefix (default: $)
-    -f, --format <format>   Color output format (default: hex)
-    -c, --create <variant>  Create template from existing theme (default: main)
-                            Variants: main, moon, dawn
-
-    --accents               Create themes for each accent color
-    --no-commas             Remove commas from color values
-    --no-spaces             Remove spaces from color values
-
-    -h, --help              Show help
-
-  Formats
-    hex           #c4a7e7
-    hex-ns        c4a7e7
-
-    hsl           267, 57%%, 78%%
-    hsl-array     [267, 57%%, 78%%]
-    hsl-function  hsl(267, 57%%, 78%%)
-
-    rgb           196, 167, 231
-    rgb-ansi      196;167;231
-    rgb-array     [196, 167, 231]
-    rgb-function  rgb(196, 167, 231)
-
-  Examples
-    $ rose-pine-bloom template.yaml
-    $ rose-pine-bloom -f hsl -o dist template.json
-    $ rose-pine-bloom -c dawn my-theme.toml
-
-`, os.Args[0])
-	fmt.Fprint(os.Stderr, helpMessage)
-}
-
 func main() {
 	flag.StringVar(&cfg.Output, "o", "dist", "")
 	flag.StringVar(&cfg.Output, "output", "dist", "")
@@ -107,7 +65,7 @@ func main() {
 	flag.Parse()
 
 	if showHelp {
-		printHelp()
+		PrintHelp()
 		return
 	}
 
