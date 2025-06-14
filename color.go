@@ -39,6 +39,14 @@ func formatColor(c *Color, format ColorFormat, commas bool, spaces bool) string 
 		}
 		hsl += "]"
 		workingString = hsl
+	case FormatHSLCss:
+		prefix := "hsl"
+		hsl := fmt.Sprintf("%s(%vdeg %v%% %v%%", prefix, c.HSL[0], c.HSL[1], c.HSL[2])
+		if c.Alpha != nil {
+			hsl += fmt.Sprintf(" / %s", formatAlpha(*c.Alpha))
+		}
+		hsl += ")"
+		workingString = hsl
 	case FormatHSLFunc:
 		prefix := "hsl"
 		if c.Alpha != nil {

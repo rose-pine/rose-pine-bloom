@@ -17,6 +17,7 @@ var formats = [...]format{
 	{Name: "hex-ns", Example: "ebbcba"},
 	{Name: "hsl", Example: "2, 55%, 83%"},
 	{Name: "hsl-array", Example: "[2, 55%, 83%]"},
+	{Name: "hsl-css", Example: "hsl(2deg 55% 83%)"},
 	{Name: "hsl-function", Example: "hsl(2, 55%, 83%)"},
 	{Name: "rgb", Example: "235, 188, 186"},
 	{Name: "rgb-ansi", Example: "235;188;186"},
