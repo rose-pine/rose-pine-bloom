@@ -82,7 +82,7 @@ Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "lov
 
 ### Accents
 
-Use `<prefix>accent` to specify an accent variable. A file for every accent will be made.
+Specify an accent variable, formatted as `$accent`. A file for every accent will be made.
 
 ```jsonc
 // template.json
