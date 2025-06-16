@@ -125,8 +125,13 @@ func generateVariants(cfg *Config) error {
 			return fmt.Errorf("failed to read template: %w", err)
 		}
 
+		hasAccent := false
+		if strings.Contains(string(templateContent), cfg.Prefix+"accent") {
+			hasAccent = true
+		}
+
 		for _, variant := range variants {
-			if cfg.Accents {
+			if hasAccent {
 				for _, accent := range accents {
 					if err := processVariant(cfg, template, templateContent, accent, variant); err != nil {
 						return fmt.Errorf("failed to process %s: %w", variant.id, err)
@@ -202,7 +207,7 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 		result = prettyJSON.String()
 	}
 	var outputFile, outputDir string
-	if cfg.Accents {
+	if accent != "accent" {
 		outputDir = cfg.Output + "/" + variant.id
 		outputFile = variant.id + "-" + accent + ext
 	} else {
@@ -214,7 +219,7 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 
 	if templateFileInfo.IsDir() {
 		dir, _ := strings.CutPrefix(filepath.Dir(template), filepath.Clean(cfg.Template))
-		if cfg.Accents {
+		if accent != "accent" {
 			outputDir += "/" + accent
 		} else {
 			outputDir += "/" + variant.id
