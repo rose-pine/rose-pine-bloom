@@ -1,4 +1,4 @@
-name: release-please
+name: release
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.24.4
-      - name: Build and package
+      - name: Build
         run: |
           mkdir -p dist
           ext=""
