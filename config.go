@@ -6,7 +6,6 @@ type Config struct {
 	Prefix   string
 	Format   string
 	Create   string
-	Accents  bool
 	Commas   bool
 	Spaces   bool
 }

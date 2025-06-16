@@ -56,9 +56,6 @@ func main() {
 	flag.StringVar(&cfg.Format, "f", "hex", "")
 	flag.StringVar(&cfg.Format, "format", "hex", "")
 
-	flag.BoolVar(&cfg.Accents, "a", false, "")
-	flag.BoolVar(&cfg.Accents, "accents", false, "")
-
 	flag.BoolVar(&noCommas, "no-commas", false, "")
 	flag.BoolVar(&noSpaces, "no-spaces", false, "")
 

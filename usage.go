@@ -52,7 +52,6 @@ func helpText() string {
     -c, --create <variant>  Create template from existing theme (default: main)
                             Variants: main, moon, dawn
 
-    --accents               Create themes for each accent color
     --no-commas             Remove commas from color values
     --no-spaces             Remove spaces from color values
 

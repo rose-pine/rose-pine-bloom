@@ -345,7 +345,6 @@ func TestAccents(t *testing.T) {
 		Format:   "hex",
 		Prefix:   "$",
 		Spaces:   true,
-		Accents:  true,
 	}
 
 	if err := Build(cfg); err != nil {
@@ -428,7 +427,6 @@ func TestAccentNames(t *testing.T) {
 		Format:   "hex",
 		Prefix:   "$",
 		Spaces:   true,
-		Accents:  true,
 	}
 
 	if err := Build(cfg); err != nil {
