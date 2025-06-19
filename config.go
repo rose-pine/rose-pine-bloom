@@ -18,7 +18,7 @@ const (
 	FormatHexNS    ColorFormat = "hex-ns"
 	FormatHSL      ColorFormat = "hsl"
 	FormatHSLArray ColorFormat = "hsl-array"
-	FormatHSLCss   ColorFormat = "hsl-css"
+	FormatHSLCSS   ColorFormat = "hsl-css"
 	FormatHSLFunc  ColorFormat = "hsl-function"
 	FormatRGB      ColorFormat = "rgb"
 	FormatRGBAnsi  ColorFormat = "rgb-ansi"
