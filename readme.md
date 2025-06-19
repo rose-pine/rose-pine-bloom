@@ -35,7 +35,6 @@ $ ./rose-pine-bloom --help
     -c, --create <variant>  Create template from existing theme (default: main)
                             Variants: main, moon, dawn
 
-    --accents               Create themes for each accent color
     --no-commas             Remove commas from color values
     --no-spaces             Remove spaces from color values
 
@@ -84,9 +83,7 @@ Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "lov
 
 ### Accents
 
-> Enable accents by passing the `--accents` / `-a` flag
-
-When using the flag, a file for every accent will be made.
+Specify an accent variable, formatted as `$accent`. A file for every accent will be made.
 
 ```jsonc
 // template.json
