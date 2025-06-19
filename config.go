@@ -16,11 +16,12 @@ type ColorFormat string
 const (
 	FormatHex      ColorFormat = "hex"
 	FormatHexNS    ColorFormat = "hex-ns"
+	FormatHSL      ColorFormat = "hsl"
+	FormatHSLArray ColorFormat = "hsl-array"
+	FormatHSLCSS   ColorFormat = "hsl-css"
+	FormatHSLFunc  ColorFormat = "hsl-function"
 	FormatRGB      ColorFormat = "rgb"
 	FormatRGBAnsi  ColorFormat = "rgb-ansi"
 	FormatRGBArray ColorFormat = "rgb-array"
 	FormatRGBFunc  ColorFormat = "rgb-function"
-	FormatHSL      ColorFormat = "hsl"
-	FormatHSLArray ColorFormat = "hsl-array"
-	FormatHSLFunc  ColorFormat = "hsl-function"
 )

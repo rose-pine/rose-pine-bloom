@@ -46,6 +46,7 @@ $ ./rose-pine-bloom --help
     hex-ns        ebbcba
     hsl           2, 55%, 83%
     hsl-array     [2, 55%, 83%]
+    hsl-css       hsl(2deg 55% 83%)
     hsl-function  hsl(2, 55%, 83%)
     rgb           235, 188, 186
     rgb-ansi      235;188;186
