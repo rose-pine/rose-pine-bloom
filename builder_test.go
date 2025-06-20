@@ -335,7 +335,9 @@ func TestAccents(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	templateContent := `{
-        "accent": "$accent"
+        "accentname": "$accentname",
+        "accent": "$accent",
+		"onaccent": "$onaccent"
     }`
 
 	templatePath := filepath.Join(tmpDir, "template.json")
@@ -356,29 +358,31 @@ func TestAccents(t *testing.T) {
 	}
 
 	variants := []struct {
-		filename string
-		accent   string
+		filename   string
+		accentname string
+		accent     string
+		onaccent   string
 	}{
-		{filename: "rose-pine/rose-pine-foam.json", accent: "#9ccfd8"},
-		{filename: "rose-pine/rose-pine-gold.json", accent: "#f6c177"},
-		{filename: "rose-pine/rose-pine-iris.json", accent: "#c4a7e7"},
-		{filename: "rose-pine/rose-pine-love.json", accent: "#eb6f92"},
-		{filename: "rose-pine/rose-pine-pine.json", accent: "#31748f"},
-		{filename: "rose-pine/rose-pine-rose.json", accent: "#ebbcba"},
+		{filename: "rose-pine/rose-pine-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#1f1d2e"},
+		{filename: "rose-pine/rose-pine-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#1f1d2e"},
+		{filename: "rose-pine/rose-pine-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#1f1d2e"},
+		{filename: "rose-pine/rose-pine-love.json", accentname: "love", accent: "#eb6f92", onaccent: "#e0def4"},
+		{filename: "rose-pine/rose-pine-pine.json", accentname: "pine", accent: "#31748f", onaccent: "#e0def4"},
+		{filename: "rose-pine/rose-pine-rose.json", accentname: "rose", accent: "#ebbcba", onaccent: "#1f1d2e"},
 
-		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accent: "#56949f"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accent: "#ea9d34"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accent: "#907aa9"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accent: "#b4637a"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accent: "#286983"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accent: "#d7827e"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accentname: "foam", accent: "#56949f", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accentname: "gold", accent: "#ea9d34", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris", accent: "#907aa9", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accentname: "love", accent: "#b4637a", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accentname: "pine", accent: "#286983", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accentname: "rose", accent: "#d7827e", onaccent: "#fffaf3"},
 
-		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accent: "#9ccfd8"},
-		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accent: "#f6c177"},
-		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accent: "#c4a7e7"},
-		{filename: "rose-pine-moon/rose-pine-moon-love.json", accent: "#eb6f92"},
-		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accent: "#3e8fb0"},
-		{filename: "rose-pine-moon/rose-pine-moon-rose.json", accent: "#ea9a97"},
+		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#2a273f"},
+		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#2a273f"},
+		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#2a273f"},
+		{filename: "rose-pine-moon/rose-pine-moon-love.json", accentname: "love", accent: "#eb6f92", onaccent: "#e0def4"},
+		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accentname: "pine", accent: "#3e8fb0", onaccent: "#e0def4"},
+		{filename: "rose-pine-moon/rose-pine-moon-rose.json", accentname: "rose", accent: "#ea9a97", onaccent: "#2a273f"},
 	}
 
 	for _, v := range variants {
@@ -397,7 +401,9 @@ func TestAccents(t *testing.T) {
 				field string
 				want  string
 			}{
+				{"accentname", v.accentname},
 				{"accent", v.accent},
+				{"onaccent", v.onaccent},
 			}
 
 			for _, tt := range tests {

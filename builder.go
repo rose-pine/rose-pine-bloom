@@ -63,6 +63,33 @@ var accents = []string{
 	"love", "gold", "rose", "pine", "foam", "iris",
 }
 
+var onAccentMapping = map[string]map[string]string{
+	"rose-pine": {
+		"love": "text",
+		"gold": "surface",
+		"rose": "surface",
+		"pine": "text",
+		"foam": "surface",
+		"iris": "surface",
+	},
+	"rose-pine-moon": {
+		"love": "text",
+		"gold": "surface",
+		"rose": "surface",
+		"pine": "text",
+		"foam": "surface",
+		"iris": "surface",
+	},
+	"rose-pine-dawn": {
+		"love": "surface",
+		"gold": "surface",
+		"rose": "surface",
+		"pine": "surface",
+		"foam": "surface",
+		"iris": "surface",
+	},
+}
+
 func createTemplate(cfg *Config, file string, fileContent []byte) error {
 	result := string(fileContent)
 
@@ -164,6 +191,16 @@ func processVariant(cfg *Config, template string, templateContent []byte, accent
 
 	result = strings.ReplaceAll(result, cfg.Prefix+"accentname", accent)
 	result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+accent)
+
+	onAccentColor := ""
+	if byVariant, ok := onAccentMapping[variant.id]; ok {
+		if mapped, ok := byVariant[accent]; ok {
+			onAccentColor = mapped
+		}
+	}
+	if onAccentColor != "" {
+		result = strings.ReplaceAll(result, cfg.Prefix+"onaccent", cfg.Prefix+onAccentColor)
+	}
 
 	for colorName, color := range variant.colors.Colors {
 		varName := cfg.Prefix + colorName
