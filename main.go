@@ -43,6 +43,10 @@ func detectTemplate(args []string) (string, error) {
 	}
 }
 
+func init() {
+	flag.Usage = PrintHelp
+}
+
 func main() {
 	flag.StringVar(&cfg.Output, "o", "dist", "")
 	flag.StringVar(&cfg.Output, "output", "dist", "")
