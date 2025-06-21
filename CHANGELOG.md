@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.0.1...v2.1.0) (2025-06-21)
+
+
+### Features
+
+* add `hsl-css` format ([#26](https://github.com/rose-pine/rose-pine-bloom/issues/26)) ([bfaaa12](https://github.com/rose-pine/rose-pine-bloom/commit/bfaaa121dba7551ca654a095d4ca5437ecaef260))
+* add `onaccent` variable ([#33](https://github.com/rose-pine/rose-pine-bloom/issues/33)) ([89afda9](https://github.com/rose-pine/rose-pine-bloom/commit/89afda971c7d9593bacea42a346b7f457925de63))
+* add accent autodetection ([#27](https://github.com/rose-pine/rose-pine-bloom/issues/27)) ([c4d1fa5](https://github.com/rose-pine/rose-pine-bloom/commit/c4d1fa54f256ef5563b7f77439f3eff853843905))
+* show help for invalid usage ([#32](https://github.com/rose-pine/rose-pine-bloom/issues/32)) ([9ff0f30](https://github.com/rose-pine/rose-pine-bloom/commit/9ff0f3056a17c892ef26c883d24281f86e7a249f))
+
 ## [2.0.1](https://github.com/rose-pine/rose-pine-bloom/compare/v2.0.0...v2.0.1) (2025-06-14)
 
 
