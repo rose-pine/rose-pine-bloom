@@ -129,6 +129,13 @@ func createTemplate(cfg *Config, file string, fileContent []byte) error {
 	outputDir = cfg.Output
 	outputFile = filepath.Base(file)
 
+	parts := strings.SplitN(outputFile, ".", 2)
+	if len(parts) == 2 {
+		outputFile = "template." + parts[1]
+	} else {
+		outputFile = "template" + filepath.Ext(outputFile)
+	}
+
 	outputPath := filepath.Join(outputDir, outputFile)
 
 	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
