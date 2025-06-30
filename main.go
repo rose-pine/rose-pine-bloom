@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -14,6 +15,19 @@ var (
 	noSpaces bool
 	showHelp bool
 )
+
+func wasFlagPassed(name string) bool {
+	for i := 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
+		if arg == "-"+name || arg == "--"+name {
+			return true
+		}
+		if (arg == "-"+name || arg == "--"+name) && strings.Contains(arg, "=") {
+			return true
+		}
+	}
+	return false
+}
 
 func detectTemplate(args []string) (string, error) {
 	switch len(args) {
@@ -79,6 +93,13 @@ func main() {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
+	}
+
+	outputPassed := wasFlagPassed("o") || wasFlagPassed("output")
+	createPassed := wasFlagPassed("c") || wasFlagPassed("create")
+
+	if !outputPassed && createPassed {
+		cfg.Output = "."
 	}
 
 	cfg.Template = template
