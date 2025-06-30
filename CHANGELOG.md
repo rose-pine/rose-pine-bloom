@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.1.0...v2.2.0) (2025-06-30)
+
+
+### Features
+
+* improve `create` defaults ([#36](https://github.com/rose-pine/rose-pine-bloom/issues/36)) ([6a2c345](https://github.com/rose-pine/rose-pine-bloom/commit/6a2c3450203fe13f187cd06a18322f5510a30f8b))
+
 ## [2.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.0.1...v2.1.0) (2025-06-21)
 
 
