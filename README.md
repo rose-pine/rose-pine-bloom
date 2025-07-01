@@ -19,7 +19,6 @@ Start by creating a template file. This will look similar to your desired theme 
 
 <!-- HELP_START -->
 <!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
-
 ```
 $ ./rose-pine-bloom --help
 
@@ -35,6 +34,7 @@ $ ./rose-pine-bloom --help
     -c, --create <variant>  Create template from existing theme (default: main)
                             Variants: main, moon, dawn
 
+    --plain                 Output plain values without wrappers (e.g. ebbcba vs #ebbcba)
     --no-commas             Remove commas from color values
     --no-spaces             Remove spaces from color values
 
@@ -44,18 +44,19 @@ $ ./rose-pine-bloom --help
     hex           #ebbcba
     hex-ns        ebbcba
     hsl           2, 55%, 83%
-    hsl-array     [2, 55%, 83%]
-    hsl-css       hsl(2deg 55% 83%)
     hsl-function  hsl(2, 55%, 83%)
+    hsl-css       hsl(2deg 55% 83%)
+    hsl-array     [2, 0.55, 0.83]
     rgb           235, 188, 186
-    rgb-ansi      235;188;186
-    rgb-array     [235, 188, 186]
     rgb-function  rgb(235, 188, 186)
+    rgb-css       rgb(235 188 186)
+    rgb-array     [235, 188, 186]
+    ansi          235;188;186
 
   Examples
     $ ./rose-pine-bloom template.yaml
-    $ ./rose-pine-bloom -f hsl -o dist template.json
-    $ ./rose-pine-bloom -c dawn my-theme.toml
+    $ ./rose-pine-bloom --format hsl --output ./themes template.json
+    $ ./rose-pine-bloom --create dawn my-theme.toml
 
 ```
 <!-- HELP_END -->
@@ -78,8 +79,8 @@ Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "lov
 | ----------- | ---------------------------------------------------------------------------- |
 | id          | rose-pine<-moon,-dawn>                                                       |
 | name        | Rosé Pine <Moon,Dawn>                                                        |
+| appearance  | <dark,dark,light>                                                            |
 | description | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
-| type        | <dark,dark,light>                                                            |
 
 ### Accents
 
