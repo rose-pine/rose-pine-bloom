@@ -4,7 +4,7 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-README="readme.md"
+README="README.md"
 BINARY="./rose-pine-bloom"
 HELP_TMP="$(mktemp)"
 
@@ -21,7 +21,6 @@ awk -v helpfile="$HELP_TMP" '
     /<!-- HELP_START -->/ {
         print;
         print "<!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->";
-        print "";
         print "```";
         while ((getline line < helpfile) > 0) print line;
         close(helpfile);
