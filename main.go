@@ -25,6 +25,7 @@ var formats = [...]format{
 	{Name: "rgb", Example: "235, 188, 186"},
 	{Name: "rgb-ansi", Example: "235;188;186"},
 	{Name: "rgb-array", Example: "[235, 188, 186]"},
+	{Name: "rgb-css", Example: "rgb(235 188 186)"},
 	{Name: "rgb-function", Example: "rgb(235, 188, 186)"},
 }
 

@@ -81,6 +81,16 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
 		workingString = rgb
+	case FormatRGBCSS:
+		rgb := fmt.Sprintf("%v %v %v", c.RGB[0], c.RGB[1], c.RGB[2])
+		if c.Alpha != nil {
+			rgb += fmt.Sprintf(" / %s", formatAlpha(*c.Alpha))
+		}
+		if plain {
+			workingString = rgb
+		} else {
+			workingString = fmt.Sprintf("rgb(%s)", rgb)
+		}
 	case FormatRGBArray:
 		rgbArray := fmt.Sprintf("%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {

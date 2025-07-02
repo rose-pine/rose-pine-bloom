@@ -49,6 +49,7 @@ $ ./rose-pine-bloom --help
     rgb           235, 188, 186
     rgb-ansi      235;188;186
     rgb-array     [235, 188, 186]
+    rgb-css       rgb(235 188 186)
     rgb-function  rgb(235, 188, 186)
 
   Examples

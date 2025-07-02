@@ -22,5 +22,6 @@ const (
 	FormatRGB      ColorFormat = "rgb"
 	FormatRGBAnsi  ColorFormat = "rgb-ansi"
 	FormatRGBArray ColorFormat = "rgb-array"
+	FormatRGBCSS   ColorFormat = "rgb-css"
 	FormatRGBFunc  ColorFormat = "rgb-function"
 )
