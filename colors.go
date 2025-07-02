@@ -60,7 +60,8 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			workingString = fmt.Sprintf("hsl(%s)", hsl)
 		}
 	case FormatHSLArray:
-		hslArray := fmt.Sprintf("%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
+		// Convert percentages to decimals for array format
+		hslArray := fmt.Sprintf("%v, %.2f, %.2f", c.HSL[0], c.HSL[1]/100, c.HSL[2]/100)
 		if c.Alpha != nil {
 			hslArray += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
@@ -70,7 +71,7 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			workingString = "[" + hslArray + "]"
 		}
 	case FormatRGB:
-		rgb := fmt.Sprintf("%v, %v, %v", c.RGB[0], c.RGB[1], c.RGB[2])
+		rgb := fmt.Sprintf("%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
@@ -84,7 +85,7 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			workingString = fmt.Sprintf("%s(%s)", prefix, rgb)
 		}
 	case FormatRGBCSS:
-		rgb := fmt.Sprintf("%v %v %v", c.RGB[0], c.RGB[1], c.RGB[2])
+		rgb := fmt.Sprintf("%d %d %d", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(" / %s", formatAlpha(*c.Alpha))
 		}
