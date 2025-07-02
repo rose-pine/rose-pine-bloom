@@ -69,6 +69,8 @@ func TestColorFormatting(t *testing.T) {
 		{"rgb-array", FormatRGBArray, false, true, true, "[235, 188, 186]"},
 		{"rgb-array plain", FormatRGBArray, true, true, true, "235, 188, 186"},
 		{"rgb-array no-spaces", FormatRGBArray, false, true, false, "[235,188,186]"},
+		{"rgb-css", FormatRGBCSS, false, true, true, "rgb(235 188 186)"},
+		{"rgb-css plain", FormatRGBCSS, true, true, true, "235 188 186"},
 		{"rgb-function", FormatRGBFunc, false, true, true, "rgb(235, 188, 186)"},
 		{"rgb-function plain", FormatRGBFunc, true, true, true, "235, 188, 186"},
 		{"rgb-function no-commas", FormatRGBFunc, false, false, true, "rgb(235 188 186)"},
@@ -108,6 +110,7 @@ func TestAlphaFormatting(t *testing.T) {
 		{FormatRGB, "235, 188, 186, 0.5"},
 		{FormatRGBAnsi, "235;188;186;0.5"},
 		{FormatRGBArray, "[235, 188, 186, 0.5]"},
+		{FormatRGBCSS, "rgb(235 188 186 / 0.5)"},
 		{FormatRGBFunc, "rgba(235, 188, 186, 0.5)"},
 	}
 
