@@ -184,8 +184,9 @@ func TestVariantGeneration(t *testing.T) {
 	templateContent := `{
         "id": "$id",
         "name": "$name",
+        "appearance": "$appearance",
         "description": "$description",
-        "type": "$type",
+		"type": "$type",
         "colors": {
             "base": "$base",
             "surface": "$surface",
@@ -204,36 +205,36 @@ func TestVariantGeneration(t *testing.T) {
 	buildFromTemplate(t, templateContent, cfg)
 
 	variants := []struct {
-		filename string
-		id       string
-		name     string
-		varType  string
-		baseHex  string
-		custom   string
+		filename   string
+		id         string
+		name       string
+		appearance string
+		baseHex    string
+		custom     string
 	}{
 		{
-			filename: "rose-pine.json",
-			id:       "rose-pine",
-			name:     "Rosé Pine",
-			varType:  "dark",
-			baseHex:  "#191724",
-			custom:   "main",
+			filename:   "rose-pine.json",
+			id:         "rose-pine",
+			name:       "Rosé Pine",
+			appearance: "dark",
+			baseHex:    "#191724",
+			custom:     "main",
 		},
 		{
-			filename: "rose-pine-moon.json",
-			id:       "rose-pine-moon",
-			name:     "Rosé Pine Moon",
-			varType:  "dark",
-			baseHex:  "#232136",
-			custom:   "moon",
+			filename:   "rose-pine-moon.json",
+			id:         "rose-pine-moon",
+			name:       "Rosé Pine Moon",
+			appearance: "dark",
+			baseHex:    "#232136",
+			custom:     "moon",
 		},
 		{
-			filename: "rose-pine-dawn.json",
-			id:       "rose-pine-dawn",
-			name:     "Rosé Pine Dawn",
-			varType:  "light",
-			baseHex:  "#faf4ed",
-			custom:   "dawn",
+			filename:   "rose-pine-dawn.json",
+			id:         "rose-pine-dawn",
+			name:       "Rosé Pine Dawn",
+			appearance: "light",
+			baseHex:    "#faf4ed",
+			custom:     "dawn",
 		},
 	}
 
@@ -255,7 +256,7 @@ func TestVariantGeneration(t *testing.T) {
 			}{
 				{"id", v.id},
 				{"name", v.name},
-				{"type", v.varType},
+				{"appearance", v.appearance},
 				{"custom", v.custom},
 			}
 
@@ -410,6 +411,7 @@ func TestDirectories(t *testing.T) {
 	templateContent := `{
         "id": "$id",
         "name": "$name",
+        "appearance": "$appearance",
         "description": "$description",
         "type": "$type",
         "colors": {
@@ -444,60 +446,60 @@ func TestDirectories(t *testing.T) {
 	}
 
 	variants := []struct {
-		filename string
-		id       string
-		name     string
-		varType  string
-		baseHex  string
-		custom   string
+		filename   string
+		id         string
+		name       string
+		appearance string
+		baseHex    string
+		custom     string
 	}{
 		{
-			filename: "rose-pine/template.json",
-			id:       "rose-pine",
-			name:     "Rosé Pine",
-			varType:  "dark",
-			baseHex:  "#191724",
-			custom:   "main",
+			filename:   "rose-pine/template.json",
+			id:         "rose-pine",
+			name:       "Rosé Pine",
+			appearance: "dark",
+			baseHex:    "#191724",
+			custom:     "main",
 		},
 		{
-			filename: "rose-pine/template2.json",
-			id:       "rose-pine",
-			name:     "Rosé Pine",
-			varType:  "dark",
-			baseHex:  "#191724",
-			custom:   "main",
+			filename:   "rose-pine/template2.json",
+			id:         "rose-pine",
+			name:       "Rosé Pine",
+			appearance: "dark",
+			baseHex:    "#191724",
+			custom:     "main",
 		},
 		{
-			filename: "rose-pine-moon/template.json",
-			id:       "rose-pine-moon",
-			name:     "Rosé Pine Moon",
-			varType:  "dark",
-			baseHex:  "#232136",
-			custom:   "moon",
+			filename:   "rose-pine-moon/template.json",
+			id:         "rose-pine-moon",
+			name:       "Rosé Pine Moon",
+			appearance: "dark",
+			baseHex:    "#232136",
+			custom:     "moon",
 		},
 		{
-			filename: "rose-pine-moon/template2.json",
-			id:       "rose-pine-moon",
-			name:     "Rosé Pine Moon",
-			varType:  "dark",
-			baseHex:  "#232136",
-			custom:   "moon",
+			filename:   "rose-pine-moon/template2.json",
+			id:         "rose-pine-moon",
+			name:       "Rosé Pine Moon",
+			appearance: "dark",
+			baseHex:    "#232136",
+			custom:     "moon",
 		},
 		{
-			filename: "rose-pine-dawn/template.json",
-			id:       "rose-pine-dawn",
-			name:     "Rosé Pine Dawn",
-			varType:  "light",
-			baseHex:  "#faf4ed",
-			custom:   "dawn",
+			filename:   "rose-pine-dawn/template.json",
+			id:         "rose-pine-dawn",
+			name:       "Rosé Pine Dawn",
+			appearance: "light",
+			baseHex:    "#faf4ed",
+			custom:     "dawn",
 		},
 		{
-			filename: "rose-pine-dawn/template2.json",
-			id:       "rose-pine-dawn",
-			name:     "Rosé Pine Dawn",
-			varType:  "light",
-			baseHex:  "#faf4ed",
-			custom:   "dawn",
+			filename:   "rose-pine-dawn/template2.json",
+			id:         "rose-pine-dawn",
+			name:       "Rosé Pine Dawn",
+			appearance: "light",
+			baseHex:    "#faf4ed",
+			custom:     "dawn",
 		},
 	}
 
@@ -519,7 +521,6 @@ func TestDirectories(t *testing.T) {
 			}{
 				{"id", v.id},
 				{"name", v.name},
-				{"type", v.varType},
 				{"custom", v.custom},
 			}
 

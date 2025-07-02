@@ -141,7 +141,7 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 type Variant struct {
 	id          string
 	name        string
-	variantType string
+	appearance  string
 	description string
 	colors      map[string]*Color
 }
@@ -152,7 +152,7 @@ var (
 	MainVariant = Variant{
 		id:          "rose-pine",
 		name:        "Rosé Pine",
-		variantType: "dark",
+		appearance:  "dark",
 		description: description,
 		colors: map[string]*Color{
 			"base": {
@@ -242,7 +242,7 @@ var (
 	MoonVariant = Variant{
 		id:          "rose-pine-moon",
 		name:        "Rosé Pine Moon",
-		variantType: "dark",
+		appearance:  "dark",
 		description: description,
 		colors: map[string]*Color{
 			"base": {
@@ -332,7 +332,7 @@ var (
 	DawnVariant = Variant{
 		id:          "rose-pine-dawn",
 		name:        "Rosé Pine Dawn",
-		variantType: "light",
+		appearance:  "light",
 		description: description,
 		colors: map[string]*Color{
 			"base": {
