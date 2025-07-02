@@ -34,6 +34,7 @@ $ ./rose-pine-bloom --help
     -c, --create <variant>  Create template from existing theme (default: main)
                             Variants: main, moon, dawn
 
+    --plain                 Remove decorators from color values
     --no-commas             Remove commas from color values
     --no-spaces             Remove spaces from color values
 
