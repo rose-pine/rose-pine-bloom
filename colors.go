@@ -40,12 +40,6 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 		if c.Alpha != nil {
 			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
-		workingString = hsl
-	case FormatHSLFunc:
-		hsl := fmt.Sprintf("%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
-		if c.Alpha != nil {
-			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
-		}
 		prefix := "hsl"
 		if c.Alpha != nil {
 			prefix = "hsla"
@@ -76,11 +70,19 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			workingString = "[" + hslArray + "]"
 		}
 	case FormatRGB:
-		rgb := fmt.Sprintf("%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
+		rgb := fmt.Sprintf("%v, %v, %v", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
-		workingString = rgb
+		prefix := "rgb"
+		if c.Alpha != nil {
+			prefix = "rgba"
+		}
+		if plain {
+			workingString = rgb
+		} else {
+			workingString = fmt.Sprintf("%s(%s)", prefix, rgb)
+		}
 	case FormatRGBCSS:
 		rgb := fmt.Sprintf("%v %v %v", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
@@ -100,20 +102,6 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 			workingString = rgbArray
 		} else {
 			workingString = "[" + rgbArray + "]"
-		}
-	case FormatRGBFunc:
-		rgb := fmt.Sprintf("%v, %v, %v", c.RGB[0], c.RGB[1], c.RGB[2])
-		if c.Alpha != nil {
-			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
-		}
-		prefix := "rgb"
-		if c.Alpha != nil {
-			prefix = "rgba"
-		}
-		if plain {
-			workingString = rgb
-		} else {
-			workingString = fmt.Sprintf("%s(%s)", prefix, rgb)
 		}
 	case FormatAnsi:
 		if c.Alpha != nil {

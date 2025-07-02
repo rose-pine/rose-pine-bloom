@@ -17,14 +17,12 @@ const (
 	FormatHex ColorFormat = "hex"
 
 	FormatHSL      ColorFormat = "hsl"
-	FormatHSLArray ColorFormat = "hsl-array"
 	FormatHSLCSS   ColorFormat = "hsl-css"
-	FormatHSLFunc  ColorFormat = "hsl-function"
+	FormatHSLArray ColorFormat = "hsl-array"
 
 	FormatRGB      ColorFormat = "rgb"
-	FormatRGBArray ColorFormat = "rgb-array"
 	FormatRGBCSS   ColorFormat = "rgb-css"
-	FormatRGBFunc  ColorFormat = "rgb-function"
+	FormatRGBArray ColorFormat = "rgb-array"
 
 	FormatAnsi ColorFormat = "ansi"
 )
