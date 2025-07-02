@@ -6,6 +6,7 @@ type Config struct {
 	Prefix   string
 	Format   string
 	Create   string
+	Plain    bool
 	Commas   bool
 	Spaces   bool
 }
@@ -14,7 +15,6 @@ type ColorFormat string
 
 const (
 	FormatHex      ColorFormat = "hex"
-	FormatHexNS    ColorFormat = "hex-ns"
 	FormatHSL      ColorFormat = "hsl"
 	FormatHSLArray ColorFormat = "hsl-array"
 	FormatHSLCSS   ColorFormat = "hsl-css"

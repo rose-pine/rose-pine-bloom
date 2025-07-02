@@ -37,41 +37,47 @@ func TestColorFormatting(t *testing.T) {
 	tests := []struct {
 		name   string
 		format ColorFormat
+		plain  bool
 		commas bool
 		spaces bool
 		want   string
 	}{
 		// Hex formats
-		{"hex", FormatHex, true, true, "#ebbcba"},
-		{"hex-ns", FormatHexNS, true, true, "ebbcba"},
+		{"hex", FormatHex, false, true, true, "#ebbcba"},
+		{"hex plain", FormatHex, true, true, true, "ebbcba"},
 
 		// HSL formats
-		{"hsl", FormatHSL, true, true, "2, 55%, 83%"},
-		{"hsl no-commas", FormatHSL, false, true, "2 55% 83%"},
-		{"hsl no-spaces", FormatHSL, true, false, "2,55%,83%"},
-		{"hsl-array", FormatHSLArray, true, true, "[2, 55%, 83%]"},
-		{"hsl-array no-commas", FormatHSLArray, false, true, "[2 55% 83%]"},
-		{"hsl-array no-spaces", FormatHSLArray, true, false, "[2,55%,83%]"},
-		{"hsl-css", FormatHSLCSS, true, true, "hsl(2deg 55% 83%)"},
-		{"hsl-function", FormatHSLFunc, true, true, "hsl(2, 55%, 83%)"},
-		{"hsl-function no-commas", FormatHSLFunc, false, true, "hsl(2 55% 83%)"},
-		{"hsl-function no-spaces", FormatHSLFunc, true, false, "hsl(2,55%,83%)"},
+		{"hsl", FormatHSL, false, true, true, "2, 55%, 83%"},
+		{"hsl no-commas", FormatHSL, false, false, true, "2 55% 83%"},
+		{"hsl no-spaces", FormatHSL, false, true, false, "2,55%,83%"},
+		{"hsl-array", FormatHSLArray, false, true, true, "[2, 55%, 83%]"},
+		{"hsl-array plain", FormatHSLArray, true, true, true, "2, 55%, 83%"},
+		{"hsl-array no-commas", FormatHSLArray, false, false, true, "[2 55% 83%]"},
+		{"hsl-array no-spaces", FormatHSLArray, false, true, false, "[2,55%,83%]"},
+		{"hsl-css", FormatHSLCSS, false, true, true, "hsl(2deg 55% 83%)"},
+		{"hsl-css plain", FormatHSLCSS, true, true, true, "2deg 55% 83%"},
+		{"hsl-function", FormatHSLFunc, false, true, true, "hsl(2, 55%, 83%)"},
+		{"hsl-function plain", FormatHSLFunc, true, true, true, "2, 55%, 83%"},
+		{"hsl-function no-commas", FormatHSLFunc, false, false, true, "hsl(2 55% 83%)"},
+		{"hsl-function no-spaces", FormatHSLFunc, false, true, false, "hsl(2,55%,83%)"},
 
 		// RGB formats
-		{"rgb", FormatRGB, true, true, "235, 188, 186"},
-		{"rgb no-spaces", FormatRGB, true, false, "235,188,186"},
-		{"rgb no-commas", FormatRGB, false, true, "235 188 186"},
-		{"rgb-ansi", FormatRGBAnsi, true, true, "235;188;186"},
-		{"rgb-array", FormatRGBArray, true, true, "[235, 188, 186]"},
-		{"rgb-array no-spaces", FormatRGBArray, true, false, "[235,188,186]"},
-		{"rgb-function", FormatRGBFunc, true, true, "rgb(235, 188, 186)"},
-		{"rgb-function no-commas", FormatRGBFunc, false, true, "rgb(235 188 186)"},
-		{"rgb-function no-spaces", FormatRGBFunc, true, false, "rgb(235,188,186)"},
+		{"rgb", FormatRGB, false, true, true, "235, 188, 186"},
+		{"rgb no-spaces", FormatRGB, false, true, false, "235,188,186"},
+		{"rgb no-commas", FormatRGB, false, false, true, "235 188 186"},
+		{"rgb-ansi", FormatRGBAnsi, false, true, true, "235;188;186"},
+		{"rgb-array", FormatRGBArray, false, true, true, "[235, 188, 186]"},
+		{"rgb-array plain", FormatRGBArray, true, true, true, "235, 188, 186"},
+		{"rgb-array no-spaces", FormatRGBArray, false, true, false, "[235,188,186]"},
+		{"rgb-function", FormatRGBFunc, false, true, true, "rgb(235, 188, 186)"},
+		{"rgb-function plain", FormatRGBFunc, true, true, true, "235, 188, 186"},
+		{"rgb-function no-commas", FormatRGBFunc, false, false, true, "rgb(235 188 186)"},
+		{"rgb-function no-spaces", FormatRGBFunc, false, true, false, "rgb(235,188,186)"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.commas, tt.spaces)
+			got := formatColor(color, tt.format, tt.plain, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -91,27 +97,34 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 	tests := []struct {
 		name   string
 		format ColorFormat
+		plain  bool
 		commas bool
 		spaces bool
 		want   string
 	}{
-		{"rgb with alpha", FormatRGB, true, true, "235, 188, 186, 0.5"},
-		{"rgb no-commas with alpha", FormatRGB, false, true, "235 188 186 0.5"},
-		{"rgb-ansi with alpha", FormatRGBAnsi, true, true, "235;188;186;0.5"},
-		{"rgb-array with alpha", FormatRGBArray, true, true, "[235, 188, 186, 0.5]"},
-		{"rgb-function with alpha", FormatRGBFunc, true, true, "rgba(235, 188, 186, 0.5)"},
-		{"hsl with alpha", FormatHSL, true, true, "2, 55%, 83%, 0.5"},
-		{"hsl no-commas with alpha", FormatHSL, false, true, "2 55% 83% 0.5"},
-		{"hsl-array with alpha", FormatHSLArray, true, true, "[2, 55%, 83%, 0.5]"},
-		{"hsl-css with alpha", FormatHSLCSS, true, true, "hsl(2deg 55% 83% / 0.5)"},
-		{"hsl-function with alpha", FormatHSLFunc, true, true, "hsla(2, 55%, 83%, 0.5)"},
-		{"rgb-array no-spaces with alpha", FormatRGBArray, true, false, "[235,188,186,0.5]"},
-		{"hsl-array no-spaces with alpha", FormatHSLArray, true, false, "[2,55%,83%,0.5]"},
+		{"hsl with alpha", FormatHSL, false, true, true, "2, 55%, 83%, 0.5"},
+		{"hsl no-commas with alpha", FormatHSL, false, false, true, "2 55% 83% 0.5"},
+		{"hsl-array with alpha", FormatHSLArray, false, true, true, "[2, 55%, 83%, 0.5]"},
+		{"hsl-array plain with alpha", FormatHSLArray, true, true, true, "2, 55%, 83%, 0.5"},
+		{"hsl-array no-spaces with alpha", FormatHSLArray, false, true, false, "[2,55%,83%,0.5]"},
+		{"hsl-css with alpha", FormatHSLCSS, false, true, true, "hsl(2deg 55% 83% / 0.5)"},
+		{"hsl-css plain with alpha", FormatHSLCSS, true, true, true, "2deg 55% 83% / 0.5"},
+		{"hsl-function with alpha", FormatHSLFunc, false, true, true, "hsla(2, 55%, 83%, 0.5)"},
+		{"hsl-function plain with alpha", FormatHSLFunc, true, true, true, "2, 55%, 83%, 0.5"},
+
+		{"rgb with alpha", FormatRGB, false, true, true, "235, 188, 186, 0.5"},
+		{"rgb no-commas with alpha", FormatRGB, false, false, true, "235 188 186 0.5"},
+		{"rgb-ansi with alpha", FormatRGBAnsi, false, true, true, "235;188;186;0.5"},
+		{"rgb-array with alpha", FormatRGBArray, false, true, true, "[235, 188, 186, 0.5]"},
+		{"rgb-array plain with alpha", FormatRGBArray, true, true, true, "235, 188, 186, 0.5"},
+		{"rgb-array no-spaces with alpha", FormatRGBArray, false, true, false, "[235,188,186,0.5]"},
+		{"rgb-function with alpha", FormatRGBFunc, false, true, true, "rgba(235, 188, 186, 0.5)"},
+		{"rgb-function plain with alpha", FormatRGBFunc, true, true, true, "235, 188, 186, 0.5"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.commas, tt.spaces)
+			got := formatColor(color, tt.format, tt.plain, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -343,26 +356,26 @@ func TestAccents(t *testing.T) {
 		accent     string
 		onaccent   string
 	}{
-		{filename: "rose-pine/rose-pine-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#1f1d2e"},
-		{filename: "rose-pine/rose-pine-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#1f1d2e"},
-		{filename: "rose-pine/rose-pine-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#1f1d2e"},
 		{filename: "rose-pine/rose-pine-love.json", accentname: "love", accent: "#eb6f92", onaccent: "#e0def4"},
-		{filename: "rose-pine/rose-pine-pine.json", accentname: "pine", accent: "#31748f", onaccent: "#e0def4"},
+		{filename: "rose-pine/rose-pine-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#1f1d2e"},
 		{filename: "rose-pine/rose-pine-rose.json", accentname: "rose", accent: "#ebbcba", onaccent: "#1f1d2e"},
+		{filename: "rose-pine/rose-pine-pine.json", accentname: "pine", accent: "#31748f", onaccent: "#e0def4"},
+		{filename: "rose-pine/rose-pine-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#1f1d2e"},
+		{filename: "rose-pine/rose-pine-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#1f1d2e"},
 
-		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accentname: "foam", accent: "#56949f", onaccent: "#fffaf3"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accentname: "gold", accent: "#ea9d34", onaccent: "#fffaf3"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris", accent: "#907aa9", onaccent: "#fffaf3"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accentname: "love", accent: "#b4637a", onaccent: "#fffaf3"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accentname: "pine", accent: "#286983", onaccent: "#fffaf3"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accentname: "rose", accent: "#d7827e", onaccent: "#fffaf3"},
-
-		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#2a273f"},
-		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#2a273f"},
-		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#2a273f"},
 		{filename: "rose-pine-moon/rose-pine-moon-love.json", accentname: "love", accent: "#eb6f92", onaccent: "#e0def4"},
-		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accentname: "pine", accent: "#3e8fb0", onaccent: "#e0def4"},
+		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accentname: "gold", accent: "#f6c177", onaccent: "#2a273f"},
 		{filename: "rose-pine-moon/rose-pine-moon-rose.json", accentname: "rose", accent: "#ea9a97", onaccent: "#2a273f"},
+		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accentname: "pine", accent: "#3e8fb0", onaccent: "#e0def4"},
+		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accentname: "foam", accent: "#9ccfd8", onaccent: "#2a273f"},
+		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accentname: "iris", accent: "#c4a7e7", onaccent: "#2a273f"},
+
+		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accentname: "love", accent: "#b4637a", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accentname: "gold", accent: "#ea9d34", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accentname: "rose", accent: "#d7827e", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accentname: "pine", accent: "#286983", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accentname: "foam", accent: "#56949f", onaccent: "#fffaf3"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris", accent: "#907aa9", onaccent: "#fffaf3"},
 	}
 
 	for _, v := range variants {
@@ -384,77 +397,6 @@ func TestAccents(t *testing.T) {
 				{"accentname", v.accentname},
 				{"accent", v.accent},
 				{"onaccent", v.onaccent},
-			}
-
-			for _, tt := range tests {
-				if got := result[tt.field]; got != tt.want {
-					t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
-				}
-			}
-		})
-	}
-}
-
-func TestAccentNames(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
-
-	templateContent := `{
-        "accentname": "$accentname"
-    }`
-
-	cfg := &Config{
-		Output: tmpDir,
-		Format: "hex",
-		Prefix: "$",
-		Spaces: true,
-	}
-
-	buildFromTemplate(t, templateContent, cfg)
-
-	variants := []struct {
-		filename   string
-		accentname string
-	}{
-		{filename: "rose-pine/rose-pine-foam.json", accentname: "foam"},
-		{filename: "rose-pine/rose-pine-gold.json", accentname: "gold"},
-		{filename: "rose-pine/rose-pine-iris.json", accentname: "iris"},
-		{filename: "rose-pine/rose-pine-love.json", accentname: "love"},
-		{filename: "rose-pine/rose-pine-pine.json", accentname: "pine"},
-		{filename: "rose-pine/rose-pine-rose.json", accentname: "rose"},
-
-		{filename: "rose-pine-dawn/rose-pine-dawn-foam.json", accentname: "foam"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-gold.json", accentname: "gold"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accentname: "love"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-pine.json", accentname: "pine"},
-		{filename: "rose-pine-dawn/rose-pine-dawn-rose.json", accentname: "rose"},
-
-		{filename: "rose-pine-moon/rose-pine-moon-foam.json", accentname: "foam"},
-		{filename: "rose-pine-moon/rose-pine-moon-gold.json", accentname: "gold"},
-		{filename: "rose-pine-moon/rose-pine-moon-iris.json", accentname: "iris"},
-		{filename: "rose-pine-moon/rose-pine-moon-love.json", accentname: "love"},
-		{filename: "rose-pine-moon/rose-pine-moon-pine.json", accentname: "pine"},
-		{filename: "rose-pine-moon/rose-pine-moon-rose.json", accentname: "rose"},
-	}
-
-	for _, v := range variants {
-		t.Run(v.filename, func(t *testing.T) {
-			content, err := os.ReadFile(filepath.Join(tmpDir, v.filename))
-			if err != nil {
-				t.Fatalf("Failed to read generated file: %v", err)
-			}
-
-			var result map[string]any
-			if err := json.Unmarshal(content, &result); err != nil {
-				t.Fatalf("Failed to parse JSON: %v", err)
-			}
-
-			tests := []struct {
-				field string
-				want  string
-			}{
-				{"accentname", v.accentname},
 			}
 
 			for _, tt := range tests {
