@@ -19,7 +19,6 @@ Start by creating a template file. This will look similar to your desired theme 
 
 <!-- HELP_START -->
 <!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
-
 ```
 $ ./rose-pine-bloom --help
 
@@ -54,8 +53,8 @@ $ ./rose-pine-bloom --help
 
   Examples
     $ ./rose-pine-bloom template.yaml
-    $ ./rose-pine-bloom -f hsl -o dist template.json
-    $ ./rose-pine-bloom -c dawn my-theme.toml
+    $ ./rose-pine-bloom --format hsl --output ./themes template.json
+    $ ./rose-pine-bloom --create dawn my-theme.toml
 
 ```
 <!-- HELP_END -->

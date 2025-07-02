@@ -7,31 +7,45 @@ import (
 	"testing"
 )
 
+func setupTest(t *testing.T) (string, func()) {
+	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tmpDir, func() { os.RemoveAll(tmpDir) }
+}
+
+func buildFromTemplate(t *testing.T, template string, cfg *Config) {
+	templatePath := filepath.Join(cfg.Output, "template.json")
+	if err := os.WriteFile(templatePath, []byte(template), 0644); err != nil {
+		t.Fatal(err)
+	}
+	cfg.Template = templatePath
+
+	if err := Build(cfg); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestColorFormatting(t *testing.T) {
 	color := &Color{
 		Hex: "ebbcba",
-		RGB: [3]int{235, 188, 186},
 		HSL: [3]float64{2, 55, 83},
+		RGB: [3]int{235, 188, 186},
 	}
 
 	tests := []struct {
 		name   string
 		format ColorFormat
-		Commas bool
-		Spaces bool
+		commas bool
+		spaces bool
 		want   string
 	}{
+		// Hex formats
 		{"hex", FormatHex, true, true, "#ebbcba"},
 		{"hex-ns", FormatHexNS, true, true, "ebbcba"},
-		{"rgb", FormatRGB, true, true, "235, 188, 186"},
-		{"rgb no-spaces", FormatRGB, true, false, "235,188,186"},
-		{"rgb no-commas", FormatRGB, false, true, "235 188 186"},
-		{"rgb-ansi", FormatRGBAnsi, true, true, "235;188;186"},
-		{"rgb-array", FormatRGBArray, true, true, "[235, 188, 186]"},
-		{"rgb-array", FormatRGBArray, true, false, "[235,188,186]"},
-		{"rgb-function", FormatRGBFunc, true, true, "rgb(235, 188, 186)"},
-		{"rgb-function no-commas", FormatRGBFunc, false, true, "rgb(235 188 186)"},
-		{"rgb-function", FormatRGBFunc, true, false, "rgb(235,188,186)"},
+
+		// HSL formats
 		{"hsl", FormatHSL, true, true, "2, 55%, 83%"},
 		{"hsl no-commas", FormatHSL, false, true, "2 55% 83%"},
 		{"hsl no-spaces", FormatHSL, true, false, "2,55%,83%"},
@@ -42,11 +56,22 @@ func TestColorFormatting(t *testing.T) {
 		{"hsl-function", FormatHSLFunc, true, true, "hsl(2, 55%, 83%)"},
 		{"hsl-function no-commas", FormatHSLFunc, false, true, "hsl(2 55% 83%)"},
 		{"hsl-function no-spaces", FormatHSLFunc, true, false, "hsl(2,55%,83%)"},
+
+		// RGB formats
+		{"rgb", FormatRGB, true, true, "235, 188, 186"},
+		{"rgb no-spaces", FormatRGB, true, false, "235,188,186"},
+		{"rgb no-commas", FormatRGB, false, true, "235 188 186"},
+		{"rgb-ansi", FormatRGBAnsi, true, true, "235;188;186"},
+		{"rgb-array", FormatRGBArray, true, true, "[235, 188, 186]"},
+		{"rgb-array no-spaces", FormatRGBArray, true, false, "[235,188,186]"},
+		{"rgb-function", FormatRGBFunc, true, true, "rgb(235, 188, 186)"},
+		{"rgb-function no-commas", FormatRGBFunc, false, true, "rgb(235 188 186)"},
+		{"rgb-function no-spaces", FormatRGBFunc, true, false, "rgb(235,188,186)"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.Commas, tt.Spaces)
+			got := formatColor(color, tt.format, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -58,16 +83,16 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 	alpha := 0.5
 	color := &Color{
 		Hex:   "ebbcba",
-		RGB:   [3]int{235, 188, 186},
 		HSL:   [3]float64{2, 55, 83},
+		RGB:   [3]int{235, 188, 186},
 		Alpha: &alpha,
 	}
 
 	tests := []struct {
 		name   string
 		format ColorFormat
-		Commas bool
-		Spaces bool
+		commas bool
+		spaces bool
 		want   string
 	}{
 		{"rgb with alpha", FormatRGB, true, true, "235, 188, 186, 0.5"},
@@ -80,14 +105,13 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 		{"hsl-array with alpha", FormatHSLArray, true, true, "[2, 55%, 83%, 0.5]"},
 		{"hsl-css with alpha", FormatHSLCSS, true, true, "hsl(2deg 55% 83% / 0.5)"},
 		{"hsl-function with alpha", FormatHSLFunc, true, true, "hsla(2, 55%, 83%, 0.5)"},
-
 		{"rgb-array no-spaces with alpha", FormatRGBArray, true, false, "[235,188,186,0.5]"},
 		{"hsl-array no-spaces with alpha", FormatHSLArray, true, false, "[2,55%,83%,0.5]"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.Commas, tt.Spaces)
+			got := formatColor(color, tt.format, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -96,11 +120,8 @@ func TestColorFormattingWithAlpha(t *testing.T) {
 }
 
 func TestAlphaVariables(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	templateContent := `{
         "regular": "$base",
@@ -109,23 +130,15 @@ func TestAlphaVariables(t *testing.T) {
         "alphaMuted50": "$muted/50"
     }`
 
-	templatePath := filepath.Join(tmpDir, "template.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Format:   "rgb",
-		Prefix:   "$",
-		Commas:   true,
-		Spaces:   true,
+		Output: tmpDir,
+		Format: "rgb",
+		Prefix: "$",
+		Commas: true,
+		Spaces: true,
 	}
 
-	if err := Build(cfg); err != nil {
-		t.Fatal(err)
-	}
+	buildFromTemplate(t, templateContent, cfg)
 
 	content, err := os.ReadFile(filepath.Join(tmpDir, "rose-pine.json"))
 	if err != nil {
@@ -157,11 +170,8 @@ func TestAlphaVariables(t *testing.T) {
 }
 
 func TestVariantGeneration(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	templateContent := `{
         "id": "$id",
@@ -176,22 +186,14 @@ func TestVariantGeneration(t *testing.T) {
         "custom": "$(main|moon|dawn)"
     }`
 
-	templatePath := filepath.Join(tmpDir, "template.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Format:   "hex",
-		Prefix:   "$",
-		Spaces:   false,
+		Output: tmpDir,
+		Format: "hex",
+		Prefix: "$",
+		Spaces: false,
 	}
 
-	if err := Build(cfg); err != nil {
-		t.Fatal(err)
-	}
+	buildFromTemplate(t, templateContent, cfg)
 
 	variants := []struct {
 		filename string
@@ -264,32 +266,21 @@ func TestVariantGeneration(t *testing.T) {
 }
 
 func TestVariantSpecificValues(t *testing.T) {
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
+
 	templateContent := `{
         "accent": "$(#ebbcba|#c4a7e7|#286983)",
         "name": "$(Main|Moon|Dawn)",
         "mood": "$(Dark|Dim|Light)"
     }`
 
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
-
-	templatePath := filepath.Join(tmpDir, "template.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Prefix:   "$",
+		Output: tmpDir,
+		Prefix: "$",
 	}
 
-	if err := Build(cfg); err != nil {
-		t.Fatal(err)
-	}
+	buildFromTemplate(t, templateContent, cfg)
 
 	tests := []struct {
 		variant string
@@ -328,11 +319,8 @@ func TestVariantSpecificValues(t *testing.T) {
 }
 
 func TestAccents(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	templateContent := `{
         "accentname": "$accentname",
@@ -340,22 +328,14 @@ func TestAccents(t *testing.T) {
 		"onaccent": "$onaccent"
     }`
 
-	templatePath := filepath.Join(tmpDir, "template.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Format:   "hex",
-		Prefix:   "$",
-		Spaces:   true,
+		Output: tmpDir,
+		Format: "hex",
+		Prefix: "$",
+		Spaces: true,
 	}
 
-	if err := Build(cfg); err != nil {
-		t.Fatal(err)
-	}
+	buildFromTemplate(t, templateContent, cfg)
 
 	variants := []struct {
 		filename   string
@@ -416,32 +396,21 @@ func TestAccents(t *testing.T) {
 }
 
 func TestAccentNames(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	templateContent := `{
         "accentname": "$accentname"
     }`
 
-	templatePath := filepath.Join(tmpDir, "template.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
 	cfg := &Config{
-		Template: templatePath,
-		Output:   tmpDir,
-		Format:   "hex",
-		Prefix:   "$",
-		Spaces:   true,
+		Output: tmpDir,
+		Format: "hex",
+		Prefix: "$",
+		Spaces: true,
 	}
 
-	if err := Build(cfg); err != nil {
-		t.Fatal(err)
-	}
+	buildFromTemplate(t, templateContent, cfg)
 
 	variants := []struct {
 		filename   string
@@ -498,11 +467,8 @@ func TestAccentNames(t *testing.T) {
 }
 
 func TestDirectories(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	templateContent := `{
         "id": "$id",
@@ -517,9 +483,10 @@ func TestDirectories(t *testing.T) {
         "custom": "$(main|moon|dawn)"
     }`
 
-	os.Mkdir(filepath.Join(tmpDir, "template"), 0755)
-	templatePath := filepath.Join(tmpDir, "template/template.json")
-	template2Path := filepath.Join(tmpDir, "template/template2.json")
+	templateDir := filepath.Join(tmpDir, "template")
+	os.Mkdir(templateDir, 0755)
+	templatePath := filepath.Join(templateDir, "template.json")
+	template2Path := filepath.Join(templateDir, "template2.json")
 	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -528,7 +495,7 @@ func TestDirectories(t *testing.T) {
 	}
 
 	cfg := &Config{
-		Template: filepath.Join(tmpDir, "template"),
+		Template: templateDir,
 		Output:   tmpDir,
 		Format:   "hex",
 		Prefix:   "$",
@@ -634,11 +601,8 @@ func TestDirectories(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmpDir)
+	tmpDir, cleanup := setupTest(t)
+	defer cleanup()
 
 	fileContent := `{
   "base": "#232136",
