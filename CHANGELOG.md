@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.1.0...v2.2.0) (2025-07-02)
+
+
+### Features
+
+* add `--plain` flag ([#43](https://github.com/rose-pine/rose-pine-bloom/issues/43)) ([2e36a6c](https://github.com/rose-pine/rose-pine-bloom/commit/2e36a6c1e88f6d5aaea736c9aa52099f38f6a6e8))
+* add `ansi` format as alias for `rgb-ansi` ([#47](https://github.com/rose-pine/rose-pine-bloom/issues/47)) ([dc8cdcc](https://github.com/rose-pine/rose-pine-bloom/commit/dc8cdcc7fbb686ab539401c014c4e7523d8ac8ea))
+* add `appearance` variable as alias for `type` ([#48](https://github.com/rose-pine/rose-pine-bloom/issues/48)) ([1cb3a5c](https://github.com/rose-pine/rose-pine-bloom/commit/1cb3a5c4e7d76d1cb0991dd9f077406c58e9acbf))
+* add `rgb-css` format ([#45](https://github.com/rose-pine/rose-pine-bloom/issues/45)) ([223190b](https://github.com/rose-pine/rose-pine-bloom/commit/223190b51119ba947f5a7c2ed8c2f5f208486ee6))
+* improve `create` defaults ([#36](https://github.com/rose-pine/rose-pine-bloom/issues/36)) ([6a2c345](https://github.com/rose-pine/rose-pine-bloom/commit/6a2c3450203fe13f187cd06a18322f5510a30f8b))
+* support alpha in `hex` format ([#44](https://github.com/rose-pine/rose-pine-bloom/issues/44)) ([bfaeacd](https://github.com/rose-pine/rose-pine-bloom/commit/bfaeacd81d7fcf4052fb23ca6dcde7a6ba0cb5bf))
+
+
+### Bug Fixes
+
+* update script to target correct README.md file ([#40](https://github.com/rose-pine/rose-pine-bloom/issues/40)) ([d54a733](https://github.com/rose-pine/rose-pine-bloom/commit/d54a7332dfcda9c3acc450e653c77c30fe25ad51))
+
 ## [2.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.0.1...v2.1.0) (2025-06-21)
 
 
