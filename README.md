@@ -83,40 +83,38 @@ Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "lov
 
 ### Accents
 
-Specify an accent variable, formatted as `$accent`. A file for every accent will be made.
+Specify an `$accent` or `$accentname` variable to generate a theme for every accent:
 
 ```jsonc
 // template.json
-{ "accent": "$accent" }
+{ "accent": "$accent", "name": "$accentname" }
 
-// rose-pine/rose-pine-foam.json
-{ "accent": "#9ccfd8" }
+// rose-pine-love.json
+{ "accent": "#eb6f92", "name": "love" }
 
-// rose-pine/rose-pine-gold.json
-{ "accent": "#f6c177" }
-
-...
-
-// rose-pine-moon/rose-pine-moon-iris.json
-{ "accent": "#c4a7e7" }
-
-// rose-pine-moon/rose-pine-moon-love.json
-{ "accent": "#eb6f92" }
+// rose-pine-gold.json
+{ "accent": "#f6c177", "name": "gold" }
 
 ...
 
-// rose-pine-dawn/rose-pine-dawn-pine.json
-{ "accent": "#286983" }
+// rose-pine-moon-rose.json
+{ "accent": "#ea9a97", "name": "rose" }
 
-// rose-pine-dawn/rose-pine-dawn-rose.json
-{ "accent": "#d7827e" }
+// rose-pine-moon-pine.json
+{ "accent": "#3e8fb0", "name": "pine" }
+
+...
+
+// rose-pine-dawn-foam.json
+{ "accent": "#56949f", "name": "foam" }
+
+// rose-pine-dawn-iris.json
+{ "accent": "#907aa9", "name": "iris" }
 ```
-
-> You can also use `accentname` to output the name of the accent color, instead of the actual color
 
 ### Using custom values per variant
 
-Use different values for each variant, formatted as `$(main|moon|dawn)`, e.g.:
+Use different values for each variant, formatted as `$(main|moon|dawn)`:
 
 ```jsonc
 // template.json
