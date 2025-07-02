@@ -24,10 +24,16 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 
 	switch format {
 	case FormatHex:
+		hexValue := c.Hex
+		if c.Alpha != nil {
+			// Convert alpha to hex (0-255 -> 00-FF)
+			alphaHex := fmt.Sprintf("%02x", int(*c.Alpha*255+0.5))
+			hexValue += alphaHex
+		}
 		if plain {
-			workingString = c.Hex
+			workingString = hexValue
 		} else {
-			workingString = fmt.Sprintf("#%s", c.Hex)
+			workingString = "#" + hexValue
 		}
 	case FormatHSL:
 		hsl := fmt.Sprintf("%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
