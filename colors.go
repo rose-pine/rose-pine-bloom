@@ -115,7 +115,7 @@ func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces b
 		} else {
 			workingString = fmt.Sprintf("%s(%s)", prefix, rgb)
 		}
-	case FormatRGBAnsi:
+	case FormatAnsi:
 		if c.Alpha != nil {
 			return fmt.Sprintf("%d;%d;%d;%s", c.RGB[0], c.RGB[1], c.RGB[2], formatAlpha(*c.Alpha))
 		}
