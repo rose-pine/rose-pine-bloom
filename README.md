@@ -47,8 +47,8 @@ $ ./rose-pine-bloom --help
     hsl --plain   2, 55%, 83%
     hsl-css       hsl(2deg 55% 83%)
     hsl-css --plain 2deg 55% 83%
-    hsl-array     [2, 55%, 83%]
-    hsl-array --plain 2, 55%, 83%
+    hsl-array     [2, 0.55, 0.83]
+    hsl-array --plain 2, 0.55, 0.83
     rgb           rgb(235, 188, 186)
     rgb --plain   235, 188, 186
     rgb-css       rgb(235 188 186)

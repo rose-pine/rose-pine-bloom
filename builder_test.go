@@ -52,10 +52,10 @@ func TestColorFormatting(t *testing.T) {
 		{"hsl plain no-commas", FormatHSL, true, false, true, "2 55% 83%"},
 		{"hsl plain no-spaces", FormatHSL, true, true, false, "2,55%,83%"},
 
-		{"hsl-array", FormatHSLArray, false, true, true, "[2, 55%, 83%]"},
-		{"hsl-array plain", FormatHSLArray, true, true, true, "2, 55%, 83%"},
-		{"hsl-array no-commas", FormatHSLArray, false, false, true, "[2 55% 83%]"},
-		{"hsl-array no-spaces", FormatHSLArray, false, true, false, "[2,55%,83%]"},
+		{"hsl-array", FormatHSLArray, false, true, true, "[2, 0.55, 0.83]"},
+		{"hsl-array plain", FormatHSLArray, true, true, true, "2, 0.55, 0.83"},
+		{"hsl-array no-commas", FormatHSLArray, false, false, true, "[2 0.55 0.83]"},
+		{"hsl-array no-spaces", FormatHSLArray, false, true, false, "[2,0.55,0.83]"},
 
 		{"hsl-css", FormatHSLCSS, false, true, true, "hsl(2deg 55% 83%)"},
 		{"hsl-css plain", FormatHSLCSS, true, true, true, "2deg 55% 83%"},
@@ -105,7 +105,7 @@ func TestAlphaFormatting(t *testing.T) {
 
 		{FormatHSL, "hsla(2, 55%, 83%, 0.5)"},
 		{FormatHSLCSS, "hsl(2deg 55% 83% / 0.5)"},
-		{FormatHSLArray, "[2, 55%, 83%, 0.5]"},
+		{FormatHSLArray, "[2, 0.55, 0.83, 0.5]"},
 
 		{FormatRGB, "rgba(235, 188, 186, 0.5)"},
 		{FormatRGBCSS, "rgb(235 188 186 / 0.5)"},
