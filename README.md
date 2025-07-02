@@ -79,8 +79,8 @@ Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "lov
 | ----------- | ---------------------------------------------------------------------------- |
 | id          | rose-pine<-moon,-dawn>                                                       |
 | name        | Rosé Pine <Moon,Dawn>                                                        |
+| appearance  | <dark,dark,light>                                                            |
 | description | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
-| type        | <dark,dark,light>                                                            |
 
 ### Accents
 

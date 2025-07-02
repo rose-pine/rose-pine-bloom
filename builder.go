@@ -129,7 +129,8 @@ func processTemplate(content string, cfg *Config, variant Variant, accent string
 	// Replace metadata
 	result = strings.ReplaceAll(result, cfg.Prefix+"id", variant.id)
 	result = strings.ReplaceAll(result, cfg.Prefix+"name", variant.name)
-	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.variantType)
+	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.appearance)
+	result = strings.ReplaceAll(result, cfg.Prefix+"appearance", variant.appearance)
 	result = strings.ReplaceAll(result, cfg.Prefix+"description", variant.description)
 
 	// Replace accent variables
