@@ -56,6 +56,7 @@ func helpText() string {
     -c, --create <variant>  Create template from existing theme (default: main)
                             Variants: main, moon, dawn
 
+    --plain                 Remove decorators from color values
     --no-commas             Remove commas from color values
     --no-spaces             Remove spaces from color values
 
@@ -90,6 +91,8 @@ func main() {
 	flag.StringVar(&cfg.Format, "f", "hex", "")
 	flag.StringVar(&cfg.Format, "format", "hex", "")
 
+	flag.BoolVar(&cfg.Plain, "plain", false, "")
+
 	noCommas := flag.Bool("no-commas", false, "")
 	noSpaces := flag.Bool("no-spaces", false, "")
 
@@ -115,6 +118,12 @@ func main() {
 	cfg.Template = template
 	cfg.Commas = !*noCommas
 	cfg.Spaces = !*noSpaces
+
+	// Backward compatibility: hex-ns is equivalent to hex --plain
+	if cfg.Format == "hex-ns" {
+		cfg.Format = "hex"
+		cfg.Plain = true
+	}
 
 	if err := Build(cfg); err != nil {
 		log.Fatal(err)

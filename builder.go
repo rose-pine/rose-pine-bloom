@@ -91,7 +91,7 @@ func createTemplates(cfg *Config) error {
 
 		// Replace colors with variables
 		for colorName, color := range variant.colors {
-			colorValue := formatColor(color, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces)
+			colorValue := formatColor(color, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
 			before := result
 			result = strings.ReplaceAll(result, colorValue, cfg.Prefix+colorName)
 			if before != result {
@@ -153,11 +153,11 @@ func processTemplate(content string, cfg *Config, variant Variant, accent string
 			colorCopy := *color
 			normalizedAlpha := alpha / 100
 			colorCopy.Alpha = &normalizedAlpha
-			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces)
+			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
 		})
 
 		// Replace regular color variable
-		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Commas, cfg.Spaces))
+		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
 	}
 
 	// Process variant-specific values $(main|moon|dawn)

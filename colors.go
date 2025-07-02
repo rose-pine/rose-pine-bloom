@@ -13,7 +13,7 @@ type Color struct {
 	On    string     `json:"on,omitempty"`
 }
 
-func formatColor(c *Color, format ColorFormat, commas bool, spaces bool) string {
+func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces bool) string {
 	workingString := ""
 	formatAlpha := func(alpha float64) string {
 		s := fmt.Sprintf("%.2f", alpha)
@@ -24,9 +24,11 @@ func formatColor(c *Color, format ColorFormat, commas bool, spaces bool) string 
 
 	switch format {
 	case FormatHex:
-		workingString = "#" + c.Hex
-	case FormatHexNS:
-		workingString = c.Hex
+		if plain {
+			workingString = c.Hex
+		} else {
+			workingString = fmt.Sprintf("#%s", c.Hex)
+		}
 	case FormatHSL:
 		hsl := fmt.Sprintf("%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
 		if c.Alpha != nil {
@@ -42,23 +44,31 @@ func formatColor(c *Color, format ColorFormat, commas bool, spaces bool) string 
 		if c.Alpha != nil {
 			prefix = "hsla"
 		}
-		workingString = fmt.Sprintf("%s(%s)", prefix, hsl)
+		if plain {
+			workingString = hsl
+		} else {
+			workingString = fmt.Sprintf("%s(%s)", prefix, hsl)
+		}
 	case FormatHSLCSS:
-		// CSS format uses deg and spaces, not commas
-		prefix := "hsl"
-		hsl := fmt.Sprintf("%s(%vdeg %v%% %v%%", prefix, c.HSL[0], c.HSL[1], c.HSL[2])
+		hsl := fmt.Sprintf("%vdeg %v%% %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
 		if c.Alpha != nil {
 			hsl += fmt.Sprintf(" / %s", formatAlpha(*c.Alpha))
 		}
-		hsl += ")"
-		workingString = hsl
-	case FormatHSLArray:
-		hsl := fmt.Sprintf("[%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
-		if c.Alpha != nil {
-			hsl += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
+		if plain {
+			workingString = hsl
+		} else {
+			workingString = fmt.Sprintf("hsl(%s)", hsl)
 		}
-		hsl += "]"
-		workingString = hsl
+	case FormatHSLArray:
+		hslArray := fmt.Sprintf("%v, %v%%, %v%%", c.HSL[0], c.HSL[1], c.HSL[2])
+		if c.Alpha != nil {
+			hslArray += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
+		}
+		if plain {
+			workingString = hslArray
+		} else {
+			workingString = "[" + hslArray + "]"
+		}
 	case FormatRGB:
 		rgb := fmt.Sprintf("%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
@@ -66,30 +76,40 @@ func formatColor(c *Color, format ColorFormat, commas bool, spaces bool) string 
 		}
 		workingString = rgb
 	case FormatRGBArray:
-		rgb := fmt.Sprintf("[%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
+		rgbArray := fmt.Sprintf("%d, %d, %d", c.RGB[0], c.RGB[1], c.RGB[2])
+		if c.Alpha != nil {
+			rgbArray += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
+		}
+		if plain {
+			workingString = rgbArray
+		} else {
+			workingString = "[" + rgbArray + "]"
+		}
+	case FormatRGBFunc:
+		rgb := fmt.Sprintf("%v, %v, %v", c.RGB[0], c.RGB[1], c.RGB[2])
 		if c.Alpha != nil {
 			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
 		}
-		rgb += "]"
-		workingString = rgb
-	case FormatRGBFunc:
 		prefix := "rgb"
 		if c.Alpha != nil {
 			prefix = "rgba"
 		}
-		rgb := fmt.Sprintf("%s(%d, %d, %d", prefix, c.RGB[0], c.RGB[1], c.RGB[2])
-		if c.Alpha != nil {
-			rgb += fmt.Sprintf(", %s", formatAlpha(*c.Alpha))
+		if plain {
+			workingString = rgb
+		} else {
+			workingString = fmt.Sprintf("%s(%s)", prefix, rgb)
 		}
-		rgb += ")"
-		workingString = rgb
 	case FormatRGBAnsi:
 		if c.Alpha != nil {
 			return fmt.Sprintf("%d;%d;%d;%s", c.RGB[0], c.RGB[1], c.RGB[2], formatAlpha(*c.Alpha))
 		}
 		return fmt.Sprintf("%d;%d;%d", c.RGB[0], c.RGB[1], c.RGB[2])
 	default:
-		workingString = "#" + c.Hex
+		if plain {
+			workingString = c.Hex
+		} else {
+			workingString = "#" + c.Hex
+		}
 	}
 
 	if commas == false {
