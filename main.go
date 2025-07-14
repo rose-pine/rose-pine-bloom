@@ -40,7 +40,7 @@ func formatsTable() string {
 	var sb strings.Builder
 	w := tabwriter.NewWriter(&sb, 1, 1, 1, ' ', 0)
 	for _, f := range formats {
-		fmt.Fprintf(w, "    %-13s %s\n", f.Name, f.Example)
+		fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
 	}
 	w.Flush()
 	return sb.String()
