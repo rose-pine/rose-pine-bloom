@@ -23,8 +23,8 @@ var formats = [...]format{
 	{Name: "hsl --plain", Example: "2, 55%, 83%"},
 	{Name: "hsl-css", Example: "hsl(2deg 55% 83%)"},
 	{Name: "hsl-css --plain", Example: "2deg 55% 83%"},
-	{Name: "hsl-array", Example: "[2, 55%, 83%]"},
-	{Name: "hsl-array --plain", Example: "2, 55%, 83%"},
+	{Name: "hsl-array", Example: "[2, 0.55, 0.83]"},
+	{Name: "hsl-array --plain", Example: "2, 0.55, 0.83"},
 
 	{Name: "rgb", Example: "rgb(235, 188, 186)"},
 	{Name: "rgb --plain", Example: "235, 188, 186"},
