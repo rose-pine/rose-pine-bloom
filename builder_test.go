@@ -42,38 +42,38 @@ func TestColorFormatting(t *testing.T) {
 		spaces bool
 		want   string
 	}{
-		// Hex formats
 		{"hex", FormatHex, false, true, true, "#ebbcba"},
 		{"hex plain", FormatHex, true, true, true, "ebbcba"},
 
-		// HSL formats
-		{"hsl", FormatHSL, false, true, true, "2, 55%, 83%"},
-		{"hsl no-commas", FormatHSL, false, false, true, "2 55% 83%"},
-		{"hsl no-spaces", FormatHSL, false, true, false, "2,55%,83%"},
+		{"hsl", FormatHSL, false, true, true, "hsl(2, 55%, 83%)"},
+		{"hsl no-commas", FormatHSL, false, false, true, "hsl(2 55% 83%)"},
+		{"hsl no-spaces", FormatHSL, false, true, false, "hsl(2,55%,83%)"},
+		{"hsl plain", FormatHSL, true, true, true, "2, 55%, 83%"},
+		{"hsl plain no-commas", FormatHSL, true, false, true, "2 55% 83%"},
+		{"hsl plain no-spaces", FormatHSL, true, true, false, "2,55%,83%"},
+
 		{"hsl-array", FormatHSLArray, false, true, true, "[2, 55%, 83%]"},
 		{"hsl-array plain", FormatHSLArray, true, true, true, "2, 55%, 83%"},
 		{"hsl-array no-commas", FormatHSLArray, false, false, true, "[2 55% 83%]"},
 		{"hsl-array no-spaces", FormatHSLArray, false, true, false, "[2,55%,83%]"},
+
 		{"hsl-css", FormatHSLCSS, false, true, true, "hsl(2deg 55% 83%)"},
 		{"hsl-css plain", FormatHSLCSS, true, true, true, "2deg 55% 83%"},
-		{"hsl-function", FormatHSLFunc, false, true, true, "hsl(2, 55%, 83%)"},
-		{"hsl-function plain", FormatHSLFunc, true, true, true, "2, 55%, 83%"},
-		{"hsl-function no-commas", FormatHSLFunc, false, false, true, "hsl(2 55% 83%)"},
-		{"hsl-function no-spaces", FormatHSLFunc, false, true, false, "hsl(2,55%,83%)"},
 
-		// RGB formats
-		{"rgb", FormatRGB, false, true, true, "235, 188, 186"},
-		{"rgb no-spaces", FormatRGB, false, true, false, "235,188,186"},
-		{"rgb no-commas", FormatRGB, false, false, true, "235 188 186"},
+		{"rgb", FormatRGB, false, true, true, "rgb(235, 188, 186)"},
+		{"rgb no-commas", FormatRGB, false, false, true, "rgb(235 188 186)"},
+		{"rgb no-spaces", FormatRGB, false, true, false, "rgb(235,188,186)"},
+		{"rgb plain", FormatRGB, true, true, true, "235, 188, 186"},
+		{"rgb plain no-commas", FormatRGB, true, false, true, "235 188 186"},
+		{"rgb plain no-spaces", FormatRGB, true, true, false, "235,188,186"},
+
 		{"rgb-array", FormatRGBArray, false, true, true, "[235, 188, 186]"},
 		{"rgb-array plain", FormatRGBArray, true, true, true, "235, 188, 186"},
+		{"rgb-array no-commas", FormatRGBArray, false, false, true, "[235 188 186]"},
 		{"rgb-array no-spaces", FormatRGBArray, false, true, false, "[235,188,186]"},
+
 		{"rgb-css", FormatRGBCSS, false, true, true, "rgb(235 188 186)"},
 		{"rgb-css plain", FormatRGBCSS, true, true, true, "235 188 186"},
-		{"rgb-function", FormatRGBFunc, false, true, true, "rgb(235, 188, 186)"},
-		{"rgb-function plain", FormatRGBFunc, true, true, true, "235, 188, 186"},
-		{"rgb-function no-commas", FormatRGBFunc, false, false, true, "rgb(235 188 186)"},
-		{"rgb-function no-spaces", FormatRGBFunc, false, true, false, "rgb(235,188,186)"},
 
 		{"ansi", FormatAnsi, false, true, true, "235;188;186"},
 	}
@@ -103,15 +103,13 @@ func TestAlphaFormatting(t *testing.T) {
 	}{
 		{FormatHex, "#ebbcba80"},
 
-		{FormatHSL, "2, 55%, 83%, 0.5"},
-		{FormatHSLArray, "[2, 55%, 83%, 0.5]"},
+		{FormatHSL, "hsla(2, 55%, 83%, 0.5)"},
 		{FormatHSLCSS, "hsl(2deg 55% 83% / 0.5)"},
-		{FormatHSLFunc, "hsla(2, 55%, 83%, 0.5)"},
+		{FormatHSLArray, "[2, 55%, 83%, 0.5]"},
 
-		{FormatRGB, "235, 188, 186, 0.5"},
-		{FormatRGBArray, "[235, 188, 186, 0.5]"},
+		{FormatRGB, "rgba(235, 188, 186, 0.5)"},
 		{FormatRGBCSS, "rgb(235 188 186 / 0.5)"},
-		{FormatRGBFunc, "rgba(235, 188, 186, 0.5)"},
+		{FormatRGBArray, "[235, 188, 186, 0.5]"},
 
 		{FormatAnsi, "235;188;186;0.5"},
 	}
@@ -132,10 +130,9 @@ func TestAlphaVariables(t *testing.T) {
 	defer cleanup()
 
 	templateContent := `{
-        "regular": "$base",
-        "alpha50": "$base/50",
-        "alpha25": "$base/25",
-        "alphaMuted50": "$muted/50"
+        "muted": "$muted",
+        "muted10": "$muted/10",
+        "muted20": "$muted/20"
     }`
 
 	cfg := &Config{
@@ -162,10 +159,9 @@ func TestAlphaVariables(t *testing.T) {
 		field string
 		want  string
 	}{
-		{"regular", "25, 23, 36"},
-		{"alpha50", "25, 23, 36, 0.5"},
-		{"alpha25", "25, 23, 36, 0.25"},
-		{"alphaMuted50", "110, 106, 134, 0.5"},
+		{"muted", "rgb(110, 106, 134)"},
+		{"muted10", "rgba(110, 106, 134, 0.1)"},
+		{"muted20", "rgba(110, 106, 134, 0.2)"},
 	}
 
 	for _, tt := range tests {
