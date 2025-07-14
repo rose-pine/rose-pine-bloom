@@ -27,12 +27,95 @@ func buildFromTemplate(t *testing.T, template string, cfg *Config) {
 	}
 }
 
-func TestColorFormatting(t *testing.T) {
-	color := &Color{
-		Hex: "ebbcba",
-		HSL: [3]float64{2, 55, 83},
-		RGB: [3]int{235, 188, 186},
+func readAndParseJSON(t *testing.T, path string) map[string]any {
+	t.Helper()
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
 	}
+
+	var result map[string]any
+	if err := json.Unmarshal(content, &result); err != nil {
+		t.Fatal(err)
+	}
+	return result
+}
+
+func assertJSONField(t *testing.T, result map[string]any, field, want string) {
+	t.Helper()
+	if got := result[field]; got != want {
+		t.Errorf("%s = %v, want %v", field, got, want)
+	}
+}
+
+// testConfig provides standard config
+var testConfig = Config{
+	Template: "",
+	Output:   "",
+	Prefix:   "$",
+	Format:   "hex",
+	Plain:    false,
+	Commas:   true,
+	Spaces:   true,
+}
+
+// testColor provides a standard color
+var testColor = &Color{
+	Hex: "ebbcba",
+	HSL: [3]float64{2, 55, 83},
+	RGB: [3]int{235, 188, 186},
+}
+
+// testTemplate provides a standard template
+const testTemplate = `{
+    "id": "$id",
+    "name": "$name",
+    "appearance": "$appearance",
+    "description": "$description",
+    "type": "$type",
+    "colors": {
+        "base": "$base",
+        "surface": "$surface",
+        "love": "$love"
+    },
+    "custom": "$(main|moon|dawn)"
+}`
+
+var testVariants = []struct {
+	filename   string
+	id         string
+	name       string
+	appearance string
+	baseHex    string
+	custom     string
+}{
+	{
+		filename:   "rose-pine.json",
+		id:         "rose-pine",
+		name:       "Rosé Pine",
+		appearance: "dark",
+		baseHex:    "#191724",
+		custom:     "main",
+	},
+	{
+		filename:   "rose-pine-moon.json",
+		id:         "rose-pine-moon",
+		name:       "Rosé Pine Moon",
+		appearance: "dark",
+		baseHex:    "#232136",
+		custom:     "moon",
+	},
+	{
+		filename:   "rose-pine-dawn.json",
+		id:         "rose-pine-dawn",
+		name:       "Rosé Pine Dawn",
+		appearance: "light",
+		baseHex:    "#faf4ed",
+		custom:     "dawn",
+	},
+}
+
+func TestColorFormatting(t *testing.T) {
 
 	tests := []struct {
 		name   string
@@ -80,7 +163,7 @@ func TestColorFormatting(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.plain, tt.commas, tt.spaces)
+			got := formatColor(testColor, tt.format, tt.plain, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -91,33 +174,45 @@ func TestColorFormatting(t *testing.T) {
 func TestAlphaFormatting(t *testing.T) {
 	alpha := 0.5
 	color := &Color{
-		Hex:   "ebbcba",
-		HSL:   [3]float64{2, 55, 83},
-		RGB:   [3]int{235, 188, 186},
+		Hex:   testColor.Hex,
+		HSL:   testColor.HSL,
+		RGB:   testColor.RGB,
 		Alpha: &alpha,
 	}
 
 	tests := []struct {
+		name   string
 		format ColorFormat
+		plain  bool
 		want   string
 	}{
-		{FormatHex, "#ebbcba80"},
+		{"hex", FormatHex, false, "#ebbcba80"},
+		{"hex plain", FormatHex, true, "ebbcba80"},
 
-		{FormatHSL, "hsla(2, 55%, 83%, 0.5)"},
-		{FormatHSLCSS, "hsl(2deg 55% 83% / 0.5)"},
-		{FormatHSLArray, "[2, 0.55, 0.83, 0.5]"},
+		{"hsl", FormatHSL, false, "hsla(2, 55%, 83%, 0.5)"},
+		{"hsl plain", FormatHSL, true, "2, 55%, 83%, 0.5"},
 
-		{FormatRGB, "rgba(235, 188, 186, 0.5)"},
-		{FormatRGBCSS, "rgb(235 188 186 / 0.5)"},
-		{FormatRGBArray, "[235, 188, 186, 0.5]"},
+		{"hsl-css", FormatHSLCSS, false, "hsl(2deg 55% 83% / 0.5)"},
+		{"hsl-css plain", FormatHSLCSS, true, "2deg 55% 83% / 0.5"},
 
-		{FormatAnsi, "235;188;186;0.5"},
+		{"hsl-array", FormatHSLArray, false, "[2, 0.55, 0.83, 0.5]"},
+		{"hsl-array plain", FormatHSLArray, true, "2, 0.55, 0.83, 0.5"},
+
+		{"rgb", FormatRGB, false, "rgba(235, 188, 186, 0.5)"},
+		{"rgb plain", FormatRGB, true, "235, 188, 186, 0.5"},
+
+		{"rgb-css", FormatRGBCSS, false, "rgb(235 188 186 / 0.5)"},
+		{"rgb-css plain", FormatRGBCSS, true, "235 188 186 / 0.5"},
+
+		{"rgb-array", FormatRGBArray, false, "[235, 188, 186, 0.5]"},
+		{"rgb-array plain", FormatRGBArray, true, "235, 188, 186, 0.5"},
+
+		{"ansi", FormatAnsi, false, "235;188;186;0.5"},
 	}
 
 	for _, tt := range tests {
-		name := string(tt.format)
-		t.Run(name, func(t *testing.T) {
-			got := formatColor(color, tt.format, false, true, true)
+		t.Run(tt.name, func(t *testing.T) {
+			got := formatColor(color, tt.format, tt.plain, true, true)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -125,49 +220,74 @@ func TestAlphaFormatting(t *testing.T) {
 	}
 }
 
-func TestAlphaVariables(t *testing.T) {
+func TestAlphaVariableFormats(t *testing.T) {
 	tmpDir, cleanup := setupTest(t)
 	defer cleanup()
 
 	templateContent := `{
-        "muted": "$muted",
-        "muted10": "$muted/10",
-        "muted20": "$muted/20"
+        "base": "$base",
+        "base25": "$base/25",
+        "base50": "$base/50"
     }`
 
-	cfg := &Config{
-		Output: tmpDir,
-		Format: "rgb",
-		Prefix: "$",
-		Commas: true,
-		Spaces: true,
-	}
-
-	buildFromTemplate(t, templateContent, cfg)
-
-	content, err := os.ReadFile(filepath.Join(tmpDir, "rose-pine.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var result map[string]any
-	if err := json.Unmarshal(content, &result); err != nil {
-		t.Fatal(err)
-	}
-
 	tests := []struct {
-		field string
-		want  string
+		format string
+		want   map[string]string
 	}{
-		{"muted", "rgb(110, 106, 134)"},
-		{"muted10", "rgba(110, 106, 134, 0.1)"},
-		{"muted20", "rgba(110, 106, 134, 0.2)"},
+		{
+			format: "hex",
+			want: map[string]string{
+				"base":   "#191724",
+				"base25": "#19172440",
+				"base50": "#19172480",
+			},
+		},
+		{
+			format: "hsl",
+			want: map[string]string{
+				"base":   "hsl(249, 22%, 12%)",
+				"base25": "hsla(249, 22%, 12%, 0.25)",
+				"base50": "hsla(249, 22%, 12%, 0.5)",
+			},
+		},
+		{
+			format: "hsl-css",
+			want: map[string]string{
+				"base":   "hsl(249deg 22% 12%)",
+				"base25": "hsl(249deg 22% 12% / 0.25)",
+				"base50": "hsl(249deg 22% 12% / 0.5)",
+			},
+		},
+		{
+			format: "rgb",
+			want: map[string]string{
+				"base":   "rgb(25, 23, 36)",
+				"base25": "rgba(25, 23, 36, 0.25)",
+				"base50": "rgba(25, 23, 36, 0.5)",
+			},
+		},
+		{
+			format: "rgb-css",
+			want: map[string]string{
+				"base":   "rgb(25 23 36)",
+				"base25": "rgb(25 23 36 / 0.25)",
+				"base50": "rgb(25 23 36 / 0.5)",
+			},
+		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.field, func(t *testing.T) {
-			if got := result[tt.field]; got != tt.want {
-				t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
+		t.Run(tt.format, func(t *testing.T) {
+			cfg := testConfig
+			cfg.Output = tmpDir
+			cfg.Format = tt.format
+
+			buildFromTemplate(t, templateContent, &cfg)
+
+			result := readAndParseJSON(t, filepath.Join(tmpDir, "rose-pine.json"))
+
+			for field, want := range tt.want {
+				assertJSONField(t, result, field, want)
 			}
 		})
 	}
@@ -177,90 +297,20 @@ func TestVariantGeneration(t *testing.T) {
 	tmpDir, cleanup := setupTest(t)
 	defer cleanup()
 
-	templateContent := `{
-        "id": "$id",
-        "name": "$name",
-        "appearance": "$appearance",
-        "description": "$description",
-		"type": "$type",
-        "colors": {
-            "base": "$base",
-            "surface": "$surface",
-            "love": "$love"
-        },
-        "custom": "$(main|moon|dawn)"
-    }`
+	cfg := testConfig
+	cfg.Output = tmpDir
+	cfg.Spaces = false
 
-	cfg := &Config{
-		Output: tmpDir,
-		Format: "hex",
-		Prefix: "$",
-		Spaces: false,
-	}
+	buildFromTemplate(t, testTemplate, &cfg)
 
-	buildFromTemplate(t, templateContent, cfg)
-
-	variants := []struct {
-		filename   string
-		id         string
-		name       string
-		appearance string
-		baseHex    string
-		custom     string
-	}{
-		{
-			filename:   "rose-pine.json",
-			id:         "rose-pine",
-			name:       "Rosé Pine",
-			appearance: "dark",
-			baseHex:    "#191724",
-			custom:     "main",
-		},
-		{
-			filename:   "rose-pine-moon.json",
-			id:         "rose-pine-moon",
-			name:       "Rosé Pine Moon",
-			appearance: "dark",
-			baseHex:    "#232136",
-			custom:     "moon",
-		},
-		{
-			filename:   "rose-pine-dawn.json",
-			id:         "rose-pine-dawn",
-			name:       "Rosé Pine Dawn",
-			appearance: "light",
-			baseHex:    "#faf4ed",
-			custom:     "dawn",
-		},
-	}
-
-	for _, v := range variants {
+	for _, v := range testVariants {
 		t.Run(v.filename, func(t *testing.T) {
-			content, err := os.ReadFile(filepath.Join(tmpDir, v.filename))
-			if err != nil {
-				t.Fatalf("Failed to read generated file: %v", err)
-			}
+			result := readAndParseJSON(t, filepath.Join(tmpDir, v.filename))
 
-			var result map[string]any
-			if err := json.Unmarshal(content, &result); err != nil {
-				t.Fatalf("Failed to parse JSON: %v", err)
-			}
-
-			tests := []struct {
-				field string
-				want  string
-			}{
-				{"id", v.id},
-				{"name", v.name},
-				{"appearance", v.appearance},
-				{"custom", v.custom},
-			}
-
-			for _, tt := range tests {
-				if got := result[tt.field]; got != tt.want {
-					t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
-				}
-			}
+			assertJSONField(t, result, "id", v.id)
+			assertJSONField(t, result, "name", v.name)
+			assertJSONField(t, result, "appearance", v.appearance)
+			assertJSONField(t, result, "custom", v.custom)
 
 			colors := result["colors"].(map[string]any)
 			if got := colors["base"]; got != v.baseHex {
@@ -280,12 +330,10 @@ func TestVariantSpecificValues(t *testing.T) {
         "mood": "$(Dark|Dim|Light)"
     }`
 
-	cfg := &Config{
-		Output: tmpDir,
-		Prefix: "$",
-	}
+	cfg := testConfig
+	cfg.Output = tmpDir
 
-	buildFromTemplate(t, templateContent, cfg)
+	buildFromTemplate(t, templateContent, &cfg)
 
 	tests := []struct {
 		variant string
@@ -300,25 +348,11 @@ func TestVariantSpecificValues(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.variant, func(t *testing.T) {
-			content, err := os.ReadFile(filepath.Join(tmpDir, tt.variant))
-			if err != nil {
-				t.Fatal(err)
-			}
+			result := readAndParseJSON(t, filepath.Join(tmpDir, tt.variant))
 
-			var result map[string]any
-			if err := json.Unmarshal(content, &result); err != nil {
-				t.Fatal(err)
-			}
-
-			if got := result["accent"]; got != tt.accent {
-				t.Errorf("accent = %v, want %v", got, tt.accent)
-			}
-			if got := result["name"]; got != tt.name {
-				t.Errorf("name = %v, want %v", got, tt.name)
-			}
-			if got := result["mood"]; got != tt.mood {
-				t.Errorf("mood = %v, want %v", got, tt.mood)
-			}
+			assertJSONField(t, result, "accent", tt.accent)
+			assertJSONField(t, result, "name", tt.name)
+			assertJSONField(t, result, "mood", tt.mood)
 		})
 	}
 }
@@ -333,16 +367,12 @@ func TestAccents(t *testing.T) {
 		"onaccent": "$onaccent"
     }`
 
-	cfg := &Config{
-		Output: tmpDir,
-		Format: "hex",
-		Prefix: "$",
-		Spaces: true,
-	}
+	cfg := testConfig
+	cfg.Output = tmpDir
 
-	buildFromTemplate(t, templateContent, cfg)
+	buildFromTemplate(t, templateContent, &cfg)
 
-	variants := []struct {
+	tests := []struct {
 		filename   string
 		accentname string
 		accent     string
@@ -370,32 +400,13 @@ func TestAccents(t *testing.T) {
 		{filename: "rose-pine-dawn/rose-pine-dawn-iris.json", accentname: "iris", accent: "#907aa9", onaccent: "#fffaf3"},
 	}
 
-	for _, v := range variants {
+	for _, v := range tests {
 		t.Run(v.filename, func(t *testing.T) {
-			content, err := os.ReadFile(filepath.Join(tmpDir, v.filename))
-			if err != nil {
-				t.Fatalf("Failed to read generated file: %v", err)
-			}
+			result := readAndParseJSON(t, filepath.Join(tmpDir, v.filename))
 
-			var result map[string]any
-			if err := json.Unmarshal(content, &result); err != nil {
-				t.Fatalf("Failed to parse JSON: %v", err)
-			}
-
-			tests := []struct {
-				field string
-				want  string
-			}{
-				{"accentname", v.accentname},
-				{"accent", v.accent},
-				{"onaccent", v.onaccent},
-			}
-
-			for _, tt := range tests {
-				if got := result[tt.field]; got != tt.want {
-					t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
-				}
-			}
+			assertJSONField(t, result, "accentname", v.accentname)
+			assertJSONField(t, result, "accent", v.accent)
+			assertJSONField(t, result, "onaccent", v.onaccent)
 		})
 	}
 }
@@ -404,133 +415,42 @@ func TestDirectories(t *testing.T) {
 	tmpDir, cleanup := setupTest(t)
 	defer cleanup()
 
-	templateContent := `{
-        "id": "$id",
-        "name": "$name",
-        "appearance": "$appearance",
-        "description": "$description",
-        "type": "$type",
-        "colors": {
-            "base": "$base",
-            "surface": "$surface",
-            "love": "$love"
-        },
-        "custom": "$(main|moon|dawn)"
-    }`
-
 	templateDir := filepath.Join(tmpDir, "template")
 	os.Mkdir(templateDir, 0755)
 	templatePath := filepath.Join(templateDir, "template.json")
 	template2Path := filepath.Join(templateDir, "template2.json")
-	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
+	if err := os.WriteFile(templatePath, []byte(testTemplate), 0644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(template2Path, []byte(templateContent), 0644); err != nil {
-		t.Fatal(err)
-	}
-
-	cfg := &Config{
-		Template: templateDir,
-		Output:   tmpDir,
-		Format:   "hex",
-		Prefix:   "$",
-		Spaces:   true,
-	}
-
-	if err := Build(cfg); err != nil {
+	if err := os.WriteFile(template2Path, []byte(testTemplate), 0644); err != nil {
 		t.Fatal(err)
 	}
 
-	variants := []struct {
-		filename   string
-		id         string
-		name       string
-		appearance string
-		baseHex    string
-		custom     string
-	}{
-		{
-			filename:   "rose-pine/template.json",
-			id:         "rose-pine",
-			name:       "Rosé Pine",
-			appearance: "dark",
-			baseHex:    "#191724",
-			custom:     "main",
-		},
-		{
-			filename:   "rose-pine/template2.json",
-			id:         "rose-pine",
-			name:       "Rosé Pine",
-			appearance: "dark",
-			baseHex:    "#191724",
-			custom:     "main",
-		},
-		{
-			filename:   "rose-pine-moon/template.json",
-			id:         "rose-pine-moon",
-			name:       "Rosé Pine Moon",
-			appearance: "dark",
-			baseHex:    "#232136",
-			custom:     "moon",
-		},
-		{
-			filename:   "rose-pine-moon/template2.json",
-			id:         "rose-pine-moon",
-			name:       "Rosé Pine Moon",
-			appearance: "dark",
-			baseHex:    "#232136",
-			custom:     "moon",
-		},
-		{
-			filename:   "rose-pine-dawn/template.json",
-			id:         "rose-pine-dawn",
-			name:       "Rosé Pine Dawn",
-			appearance: "light",
-			baseHex:    "#faf4ed",
-			custom:     "dawn",
-		},
-		{
-			filename:   "rose-pine-dawn/template2.json",
-			id:         "rose-pine-dawn",
-			name:       "Rosé Pine Dawn",
-			appearance: "light",
-			baseHex:    "#faf4ed",
-			custom:     "dawn",
-		},
+	cfg := testConfig
+	cfg.Output = tmpDir
+	cfg.Template = templateDir
+
+	if err := Build(&cfg); err != nil {
+		t.Fatal(err)
 	}
 
-	for _, v := range variants {
-		t.Run(v.filename, func(t *testing.T) {
-			content, err := os.ReadFile(filepath.Join(tmpDir, v.filename))
-			if err != nil {
-				t.Fatalf("Failed to read generated file: %v", err)
-			}
+	testFiles := []string{"template.json", "template2.json"}
+	for _, variant := range testVariants {
+		for _, file := range testFiles {
+			filename := filepath.Join(variant.id, file)
+			t.Run(filename, func(t *testing.T) {
+				result := readAndParseJSON(t, filepath.Join(tmpDir, filename))
 
-			var result map[string]any
-			if err := json.Unmarshal(content, &result); err != nil {
-				t.Fatalf("Failed to parse JSON: %v", err)
-			}
+				assertJSONField(t, result, "id", variant.id)
+				assertJSONField(t, result, "name", variant.name)
+				assertJSONField(t, result, "custom", variant.custom)
 
-			tests := []struct {
-				field string
-				want  string
-			}{
-				{"id", v.id},
-				{"name", v.name},
-				{"custom", v.custom},
-			}
-
-			for _, tt := range tests {
-				if got := result[tt.field]; got != tt.want {
-					t.Errorf("%s = %v, want %v", tt.field, got, tt.want)
+				colors := result["colors"].(map[string]any)
+				if got := colors["base"]; got != variant.baseHex {
+					t.Errorf("base color = %v, want %v", got, variant.baseHex)
 				}
-			}
-
-			colors := result["colors"].(map[string]any)
-			if got := colors["base"]; got != v.baseHex {
-				t.Errorf("base color = %v, want %v", got, v.baseHex)
-			}
-		})
+			})
+		}
 	}
 }
 
@@ -551,10 +471,10 @@ func TestCreate(t *testing.T) {
   "pine": "#3e8fb0",
   "foam": "#9ccfd8",
   "iris": "#c4a7e7",
+  "main-id": "rose-pine",
   "id": "rose-pine-moon",
   "name": "Rosé Pine Moon",
   "description": "All natural pine, faux fur and a bit of soho vibes for the classy minimalist",
-  "regular-id": "rose-pine",
   "dawn-name": "Rosé Pine Dawn"
 }`
 	expected := `{
@@ -570,10 +490,10 @@ func TestCreate(t *testing.T) {
   "pine": "$pine",
   "foam": "$foam",
   "iris": "$iris",
+  "main-id": "rose-pine",
   "id": "$id",
   "name": "$name",
   "description": "$description",
-  "regular-id": "rose-pine",
   "dawn-name": "Rosé Pine Dawn"
 }`
 
@@ -582,16 +502,12 @@ func TestCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cfg := &Config{
-		Template: filePath,
-		Create:   "moon",
-		Output:   tmpDir,
-		Format:   "hex",
-		Prefix:   "$",
-		Spaces:   true,
-	}
+	cfg := testConfig
+	cfg.Output = tmpDir
+	cfg.Template = filePath
+	cfg.Create = "moon"
 
-	if err := Build(cfg); err != nil {
+	if err := Build(&cfg); err != nil {
 		t.Fatal(err)
 	}
 
