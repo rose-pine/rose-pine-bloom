@@ -19,6 +19,7 @@ Start by creating a template file. This will look similar to your desired theme 
 
 <!-- HELP_START -->
 <!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
+
 ```
 $ ./rose-pine-bloom --help
 
@@ -41,21 +42,21 @@ $ ./rose-pine-bloom --help
     -h, --help              Show help
 
   Formats
-    hex           #ebbcba
-    hex --plain   ebbcba
-    hsl           hsl(2, 55%, 83%)
-    hsl --plain   2, 55%, 83%
-    hsl-css       hsl(2deg 55% 83%)
-    hsl-css --plain 2deg 55% 83%
-    hsl-array     [2, 0.55, 0.83]
-    hsl-array --plain 2, 0.55, 0.83
-    rgb           rgb(235, 188, 186)
-    rgb --plain   235, 188, 186
-    rgb-css       rgb(235 188 186)
-    rgb-css --plain 235 188 186
-    rgb-array     [235, 188, 186]
-    rgb-array --plain 235, 188, 186
-    ansi          235;188;186
+    hex                     #ebbcba
+    hex --plain             ebbcba
+    hsl                     hsl(2, 55%, 83%)
+    hsl --plain             2, 55%, 83%
+    hsl-css                 hsl(2deg 55% 83%)
+    hsl-css --plain         2deg 55% 83%
+    hsl-array               [2, 0.55, 0.83]
+    hsl-array --plain       2, 0.55, 0.83
+    rgb                     rgb(235, 188, 186)
+    rgb --plain             235, 188, 186
+    rgb-css                 rgb(235 188 186)
+    rgb-css --plain         235 188 186
+    rgb-array               [235, 188, 186]
+    rgb-array --plain       235, 188, 186
+    ansi                    235;188;186
 
   Examples
     $ ./rose-pine-bloom template.yaml
@@ -63,6 +64,7 @@ $ ./rose-pine-bloom --help
     $ ./rose-pine-bloom --create dawn my-theme.toml
 
 ```
+
 <!-- HELP_END -->
 
 ## Create a template
