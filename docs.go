@@ -129,14 +129,3 @@ func isGitRepo() bool {
 	_, err := os.Stat(".git")
 	return err == nil
 }
-
-func getCurrentVersion() string {
-	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
-	output, err := cmd.Output()
-	if err != nil {
-		return ""
-	}
-
-	version := strings.TrimSpace(string(output))
-	return version
-}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
@@ -52,7 +53,7 @@ func printFormatsTable() {
 
 func helpText() string {
 	return fmt.Sprintf(`
-  🌱 Bloom - The Rosé Pine theme generator
+  🌱 Bloom %s - The Rosé Pine theme generator
 
   Usage
     $ %s [options] <template>
@@ -69,15 +70,16 @@ func helpText() string {
     --no-spaces             Remove spaces from color values
 
     -h, --help              Show help
+    -v, --version           Show bloom version
 
   Formats
 %s
   Examples
-    $ %[1]s template.yaml
-    $ %[1]s --format hsl --output ./themes template.json
-    $ %[1]s --create dawn my-theme.toml
+    $ %[2]s template.yaml
+    $ %[2]s --format hsl --output ./themes template.json
+    $ %[2]s --create dawn my-theme.toml
 
-`, os.Args[0], formatsTable())
+`, getCurrentVersion(), os.Args[0], formatsTable())
 }
 
 func printHelp() {
@@ -104,8 +106,16 @@ func main() {
 	noCommas := flag.Bool("no-commas", false, "")
 	noSpaces := flag.Bool("no-spaces", false, "")
 
+	showVersion := false
+	flag.BoolVar(&showVersion, "v", false, "")
+	flag.BoolVar(&showVersion, "version", false, "")
+
 	flag.Usage = printHelp
 	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("bloom %s", getCurrentVersion())
+	}
 
 	args := flag.Args()
 
@@ -178,4 +188,15 @@ func findTemplate(args []string) (string, error) {
 	default:
 		return "", fmt.Errorf("multiple positional arguments detected, ensure all flags come before the template")
 	}
+}
+
+func getCurrentVersion() string {
+	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
+	output, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+
+	version := strings.TrimSpace(string(output))
+	return version
 }
