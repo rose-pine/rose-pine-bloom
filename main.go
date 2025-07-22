@@ -111,7 +111,7 @@ func main() {
 
 	template, err := findTemplate(args)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
+		fmt.Fprintln(os.Stderr, err)
 		printHelp()
 		os.Exit(1)
 	}
@@ -129,6 +129,15 @@ func main() {
 
 	if err := Build(cfg); err != nil {
 		log.Fatal(err)
+	}
+
+	buildCmd := "bloom " + strings.Join(os.Args[1:], " ")
+	if err := ensureReadmeWithBuildCommand(buildCmd); err != nil {
+		fmt.Println("unable to update README:", err)
+	}
+
+	if err := ensureLicense(); err != nil {
+		fmt.Println("unable to update LICENSE:", err)
 	}
 }
 

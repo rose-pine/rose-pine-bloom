@@ -21,10 +21,12 @@ awk -v helpfile="$HELP_TMP" '
     /<!-- HELP_START -->/ {
         print;
         print "<!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->";
+        print "";
         print "```";
         while ((getline line < helpfile) > 0) print line;
         close(helpfile);
         print "```";
+        print "";
         in_block=1;
         next
     }
@@ -34,4 +36,4 @@ awk -v helpfile="$HELP_TMP" '
 
 rm "$HELP_TMP"
 
-echo "✓ Updated $README with latest help output."
+echo "✓ updated $README with latest help output"
