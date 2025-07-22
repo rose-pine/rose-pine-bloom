@@ -36,7 +36,7 @@ $ ./rose-pine-bloom --help
   🌱 Bloom v2.2.0 - The Rosé Pine theme generator
 
   Usage
-    $ ./rose-pine-bloom [options] <template>
+    $ bloom [options] <template>
 
   Options
     -o, --output <path>     Directory for generated files (default: dist)
@@ -70,9 +70,9 @@ $ ./rose-pine-bloom --help
     ansi                    235;188;186
 
   Examples
-    $ ./rose-pine-bloom template.yaml
-    $ ./rose-pine-bloom --format hsl --output ./themes template.json
-    $ ./rose-pine-bloom --create dawn my-theme.toml
+    $ bloom template.yaml
+    $ bloom --format hsl --output ./themes template.json
+    $ bloom --create dawn my-theme.toml
 
 ```
 

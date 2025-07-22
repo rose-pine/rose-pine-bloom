@@ -56,7 +56,7 @@ func helpText() string {
   🌱 Bloom %s - The Rosé Pine theme generator
 
   Usage
-    $ %s [options] <template>
+    $ bloom [options] <template>
 
   Options
     -o, --output <path>     Directory for generated files (default: dist)
@@ -75,11 +75,11 @@ func helpText() string {
   Formats
 %s
   Examples
-    $ %[2]s template.yaml
-    $ %[2]s --format hsl --output ./themes template.json
-    $ %[2]s --create dawn my-theme.toml
+    $ bloom template.yaml
+    $ bloom --format hsl --output ./themes template.json
+    $ bloom --create dawn my-theme.toml
 
-`, getCurrentVersion(), os.Args[0], formatsTable())
+`, getCurrentVersion(), formatsTable())
 }
 
 func printHelp() {
