@@ -11,7 +11,17 @@
     </a>
 </p>
 
-> Theme builder for Rosé Pine
+> Bloom new Rosé Pine themes
+
+## About
+
+Bloom is an opinionated theme generated, matching the Rosé Pine style guide.
+
+## Install
+
+```sh
+brew install rose-pine/tap/bloom
+```
 
 ## Usage
 
