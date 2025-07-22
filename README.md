@@ -33,7 +33,7 @@ Start by creating a template file. This will look similar to your desired theme 
 ```
 $ ./rose-pine-bloom --help
 
-  🌱 Bloom - The Rosé Pine theme generator
+  🌱 Bloom v2.2.0 - The Rosé Pine theme generator
 
   Usage
     $ ./rose-pine-bloom [options] <template>
@@ -50,6 +50,7 @@ $ ./rose-pine-bloom --help
     --no-spaces             Remove spaces from color values
 
     -h, --help              Show help
+    -v, --version           Show bloom version
 
   Formats
     hex                     #ebbcba
