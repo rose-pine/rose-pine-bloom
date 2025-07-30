@@ -114,7 +114,8 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("bloom %s", getCurrentVersion())
+		fmt.Println("bloom ", getCurrentVersion())
+		os.Exit(0)
 	}
 
 	args := flag.Args()
