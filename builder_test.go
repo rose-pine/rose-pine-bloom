@@ -61,9 +61,8 @@ var testConfig = Config{
 
 // testColor provides a standard color
 var testColor = &Color{
-	Hex: "ebbcba",
-	HSL: [3]float64{2, 55, 83},
-	RGB: [3]int{235, 188, 186},
+	HSL: hsl(2, 55, 83),
+	RGB: rgb(235, 188, 186),
 }
 
 // testTemplate provides a standard template
@@ -174,7 +173,6 @@ func TestColorFormatting(t *testing.T) {
 func TestAlphaFormatting(t *testing.T) {
 	alpha := 0.5
 	color := &Color{
-		Hex:   testColor.Hex,
 		HSL:   testColor.HSL,
 		RGB:   testColor.RGB,
 		Alpha: &alpha,
