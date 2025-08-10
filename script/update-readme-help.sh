@@ -5,12 +5,12 @@ set -e
 cd "$(dirname "$0")/.."
 
 README="README.md"
-BINARY="./rose-pine-bloom"
+BINARY="./bloom"
 HELP_TMP="$(mktemp)"
 
 if [ ! -x "$BINARY" ]; then
-	echo "Building $BINARY..."
-	go build -o $BINARY .
+    echo "Building $BINARY..."
+    go build -o $BINARY .
 fi
 
 echo "\$ $BINARY --help" >"$HELP_TMP"

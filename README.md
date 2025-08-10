@@ -31,7 +31,7 @@ Start by creating a template file. This will look similar to your desired theme 
 <!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
 
 ```
-$ ./rose-pine-bloom --help
+$ ./bloom --help
 
   🌱 Bloom v2.2.0 - The Rosé Pine theme generator
 
@@ -152,6 +152,16 @@ It is possible to use variables inside of this syntax as well:
 
 ```jsonc
 { "background": "$($rose|$foam|$iris)" }
+```
+
+## Contributing
+
+We welcome and appreciate contributions of any kind. Please create an issue for any proposed changes.
+
+### Build documentation
+
+```sh
+make docs
 ```
 
 ## Related

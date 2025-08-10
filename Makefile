@@ -1,9 +1,6 @@
-.PHONY: all build update-readme-help
+.PHONY: all docs
 
-all: build update-readme-help
+all: docs
 
-build:
-	go build
-
-update-readme-help:
+docs:
 	./script/update-readme-help.sh
