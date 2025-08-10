@@ -57,7 +57,7 @@ func generateThemes(cfg *Config) error {
 	return nil
 }
 
-func generateThemeFile(cfg *Config, templatePath string, content []byte, variant Variant, accent string) error {
+func generateThemeFile(cfg *Config, templatePath string, content []byte, variant VariantMeta, accent string) error {
 	result := processTemplate(string(content), cfg, variant, accent)
 
 	if filepath.Ext(templatePath) == ".json" {
@@ -90,7 +90,7 @@ func createTemplates(cfg *Config) error {
 		matchFound := false
 
 		// Replace colors with variables
-		for colorName, color := range variant.colors {
+		for colorName, color := range variant.Colors.Iter() {
 			colorValue := formatColor(color, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
 			before := result
 			result = strings.ReplaceAll(result, colorValue, cfg.Prefix+colorName)
@@ -100,9 +100,9 @@ func createTemplates(cfg *Config) error {
 		}
 
 		// Replace metadata
-		result = strings.ReplaceAll(result, variant.id, cfg.Prefix+"id")
-		result = strings.ReplaceAll(result, variant.name, cfg.Prefix+"name")
-		result = strings.ReplaceAll(result, variant.description, cfg.Prefix+"description")
+		result = strings.ReplaceAll(result, variant.Id, cfg.Prefix+"id")
+		result = strings.ReplaceAll(result, variant.Name, cfg.Prefix+"name")
+		result = strings.ReplaceAll(result, variant.Description, cfg.Prefix+"description")
 
 		if !matchFound {
 			fmt.Printf("\033[33mNo matches for specified format (%s). Available formats:\n\033[0m", cfg.Format)
@@ -123,28 +123,28 @@ func createTemplates(cfg *Config) error {
 	return nil
 }
 
-func processTemplate(content string, cfg *Config, variant Variant, accent string) string {
+func processTemplate(content string, cfg *Config, variant VariantMeta, accent string) string {
 	result := content
 
 	// Replace metadata
-	result = strings.ReplaceAll(result, cfg.Prefix+"id", variant.id)
-	result = strings.ReplaceAll(result, cfg.Prefix+"name", variant.name)
-	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.appearance)
-	result = strings.ReplaceAll(result, cfg.Prefix+"appearance", variant.appearance)
-	result = strings.ReplaceAll(result, cfg.Prefix+"description", variant.description)
+	result = strings.ReplaceAll(result, cfg.Prefix+"id", variant.Id)
+	result = strings.ReplaceAll(result, cfg.Prefix+"name", variant.Name)
+	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.Appearance)
+	result = strings.ReplaceAll(result, cfg.Prefix+"appearance", variant.Appearance)
+	result = strings.ReplaceAll(result, cfg.Prefix+"description", variant.Description)
 
 	// Replace accent variables
 	if accent != "" {
 		result = strings.ReplaceAll(result, cfg.Prefix+"accentname", accent)
 		result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+accent)
 
-		if color, ok := variant.colors[accent]; ok && color.On != "" {
+		if color, ok := variant.Colors.Get(accent); ok && color.On != "" {
 			result = strings.ReplaceAll(result, cfg.Prefix+"onaccent", cfg.Prefix+color.On)
 		}
 	}
 
 	// Replace colors and handle alpha variants
-	for colorName, color := range variant.colors {
+	for colorName, color := range variant.Colors.Iter() {
 		varName := cfg.Prefix + colorName
 
 		// Handle alpha variants (e.g. $base/50)
@@ -168,7 +168,7 @@ func processTemplate(content string, cfg *Config, variant Variant, accent string
 			return match
 		}
 
-		switch variant.id {
+		switch variant.Id {
 		case "rose-pine":
 			return parts[1]
 		case "rose-pine-moon":
@@ -183,16 +183,16 @@ func processTemplate(content string, cfg *Config, variant Variant, accent string
 	return result
 }
 
-func getVariant(create string) Variant {
+func getVariant(create string) VariantMeta {
 	switch create {
 	case "main":
-		return MainVariant
+		return MainVariantMeta
 	case "moon":
-		return MoonVariant
+		return MoonVariantMeta
 	case "dawn":
-		return DawnVariant
+		return DawnVariantMeta
 	default:
-		return MainVariant
+		return MainVariantMeta
 	}
 }
 
@@ -231,25 +231,25 @@ func writeFile(outputPath string, content []byte) error {
 	return os.WriteFile(outputPath, content, 0644)
 }
 
-func buildOutputPath(cfg *Config, templatePath string, variant Variant, accent string) string {
+func buildOutputPath(cfg *Config, templatePath string, variant VariantMeta, accent string) string {
 	ext := filepath.Ext(templatePath)
 	var outputFile, outputDir string
 
 	if accent != "" {
-		outputDir = filepath.Join(cfg.Output, variant.id)
-		outputFile = variant.id + "-" + accent + ext
+		outputDir = filepath.Join(cfg.Output, variant.Id)
+		outputFile = variant.Id + "-" + accent + ext
 	} else {
 		outputDir = cfg.Output
-		outputFile = variant.id + ext
+		outputFile = variant.Id + ext
 	}
 
 	// Handle directory templates
 	if templateInfo, err := os.Stat(cfg.Template); err == nil && templateInfo.IsDir() {
 		dir, _ := strings.CutPrefix(filepath.Dir(templatePath), filepath.Clean(cfg.Template))
 		if accent != "" {
-			outputDir = filepath.Join(cfg.Output, accent, variant.id) + dir
+			outputDir = filepath.Join(cfg.Output, accent, variant.Id) + dir
 		} else {
-			outputDir = filepath.Join(cfg.Output, variant.id) + dir
+			outputDir = filepath.Join(cfg.Output, variant.Id) + dir
 		}
 		outputFile = filepath.Base(templatePath)
 	}
