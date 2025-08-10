@@ -15,7 +15,7 @@
 
 ## About
 
-Bloom is an opinionated theme generated, matching the Rosé Pine style guide.
+Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
 ## Install
 
