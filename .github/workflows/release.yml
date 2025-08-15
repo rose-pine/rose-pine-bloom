@@ -40,10 +40,12 @@ jobs:
           go-version: 1.24.4
       - name: Build
         run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG_NAME#v}
           mkdir -p dist
           ext=""
           if [ "${{ matrix.os }}" = "windows" ]; then ext=".exe"; fi
-          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -o dist/${FILENAME}${ext}
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -ldflags="-X github.com/rose-pine/rose-pine-bloom/version.Version=$VERSION" -o dist/${FILENAME}${ext}
       - name: Upload to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

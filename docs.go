@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/rose-pine/rose-pine-bloom/version"
 )
 
 const (
@@ -26,10 +28,9 @@ func ensureReadmeWithBuildCommand(cmd string) error {
 	}
 	contentStr := string(content)
 
-	version := getCurrentVersion()
 	versionSuffix := ""
-	if version != "" {
-		versionSuffix = "@" + version
+	if version.Version != "" {
+		versionSuffix = "@" + version.Version
 	}
 
 	section := fmt.Sprintf("%s\nThis theme was built using [rose-pine-bloom](https://github.com/rose-pine/rose-pine-bloom):\n\n```sh\n%s\n```\n\nInstall via [goblin](https://goblin.run):\n\n```sh\ncurl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom%s | sh\n```\n%s", startMarker, cmd, versionSuffix, endMarker)

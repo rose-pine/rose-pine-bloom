@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
+	"github.com/rose-pine/rose-pine-bloom/version"
 )
 
 type format struct {
@@ -79,7 +79,7 @@ func helpText() string {
     $ bloom --format hsl --output ./themes template.json
     $ bloom --create dawn my-theme.toml
 
-`, getCurrentVersion(), formatsTable())
+`, version.Version, formatsTable())
 }
 
 func printHelp() {
@@ -114,7 +114,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Println("bloom ", getCurrentVersion())
+		fmt.Println("bloom ", version.Version)
 		os.Exit(0)
 	}
 
@@ -189,15 +189,4 @@ func findTemplate(args []string) (string, error) {
 	default:
 		return "", fmt.Errorf("multiple positional arguments detected, ensure all flags come before the template")
 	}
-}
-
-func getCurrentVersion() string {
-	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
-	output, err := cmd.Output()
-	if err != nil {
-		return ""
-	}
-
-	version := strings.TrimSpace(string(output))
-	return version
 }
