@@ -1,15 +1,15 @@
-.Phony: all
+.PHONY: all
 all: docs build
 
-.Phony: build
+.PHONY: build
 build:
 	go build -o bloom .
 
-.Phony: docs
+.PHONY: docs
 docs:
 	./script/update-readme-help.sh
 
-.Phony: test
+.PHONY: test
 test:
 	go test ./...
 
