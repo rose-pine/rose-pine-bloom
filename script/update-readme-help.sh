@@ -1,30 +1,22 @@
 #!/usr/bin/env sh
 
-set -e
+set -e -o pipefail
 
 cd "$(dirname "$0")/.."
 
 README="README.md"
-BINARY="./bloom"
-HELP_TMP="$(mktemp)"
 
-if [ ! -x "$BINARY" ]; then
-    echo "Building $BINARY..."
-    go build -o $BINARY .
-fi
+HELP=$(go run . --help 2>&1)
 
-echo "\$ $BINARY --help" >"$HELP_TMP"
-$BINARY --help >>"$HELP_TMP" 2>&1
-
-awk -v helpfile="$HELP_TMP" '
+awk -v "helptext=$HELP" '
     BEGIN { in_block=0 }
     /<!-- HELP_START -->/ {
         print;
         print "<!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->";
         print "";
         print "```";
-        while ((getline line < helpfile) > 0) print line;
-        close(helpfile);
+        print "$ bloom --help";
+        print helptext;
         print "```";
         print "";
         in_block=1;
@@ -33,7 +25,5 @@ awk -v helpfile="$HELP_TMP" '
     /<!-- HELP_END -->/ { in_block=0 }
     !in_block
 ' "$README" >"${README}.tmp" && mv "${README}.tmp" "$README"
-
-rm "$HELP_TMP"
 
 echo "✓ updated $README with latest help output"

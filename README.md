@@ -31,7 +31,7 @@ Start by creating a template file. This will look similar to your desired theme 
 <!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
 
 ```
-$ ./bloom --help
+$ bloom --help
 
   🌱 Bloom v2.2.0 - The Rosé Pine theme generator
 
@@ -73,7 +73,6 @@ $ ./bloom --help
     $ bloom template.yaml
     $ bloom --format hsl --output ./themes template.json
     $ bloom --create dawn my-theme.toml
-
 ```
 
 <!-- HELP_END -->
