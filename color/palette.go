@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"iter"
@@ -38,215 +38,215 @@ type VariantMeta struct {
 	Colors      *Palette
 }
 
-var accents = []string{
+var Accents = []string{
 	"love", "gold", "rose", "pine", "foam", "iris",
 }
 
 var (
 	MainPalette = Palette{
 		Base: Color{
-			HSL: hsl(249, 22, 12),
-			RGB: rgb(25, 23, 36),
+			HSL: Hsl(249, 22, 12),
+			RGB: Rgb(25, 23, 36),
 		},
 		Surface: Color{
-			HSL: hsl(247, 23, 15),
-			RGB: rgb(31, 29, 46),
+			HSL: Hsl(247, 23, 15),
+			RGB: Rgb(31, 29, 46),
 		},
 		Overlay: Color{
-			HSL: hsl(245, 25, 18),
-			RGB: rgb(38, 35, 58),
+			HSL: Hsl(245, 25, 18),
+			RGB: Rgb(38, 35, 58),
 		},
 		Muted: Color{
-			HSL: hsl(249, 12, 47),
-			RGB: rgb(110, 106, 134),
+			HSL: Hsl(249, 12, 47),
+			RGB: Rgb(110, 106, 134),
 		},
 		Subtle: Color{
-			HSL: hsl(248, 15, 61),
-			RGB: rgb(144, 140, 170),
+			HSL: Hsl(248, 15, 61),
+			RGB: Rgb(144, 140, 170),
 		},
 		Text: Color{
-			HSL: hsl(245, 50, 91),
-			RGB: rgb(224, 222, 244),
+			HSL: Hsl(245, 50, 91),
+			RGB: Rgb(224, 222, 244),
 		},
 		Love: Color{
-			HSL: hsl(343, 76, 68),
-			RGB: rgb(235, 111, 146),
+			HSL: Hsl(343, 76, 68),
+			RGB: Rgb(235, 111, 146),
 			On:  "text",
 		},
 		Gold: Color{
-			HSL: hsl(35, 88, 72),
-			RGB: rgb(246, 193, 119),
+			HSL: Hsl(35, 88, 72),
+			RGB: Rgb(246, 193, 119),
 			On:  "surface",
 		},
 		Rose: Color{
-			HSL: hsl(2, 55, 83),
-			RGB: rgb(235, 188, 186),
+			HSL: Hsl(2, 55, 83),
+			RGB: Rgb(235, 188, 186),
 			On:  "surface",
 		},
 		Pine: Color{
-			HSL: hsl(197, 49, 38),
-			RGB: rgb(49, 116, 143),
+			HSL: Hsl(197, 49, 38),
+			RGB: Rgb(49, 116, 143),
 			On:  "text",
 		},
 		Foam: Color{
-			HSL: hsl(189, 43, 73),
-			RGB: rgb(156, 207, 216),
+			HSL: Hsl(189, 43, 73),
+			RGB: Rgb(156, 207, 216),
 			On:  "surface",
 		},
 		Iris: Color{
-			HSL: hsl(267, 57, 78),
-			RGB: rgb(196, 167, 231),
+			HSL: Hsl(267, 57, 78),
+			RGB: Rgb(196, 167, 231),
 			On:  "surface",
 		},
 		HighlightLow: Color{
-			HSL: hsl(244, 18, 15),
-			RGB: rgb(33, 32, 46),
+			HSL: Hsl(244, 18, 15),
+			RGB: Rgb(33, 32, 46),
 		},
 		HighlightMed: Color{
-			HSL: hsl(247, 15, 28),
-			RGB: rgb(64, 61, 82),
+			HSL: Hsl(247, 15, 28),
+			RGB: Rgb(64, 61, 82),
 		},
 		HighlightHigh: Color{
-			HSL: hsl(245, 13, 36),
-			RGB: rgb(82, 79, 103),
+			HSL: Hsl(245, 13, 36),
+			RGB: Rgb(82, 79, 103),
 		},
 	}
 
 	MoonPalette = Palette{
 		Base: Color{
-			HSL: hsl(246, 24, 17),
-			RGB: rgb(35, 33, 54),
+			HSL: Hsl(246, 24, 17),
+			RGB: Rgb(35, 33, 54),
 		},
 		Surface: Color{
-			HSL: hsl(248, 24, 20),
-			RGB: rgb(42, 39, 63),
+			HSL: Hsl(248, 24, 20),
+			RGB: Rgb(42, 39, 63),
 		},
 		Overlay: Color{
-			HSL: hsl(248, 21, 26),
-			RGB: rgb(57, 53, 82),
+			HSL: Hsl(248, 21, 26),
+			RGB: Rgb(57, 53, 82),
 		},
 		Muted: Color{
-			HSL: hsl(249, 12, 47),
-			RGB: rgb(110, 106, 134),
+			HSL: Hsl(249, 12, 47),
+			RGB: Rgb(110, 106, 134),
 		},
 		Subtle: Color{
-			HSL: hsl(248, 15, 61),
-			RGB: rgb(144, 140, 170),
+			HSL: Hsl(248, 15, 61),
+			RGB: Rgb(144, 140, 170),
 		},
 		Text: Color{
-			HSL: hsl(245, 50, 91),
-			RGB: rgb(224, 222, 244),
+			HSL: Hsl(245, 50, 91),
+			RGB: Rgb(224, 222, 244),
 		},
 		Love: Color{
-			HSL: hsl(343, 76, 68),
-			RGB: rgb(235, 111, 146),
+			HSL: Hsl(343, 76, 68),
+			RGB: Rgb(235, 111, 146),
 			On:  "text",
 		},
 		Gold: Color{
-			HSL: hsl(35, 88, 72),
-			RGB: rgb(246, 193, 119),
+			HSL: Hsl(35, 88, 72),
+			RGB: Rgb(246, 193, 119),
 			On:  "surface",
 		},
 		Rose: Color{
-			HSL: hsl(2, 66, 75),
-			RGB: rgb(234, 154, 151),
+			HSL: Hsl(2, 66, 75),
+			RGB: Rgb(234, 154, 151),
 			On:  "surface",
 		},
 		Pine: Color{
-			HSL: hsl(197, 48, 47),
-			RGB: rgb(62, 143, 176),
+			HSL: Hsl(197, 48, 47),
+			RGB: Rgb(62, 143, 176),
 			On:  "text",
 		},
 		Foam: Color{
-			HSL: hsl(189, 43, 73),
-			RGB: rgb(156, 207, 216),
+			HSL: Hsl(189, 43, 73),
+			RGB: Rgb(156, 207, 216),
 			On:  "surface",
 		},
 		Iris: Color{
-			HSL: hsl(267, 57, 78),
-			RGB: rgb(196, 167, 231),
+			HSL: Hsl(267, 57, 78),
+			RGB: Rgb(196, 167, 231),
 			On:  "surface",
 		},
 		HighlightLow: Color{
-			HSL: hsl(245, 22, 20),
-			RGB: rgb(42, 40, 62),
+			HSL: Hsl(245, 22, 20),
+			RGB: Rgb(42, 40, 62),
 		},
 		HighlightMed: Color{
-			HSL: hsl(247, 16, 30),
-			RGB: rgb(68, 65, 90),
+			HSL: Hsl(247, 16, 30),
+			RGB: Rgb(68, 65, 90),
 		},
 		HighlightHigh: Color{
-			HSL: hsl(249, 15, 38),
-			RGB: rgb(86, 82, 110),
+			HSL: Hsl(249, 15, 38),
+			RGB: Rgb(86, 82, 110),
 		},
 	}
 
 	DawnPalette = Palette{
 		Base: Color{
-			HSL: hsl(32, 57, 95),
-			RGB: rgb(250, 244, 237),
+			HSL: Hsl(32, 57, 95),
+			RGB: Rgb(250, 244, 237),
 		},
 		Surface: Color{
-			HSL: hsl(35, 100, 98),
-			RGB: rgb(255, 250, 243),
+			HSL: Hsl(35, 100, 98),
+			RGB: Rgb(255, 250, 243),
 		},
 		Overlay: Color{
-			HSL: hsl(25, 36, 92),
-			RGB: rgb(242, 233, 225),
+			HSL: Hsl(25, 36, 92),
+			RGB: Rgb(242, 233, 225),
 		},
 		Muted: Color{
-			HSL: hsl(254, 9, 61),
-			RGB: rgb(152, 147, 165),
+			HSL: Hsl(254, 9, 61),
+			RGB: Rgb(152, 147, 165),
 		},
 		Subtle: Color{
-			HSL: hsl(249, 13, 52),
-			RGB: rgb(121, 117, 147),
+			HSL: Hsl(249, 13, 52),
+			RGB: Rgb(121, 117, 147),
 		},
 		Text: Color{
-			HSL: hsl(248, 19, 40),
-			RGB: rgb(87, 82, 121),
+			HSL: Hsl(248, 19, 40),
+			RGB: Rgb(87, 82, 121),
 		},
 		Love: Color{
-			HSL: hsl(343, 35, 55),
-			RGB: rgb(180, 99, 122),
+			HSL: Hsl(343, 35, 55),
+			RGB: Rgb(180, 99, 122),
 			On:  "surface",
 		},
 		Gold: Color{
-			HSL: hsl(35, 81, 56),
-			RGB: rgb(234, 157, 52),
+			HSL: Hsl(35, 81, 56),
+			RGB: Rgb(234, 157, 52),
 			On:  "surface",
 		},
 		Rose: Color{
-			HSL: hsl(2, 55, 67),
-			RGB: rgb(215, 130, 126),
+			HSL: Hsl(2, 55, 67),
+			RGB: Rgb(215, 130, 126),
 			On:  "surface",
 		},
 		Pine: Color{
-			HSL: hsl(197, 53, 34),
-			RGB: rgb(40, 105, 131),
+			HSL: Hsl(197, 53, 34),
+			RGB: Rgb(40, 105, 131),
 			On:  "surface",
 		},
 		Foam: Color{
-			HSL: hsl(189, 30, 48),
-			RGB: rgb(86, 148, 159),
+			HSL: Hsl(189, 30, 48),
+			RGB: Rgb(86, 148, 159),
 			On:  "surface",
 		},
 		Iris: Color{
-			HSL: hsl(267, 22, 57),
-			RGB: rgb(144, 122, 169),
+			HSL: Hsl(267, 22, 57),
+			RGB: Rgb(144, 122, 169),
 			On:  "surface",
 		},
 		HighlightLow: Color{
-			HSL: hsl(25, 35, 93),
-			RGB: rgb(244, 237, 232),
+			HSL: Hsl(25, 35, 93),
+			RGB: Rgb(244, 237, 232),
 		},
 		HighlightMed: Color{
-			HSL: hsl(10, 9, 86),
-			RGB: rgb(223, 218, 217),
+			HSL: Hsl(10, 9, 86),
+			RGB: Rgb(223, 218, 217),
 		},
 		HighlightHigh: Color{
-			HSL: hsl(315, 4, 80),
-			RGB: rgb(206, 202, 205),
+			HSL: Hsl(315, 4, 80),
+			RGB: Rgb(206, 202, 205),
 		},
 	}
 )
@@ -279,7 +279,7 @@ var (
 	}
 )
 
-var variants = []VariantMeta{
+var Variants = []VariantMeta{
 	MainVariantMeta,
 	MoonVariantMeta,
 	DawnVariantMeta,

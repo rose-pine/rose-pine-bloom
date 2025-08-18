@@ -1,4 +1,4 @@
-package main
+package builder
 
 import (
 	"bytes"
@@ -9,11 +9,14 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/rose-pine/rose-pine-bloom/color"
+	"github.com/rose-pine/rose-pine-bloom/config"
 )
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func Build(cfg *Config) error {
+func Build(cfg *config.Config) error {
 	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -25,7 +28,7 @@ func Build(cfg *Config) error {
 	return generateThemes(cfg)
 }
 
-func generateThemes(cfg *Config) error {
+func generateThemes(cfg *config.Config) error {
 	templates, err := getTemplateFiles(cfg.Template)
 	if err != nil {
 		return err
@@ -39,9 +42,9 @@ func generateThemes(cfg *Config) error {
 
 		hasAccent := strings.Contains(string(content), cfg.Prefix+"accent")
 
-		for _, variant := range variants {
+		for _, variant := range color.Variants {
 			if hasAccent {
-				for _, accent := range accents {
+				for _, accent := range color.Accents {
 					if err := generateThemeFile(cfg, templatePath, content, variant, accent); err != nil {
 						return err
 					}
@@ -57,7 +60,7 @@ func generateThemes(cfg *Config) error {
 	return nil
 }
 
-func generateThemeFile(cfg *Config, templatePath string, content []byte, variant VariantMeta, accent string) error {
+func generateThemeFile(cfg *config.Config, templatePath string, content []byte, variant color.VariantMeta, accent string) error {
 	result := processTemplate(string(content), cfg, variant, accent)
 
 	if filepath.Ext(templatePath) == ".json" {
@@ -72,7 +75,7 @@ func generateThemeFile(cfg *Config, templatePath string, content []byte, variant
 	return writeFile(outputPath, []byte(result))
 }
 
-func createTemplates(cfg *Config) error {
+func createTemplates(cfg *config.Config) error {
 	files, err := getTemplateFiles(cfg.Template)
 	if err != nil {
 		return err
@@ -90,8 +93,8 @@ func createTemplates(cfg *Config) error {
 		matchFound := false
 
 		// Replace colors with variables
-		for colorName, color := range variant.Colors.Iter() {
-			colorValue := formatColor(color, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
+		for colorName, c := range variant.Colors.Iter() {
+			colorValue := color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
 			before := result
 			result = strings.ReplaceAll(result, colorValue, cfg.Prefix+colorName)
 			if before != result {
@@ -106,7 +109,7 @@ func createTemplates(cfg *Config) error {
 
 		if !matchFound {
 			fmt.Printf("\033[33mNo matches for specified format (%s). Available formats:\n\033[0m", cfg.Format)
-			printFormatsTable()
+			color.PrintFormatsTable()
 		}
 
 		outputFile := "template" + filepath.Ext(file)
@@ -123,7 +126,7 @@ func createTemplates(cfg *Config) error {
 	return nil
 }
 
-func processTemplate(content string, cfg *Config, variant VariantMeta, accent string) string {
+func processTemplate(content string, cfg *config.Config, variant color.VariantMeta, accent string) string {
 	result := content
 
 	// Replace metadata
@@ -144,21 +147,21 @@ func processTemplate(content string, cfg *Config, variant VariantMeta, accent st
 	}
 
 	// Replace colors and handle alpha variants
-	for colorName, color := range variant.Colors.Iter() {
+	for colorName, c := range variant.Colors.Iter() {
 		varName := cfg.Prefix + colorName
 
 		// Handle alpha variants (e.g. $base/50)
 		alphaRegex := regexp.MustCompile(regexp.QuoteMeta(varName) + `/(\d+)`)
 		result = alphaRegex.ReplaceAllStringFunc(result, func(match string) string {
 			alpha, _ := strconv.ParseFloat(alphaRegex.FindStringSubmatch(match)[1], 64)
-			colorCopy := *color
+			colorCopy := *c
 			normalizedAlpha := alpha / 100
 			colorCopy.Alpha = &normalizedAlpha
-			return formatColor(&colorCopy, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
+			return color.FormatColor(&colorCopy, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
 		})
 
 		// Replace regular color variable
-		result = strings.ReplaceAll(result, varName, formatColor(color, ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
+		result = strings.ReplaceAll(result, varName, color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
 	}
 
 	// Process variant-specific values $(main|moon|dawn)
@@ -183,16 +186,16 @@ func processTemplate(content string, cfg *Config, variant VariantMeta, accent st
 	return result
 }
 
-func getVariant(create string) VariantMeta {
+func getVariant(create string) color.VariantMeta {
 	switch create {
 	case "main":
-		return MainVariantMeta
+		return color.MainVariantMeta
 	case "moon":
-		return MoonVariantMeta
+		return color.MoonVariantMeta
 	case "dawn":
-		return DawnVariantMeta
+		return color.DawnVariantMeta
 	default:
-		return MainVariantMeta
+		return color.MainVariantMeta
 	}
 }
 
@@ -231,7 +234,7 @@ func writeFile(outputPath string, content []byte) error {
 	return os.WriteFile(outputPath, content, 0644)
 }
 
-func buildOutputPath(cfg *Config, templatePath string, variant VariantMeta, accent string) string {
+func buildOutputPath(cfg *config.Config, templatePath string, variant color.VariantMeta, accent string) string {
 	ext := filepath.Ext(templatePath)
 	var outputFile, outputDir string
 

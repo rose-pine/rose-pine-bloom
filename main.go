@@ -8,48 +8,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"text/tabwriter"
+
+	"github.com/rose-pine/rose-pine-bloom/builder"
+	"github.com/rose-pine/rose-pine-bloom/color"
+	"github.com/rose-pine/rose-pine-bloom/config"
+	"github.com/rose-pine/rose-pine-bloom/docs"
 )
-
-type format struct {
-	Name    string
-	Example string
-}
-
-var formats = [...]format{
-	{Name: "hex", Example: "#ebbcba"},
-	{Name: "hex --plain", Example: "ebbcba"},
-
-	{Name: "hsl", Example: "hsl(2, 55%, 83%)"},
-	{Name: "hsl --plain", Example: "2, 55%, 83%"},
-	{Name: "hsl-css", Example: "hsl(2deg 55% 83%)"},
-	{Name: "hsl-css --plain", Example: "2deg 55% 83%"},
-	{Name: "hsl-array", Example: "[2, 0.55, 0.83]"},
-	{Name: "hsl-array --plain", Example: "2, 0.55, 0.83"},
-
-	{Name: "rgb", Example: "rgb(235, 188, 186)"},
-	{Name: "rgb --plain", Example: "235, 188, 186"},
-	{Name: "rgb-css", Example: "rgb(235 188 186)"},
-	{Name: "rgb-css --plain", Example: "235 188 186"},
-	{Name: "rgb-array", Example: "[235, 188, 186]"},
-	{Name: "rgb-array --plain", Example: "235, 188, 186"},
-
-	{Name: "ansi", Example: "235;188;186"},
-}
-
-func formatsTable() string {
-	var sb strings.Builder
-	w := tabwriter.NewWriter(&sb, 1, 1, 1, ' ', 0)
-	for _, f := range formats {
-		fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
-	}
-	w.Flush()
-	return sb.String()
-}
-
-func printFormatsTable() {
-	fmt.Fprint(os.Stdout, formatsTable())
-}
 
 func helpText() string {
 	return fmt.Sprintf(`
@@ -79,7 +43,7 @@ func helpText() string {
     $ bloom --format hsl --output ./themes template.json
     $ bloom --create dawn my-theme.toml
 
-`, getCurrentVersion(), formatsTable())
+`, getCurrentVersion(), color.FormatsTable())
 }
 
 func printHelp() {
@@ -87,7 +51,7 @@ func printHelp() {
 }
 
 func main() {
-	cfg := &Config{}
+	cfg := &config.Config{}
 
 	flag.StringVar(&cfg.Output, "o", "dist", "")
 	flag.StringVar(&cfg.Output, "output", "dist", "")
@@ -138,16 +102,16 @@ func main() {
 	cfg.Commas = !*noCommas
 	cfg.Spaces = !*noSpaces
 
-	if err := Build(cfg); err != nil {
+	if err := builder.Build(cfg); err != nil {
 		log.Fatal(err)
 	}
 
 	buildCmd := "bloom " + strings.Join(os.Args[1:], " ")
-	if err := ensureReadmeWithBuildCommand(buildCmd); err != nil {
+	if err := docs.EnsureReadmeWithBuildCommand(buildCmd, getCurrentVersion()); err != nil {
 		fmt.Println("unable to update README:", err)
 	}
 
-	if err := ensureLicense(); err != nil {
+	if err := docs.EnsureLicense(); err != nil {
 		fmt.Println("unable to update LICENSE:", err)
 	}
 }

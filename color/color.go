@@ -1,15 +1,4 @@
-package main
-
-type Config struct {
-	Template string
-	Output   string
-	Prefix   string
-	Format   string
-	Create   string
-	Plain    bool
-	Commas   bool
-	Spaces   bool
-}
+package color
 
 type ColorFormat string
 
