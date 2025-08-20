@@ -57,14 +57,6 @@ func PrintFormatsTable() {
 	fmt.Fprint(os.Stdout, FormatsTable())
 }
 
-func Rgb(r uint8, g uint8, b uint8) RGB {
-	return RGB{r, g, b}
-}
-
-func Hsl(h uint16, s uint8, l uint8) HSL {
-	return HSL{h, s, l}
-}
-
 type Color struct {
 	HSL   HSL      `json:"hsl"`
 	RGB   RGB      `json:"rgb"`

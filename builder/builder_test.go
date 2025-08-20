@@ -64,8 +64,8 @@ var testConfig = config.Config{
 
 // testColor provides a standard color
 var testColor = &color.Color{
-	HSL: color.Hsl(2, 55, 83),
-	RGB: color.Rgb(235, 188, 186),
+	HSL: color.HSL{2, 55, 83},
+	RGB: color.RGB{235, 188, 186},
 }
 
 // testTemplate provides a standard template
