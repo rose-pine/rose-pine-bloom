@@ -15,3 +15,14 @@ const (
 
 	FormatAnsi ColorFormat = "ansi"
 )
+
+var AllFormats = []string{
+	string(FormatHex),
+	string(FormatHSL),
+	string(FormatHSLCSS),
+	string(FormatHSLArray),
+	string(FormatRGB),
+	string(FormatRGBCSS),
+	string(FormatRGBArray),
+	string(FormatAnsi),
+}

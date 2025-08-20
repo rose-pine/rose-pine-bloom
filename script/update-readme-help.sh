@@ -6,6 +6,7 @@ cd "$(dirname "$0")/.."
 
 README="README.md"
 
+# TODO this does not work now
 HELP=$(go run . --help 2>&1)
 
 awk -v "helptext=$HELP" '

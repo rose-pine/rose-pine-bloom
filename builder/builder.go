@@ -16,19 +16,42 @@ import (
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func Build(cfg *config.Config) error {
+func FindTemplate() (string, error) {
+	files, err := os.ReadDir(".")
+	if err != nil {
+		return "", fmt.Errorf("failed to read current directory: %w", err)
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		name := file.Name()
+		base := name[:len(name)-len(filepath.Ext(name))]
+		if base == "template" {
+			return name, nil
+		}
+	}
+	return "", fmt.Errorf("unable to find template file")
+}
+
+func BuildTemplate(cfg *config.BuildTemplateConfig) error {
 	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
-	if cfg.Create != "" {
-		return createTemplates(cfg)
+	return createTemplates(cfg)
+}
+
+func Build(cfg *config.BuildConfig) error {
+	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
 	return generateThemes(cfg)
 }
 
-func generateThemes(cfg *config.Config) error {
+func generateThemes(cfg *config.BuildConfig) error {
 	templates, err := getTemplateFiles(cfg.Template)
 	if err != nil {
 		return err
@@ -60,7 +83,7 @@ func generateThemes(cfg *config.Config) error {
 	return nil
 }
 
-func generateThemeFile(cfg *config.Config, templatePath string, content []byte, variant color.VariantMeta, accent string) error {
+func generateThemeFile(cfg *config.BuildConfig, templatePath string, content []byte, variant color.VariantMeta, accent string) error {
 	result := processTemplate(string(content), cfg, variant, accent)
 
 	if filepath.Ext(templatePath) == ".json" {
@@ -75,13 +98,13 @@ func generateThemeFile(cfg *config.Config, templatePath string, content []byte, 
 	return writeFile(outputPath, []byte(result))
 }
 
-func createTemplates(cfg *config.Config) error {
-	files, err := getTemplateFiles(cfg.Template)
+func createTemplates(cfg *config.BuildTemplateConfig) error {
+	files, err := getTemplateFiles(cfg.Input)
 	if err != nil {
 		return err
 	}
 
-	variant := getVariant(cfg.Create)
+	variant := getVariant(cfg.Variant)
 
 	for _, file := range files {
 		content, err := os.ReadFile(file)
@@ -109,7 +132,11 @@ func createTemplates(cfg *config.Config) error {
 
 		if !matchFound {
 			fmt.Printf("\033[33mNo matches for specified format (%s). Available formats:\n\033[0m", cfg.Format)
-			color.PrintFormatsTable()
+			table, err := color.FormatsTable()
+			if err != nil {
+				return fmt.Errorf("failed to get formats table: %w", err)
+			}
+			fmt.Println(table)
 		}
 
 		outputFile := "template" + filepath.Ext(file)
@@ -126,7 +153,7 @@ func createTemplates(cfg *config.Config) error {
 	return nil
 }
 
-func processTemplate(content string, cfg *config.Config, variant color.VariantMeta, accent string) string {
+func processTemplate(content string, cfg *config.BuildConfig, variant color.VariantMeta, accent string) string {
 	result := content
 
 	// Replace metadata
@@ -234,7 +261,7 @@ func writeFile(outputPath string, content []byte) error {
 	return os.WriteFile(outputPath, content, 0644)
 }
 
-func buildOutputPath(cfg *config.Config, templatePath string, variant color.VariantMeta, accent string) string {
+func buildOutputPath(cfg *config.BuildConfig, templatePath string, variant color.VariantMeta, accent string) string {
 	ext := filepath.Ext(templatePath)
 	var outputFile, outputDir string
 
