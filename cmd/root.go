@@ -10,7 +10,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "bloom",
 	Short: "The Rosé Pine theme generator",
-	Long: `The Rosé Pine theme generator.`,
+	Long:  `The Rosé Pine theme generator.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

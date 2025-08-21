@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"slices"
 	"strings"
 
@@ -18,7 +19,11 @@ var (
 )
 
 func formatFlagUsage() string {
-	table, _ := color.FormatsTable()
+	table, err := color.FormatsTable()
+	if err != nil {
+		fmt.Printf("Error generating format table: %v", err)
+		os.Exit(1)
+	}
 	return fmt.Sprintf("Color output format:\n%s", table)
 }
 
