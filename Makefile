@@ -13,3 +13,7 @@ docs:
 test:
 	go test ./...
 
+.PHONY: fmt
+fmt:
+	go fmt ./...
+

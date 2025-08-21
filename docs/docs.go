@@ -1,4 +1,4 @@
-package main
+package docs
 
 import (
 	"errors"
@@ -15,7 +15,7 @@ const (
 	endMarker   = "<!-- BLOOM_BUILD_END -->"
 )
 
-func ensureReadmeWithBuildCommand(cmd string) error {
+func EnsureReadmeWithBuildCommand(cmd, version string) error {
 	fileName, err := findAndNormalizeFile("README.md")
 	if err != nil {
 		return err
@@ -26,7 +26,6 @@ func ensureReadmeWithBuildCommand(cmd string) error {
 	}
 	contentStr := string(content)
 
-	version := getCurrentVersion()
 	versionSuffix := ""
 	if version != "" {
 		versionSuffix = "@" + version
@@ -49,7 +48,7 @@ func ensureReadmeWithBuildCommand(cmd string) error {
 	return os.WriteFile(fileName, []byte(contentStr), 0644)
 }
 
-func ensureLicense() error {
+func EnsureLicense() error {
 	fileName, err := findAndNormalizeFile("LICENSE")
 	if err != nil {
 		return err

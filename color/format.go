@@ -1,8 +1,11 @@
-package main
+package color
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
+	"text/tabwriter"
 )
 
 type RGB struct {
@@ -14,12 +17,44 @@ type HSL struct {
 	S, L uint8
 }
 
-func rgb(r uint8, g uint8, b uint8) RGB {
-	return RGB{r, g, b}
+type format struct {
+	Name    string
+	Example string
 }
 
-func hsl(h uint16, s uint8, l uint8) HSL {
-	return HSL{h, s, l}
+var formats = [...]format{
+	{Name: "hex", Example: "#ebbcba"},
+	{Name: "hex --plain", Example: "ebbcba"},
+
+	{Name: "hsl", Example: "hsl(2, 55%, 83%)"},
+	{Name: "hsl --plain", Example: "2, 55%, 83%"},
+	{Name: "hsl-css", Example: "hsl(2deg 55% 83%)"},
+	{Name: "hsl-css --plain", Example: "2deg 55% 83%"},
+	{Name: "hsl-array", Example: "[2, 0.55, 0.83]"},
+	{Name: "hsl-array --plain", Example: "2, 0.55, 0.83"},
+
+	{Name: "rgb", Example: "rgb(235, 188, 186)"},
+	{Name: "rgb --plain", Example: "235, 188, 186"},
+	{Name: "rgb-css", Example: "rgb(235 188 186)"},
+	{Name: "rgb-css --plain", Example: "235 188 186"},
+	{Name: "rgb-array", Example: "[235, 188, 186]"},
+	{Name: "rgb-array --plain", Example: "235, 188, 186"},
+
+	{Name: "ansi", Example: "235;188;186"},
+}
+
+func FormatsTable() string {
+	var sb strings.Builder
+	w := tabwriter.NewWriter(&sb, 1, 1, 1, ' ', 0)
+	for _, f := range formats {
+		fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
+	}
+	w.Flush()
+	return sb.String()
+}
+
+func PrintFormatsTable() {
+	fmt.Fprint(os.Stdout, FormatsTable())
 }
 
 type Color struct {
@@ -43,7 +78,7 @@ func formatUint[T ~uint8 | ~uint16](n T) string {
 	return strconv.FormatUint(uint64(n), 10)
 }
 
-func formatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces bool) string {
+func FormatColor(c *Color, format ColorFormat, plain bool, commas bool, spaces bool) string {
 	var b strings.Builder
 
 	writeSep := func(sep byte) {

@@ -1,10 +1,13 @@
-package main
+package builder
 
 import (
 	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/rose-pine/rose-pine-bloom/color"
+	"github.com/rose-pine/rose-pine-bloom/config"
 )
 
 func setupTest(t *testing.T) (string, func()) {
@@ -15,7 +18,7 @@ func setupTest(t *testing.T) (string, func()) {
 	return tmpDir, func() { os.RemoveAll(tmpDir) }
 }
 
-func buildFromTemplate(t *testing.T, template string, cfg *Config) {
+func buildFromTemplate(t *testing.T, template string, cfg *config.Config) {
 	templatePath := filepath.Join(cfg.Output, "template.json")
 	if err := os.WriteFile(templatePath, []byte(template), 0644); err != nil {
 		t.Fatal(err)
@@ -49,7 +52,7 @@ func assertJSONField(t *testing.T, result map[string]any, field, want string) {
 }
 
 // testConfig provides standard config
-var testConfig = Config{
+var testConfig = config.Config{
 	Template: "",
 	Output:   "",
 	Prefix:   "$",
@@ -60,9 +63,9 @@ var testConfig = Config{
 }
 
 // testColor provides a standard color
-var testColor = &Color{
-	HSL: hsl(2, 55, 83),
-	RGB: rgb(235, 188, 186),
+var testColor = &color.Color{
+	HSL: color.HSL{2, 55, 83},
+	RGB: color.RGB{235, 188, 186},
 }
 
 // testTemplate provides a standard template
@@ -118,51 +121,51 @@ func TestColorFormatting(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		format ColorFormat
+		format color.ColorFormat
 		plain  bool
 		commas bool
 		spaces bool
 		want   string
 	}{
-		{"hex", FormatHex, false, true, true, "#ebbcba"},
-		{"hex plain", FormatHex, true, true, true, "ebbcba"},
+		{"hex", color.FormatHex, false, true, true, "#ebbcba"},
+		{"hex plain", color.FormatHex, true, true, true, "ebbcba"},
 
-		{"hsl", FormatHSL, false, true, true, "hsl(2, 55%, 83%)"},
-		{"hsl no-commas", FormatHSL, false, false, true, "hsl(2 55% 83%)"},
-		{"hsl no-spaces", FormatHSL, false, true, false, "hsl(2,55%,83%)"},
-		{"hsl plain", FormatHSL, true, true, true, "2, 55%, 83%"},
-		{"hsl plain no-commas", FormatHSL, true, false, true, "2 55% 83%"},
-		{"hsl plain no-spaces", FormatHSL, true, true, false, "2,55%,83%"},
+		{"hsl", color.FormatHSL, false, true, true, "hsl(2, 55%, 83%)"},
+		{"hsl no-commas", color.FormatHSL, false, false, true, "hsl(2 55% 83%)"},
+		{"hsl no-spaces", color.FormatHSL, false, true, false, "hsl(2,55%,83%)"},
+		{"hsl plain", color.FormatHSL, true, true, true, "2, 55%, 83%"},
+		{"hsl plain no-commas", color.FormatHSL, true, false, true, "2 55% 83%"},
+		{"hsl plain no-spaces", color.FormatHSL, true, true, false, "2,55%,83%"},
 
-		{"hsl-array", FormatHSLArray, false, true, true, "[2, 0.55, 0.83]"},
-		{"hsl-array plain", FormatHSLArray, true, true, true, "2, 0.55, 0.83"},
-		{"hsl-array no-commas", FormatHSLArray, false, false, true, "[2 0.55 0.83]"},
-		{"hsl-array no-spaces", FormatHSLArray, false, true, false, "[2,0.55,0.83]"},
+		{"hsl-array", color.FormatHSLArray, false, true, true, "[2, 0.55, 0.83]"},
+		{"hsl-array plain", color.FormatHSLArray, true, true, true, "2, 0.55, 0.83"},
+		{"hsl-array no-commas", color.FormatHSLArray, false, false, true, "[2 0.55 0.83]"},
+		{"hsl-array no-spaces", color.FormatHSLArray, false, true, false, "[2,0.55,0.83]"},
 
-		{"hsl-css", FormatHSLCSS, false, true, true, "hsl(2deg 55% 83%)"},
-		{"hsl-css plain", FormatHSLCSS, true, true, true, "2deg 55% 83%"},
+		{"hsl-css", color.FormatHSLCSS, false, true, true, "hsl(2deg 55% 83%)"},
+		{"hsl-css plain", color.FormatHSLCSS, true, true, true, "2deg 55% 83%"},
 
-		{"rgb", FormatRGB, false, true, true, "rgb(235, 188, 186)"},
-		{"rgb no-commas", FormatRGB, false, false, true, "rgb(235 188 186)"},
-		{"rgb no-spaces", FormatRGB, false, true, false, "rgb(235,188,186)"},
-		{"rgb plain", FormatRGB, true, true, true, "235, 188, 186"},
-		{"rgb plain no-commas", FormatRGB, true, false, true, "235 188 186"},
-		{"rgb plain no-spaces", FormatRGB, true, true, false, "235,188,186"},
+		{"rgb", color.FormatRGB, false, true, true, "rgb(235, 188, 186)"},
+		{"rgb no-commas", color.FormatRGB, false, false, true, "rgb(235 188 186)"},
+		{"rgb no-spaces", color.FormatRGB, false, true, false, "rgb(235,188,186)"},
+		{"rgb plain", color.FormatRGB, true, true, true, "235, 188, 186"},
+		{"rgb plain no-commas", color.FormatRGB, true, false, true, "235 188 186"},
+		{"rgb plain no-spaces", color.FormatRGB, true, true, false, "235,188,186"},
 
-		{"rgb-array", FormatRGBArray, false, true, true, "[235, 188, 186]"},
-		{"rgb-array plain", FormatRGBArray, true, true, true, "235, 188, 186"},
-		{"rgb-array no-commas", FormatRGBArray, false, false, true, "[235 188 186]"},
-		{"rgb-array no-spaces", FormatRGBArray, false, true, false, "[235,188,186]"},
+		{"rgb-array", color.FormatRGBArray, false, true, true, "[235, 188, 186]"},
+		{"rgb-array plain", color.FormatRGBArray, true, true, true, "235, 188, 186"},
+		{"rgb-array no-commas", color.FormatRGBArray, false, false, true, "[235 188 186]"},
+		{"rgb-array no-spaces", color.FormatRGBArray, false, true, false, "[235,188,186]"},
 
-		{"rgb-css", FormatRGBCSS, false, true, true, "rgb(235 188 186)"},
-		{"rgb-css plain", FormatRGBCSS, true, true, true, "235 188 186"},
+		{"rgb-css", color.FormatRGBCSS, false, true, true, "rgb(235 188 186)"},
+		{"rgb-css plain", color.FormatRGBCSS, true, true, true, "235 188 186"},
 
-		{"ansi", FormatAnsi, false, true, true, "235;188;186"},
+		{"ansi", color.FormatAnsi, false, true, true, "235;188;186"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(testColor, tt.format, tt.plain, tt.commas, tt.spaces)
+			got := color.FormatColor(testColor, tt.format, tt.plain, tt.commas, tt.spaces)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
@@ -172,7 +175,7 @@ func TestColorFormatting(t *testing.T) {
 
 func TestAlphaFormatting(t *testing.T) {
 	alpha := 0.5
-	color := &Color{
+	c := &color.Color{
 		HSL:   testColor.HSL,
 		RGB:   testColor.RGB,
 		Alpha: &alpha,
@@ -180,37 +183,37 @@ func TestAlphaFormatting(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		format ColorFormat
+		format color.ColorFormat
 		plain  bool
 		want   string
 	}{
-		{"hex", FormatHex, false, "#ebbcba80"},
-		{"hex plain", FormatHex, true, "ebbcba80"},
+		{"hex", color.FormatHex, false, "#ebbcba80"},
+		{"hex plain", color.FormatHex, true, "ebbcba80"},
 
-		{"hsl", FormatHSL, false, "hsla(2, 55%, 83%, 0.5)"},
-		{"hsl plain", FormatHSL, true, "2, 55%, 83%, 0.5"},
+		{"hsl", color.FormatHSL, false, "hsla(2, 55%, 83%, 0.5)"},
+		{"hsl plain", color.FormatHSL, true, "2, 55%, 83%, 0.5"},
 
-		{"hsl-css", FormatHSLCSS, false, "hsl(2deg 55% 83% / 0.5)"},
-		{"hsl-css plain", FormatHSLCSS, true, "2deg 55% 83% / 0.5"},
+		{"hsl-css", color.FormatHSLCSS, false, "hsl(2deg 55% 83% / 0.5)"},
+		{"hsl-css plain", color.FormatHSLCSS, true, "2deg 55% 83% / 0.5"},
 
-		{"hsl-array", FormatHSLArray, false, "[2, 0.55, 0.83, 0.5]"},
-		{"hsl-array plain", FormatHSLArray, true, "2, 0.55, 0.83, 0.5"},
+		{"hsl-array", color.FormatHSLArray, false, "[2, 0.55, 0.83, 0.5]"},
+		{"hsl-array plain", color.FormatHSLArray, true, "2, 0.55, 0.83, 0.5"},
 
-		{"rgb", FormatRGB, false, "rgba(235, 188, 186, 0.5)"},
-		{"rgb plain", FormatRGB, true, "235, 188, 186, 0.5"},
+		{"rgb", color.FormatRGB, false, "rgba(235, 188, 186, 0.5)"},
+		{"rgb plain", color.FormatRGB, true, "235, 188, 186, 0.5"},
 
-		{"rgb-css", FormatRGBCSS, false, "rgb(235 188 186 / 0.5)"},
-		{"rgb-css plain", FormatRGBCSS, true, "235 188 186 / 0.5"},
+		{"rgb-css", color.FormatRGBCSS, false, "rgb(235 188 186 / 0.5)"},
+		{"rgb-css plain", color.FormatRGBCSS, true, "235 188 186 / 0.5"},
 
-		{"rgb-array", FormatRGBArray, false, "[235, 188, 186, 0.5]"},
-		{"rgb-array plain", FormatRGBArray, true, "235, 188, 186, 0.5"},
+		{"rgb-array", color.FormatRGBArray, false, "[235, 188, 186, 0.5]"},
+		{"rgb-array plain", color.FormatRGBArray, true, "235, 188, 186, 0.5"},
 
-		{"ansi", FormatAnsi, false, "235;188;186;0.5"},
+		{"ansi", color.FormatAnsi, false, "235;188;186;0.5"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := formatColor(color, tt.format, tt.plain, true, true)
+			got := color.FormatColor(c, tt.format, tt.plain, true, true)
 			if got != tt.want {
 				t.Errorf("formatColor() = %v, want %v", got, tt.want)
 			}
