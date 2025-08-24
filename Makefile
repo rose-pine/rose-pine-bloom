@@ -7,7 +7,7 @@ build:
 
 .PHONY: docs
 docs:
-	./script/update-readme-help.sh
+	go run . doc --format md bloom_doc/
 
 .PHONY: test
 test:
