@@ -2,20 +2,10 @@ package color
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"text/tabwriter"
 )
-
-type RGB struct {
-	R, G, B uint8
-}
-
-type HSL struct {
-	H    uint16
-	S, L uint8
-}
 
 type format struct {
 	Name    string
@@ -43,18 +33,29 @@ var formats = [...]format{
 	{Name: "ansi", Example: "235;188;186"},
 }
 
-func FormatsTable() string {
+func FormatsTable() (string, error) {
 	var sb strings.Builder
 	w := tabwriter.NewWriter(&sb, 1, 1, 1, ' ', 0)
 	for _, f := range formats {
-		fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
+		_, err := fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
+		if err != nil {
+			return "", fmt.Errorf("failed to write format: %w", err)
+		}
 	}
-	w.Flush()
-	return sb.String()
+	err := w.Flush()
+	if err != nil {
+		return "", fmt.Errorf("failed to flush tabwriter: %w", err)
+	}
+	return sb.String(), nil
 }
 
-func PrintFormatsTable() {
-	fmt.Fprint(os.Stdout, FormatsTable())
+type RGB struct {
+	R, G, B uint8
+}
+
+type HSL struct {
+	H    uint16
+	S, L uint8
 }
 
 type Color struct {

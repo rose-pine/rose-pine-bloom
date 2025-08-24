@@ -10,15 +10,21 @@ import (
 	"github.com/rose-pine/rose-pine-bloom/config"
 )
 
-func setupTest(t *testing.T) (string, func()) {
+func setupTest(t *testing.T) string {
 	tmpDir, err := os.MkdirTemp("", "rose-pine-test-*")
 	if err != nil {
 		t.Fatal(err)
 	}
-	return tmpDir, func() { os.RemoveAll(tmpDir) }
+	t.Cleanup(func() {
+		err := os.RemoveAll(tmpDir)
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	return tmpDir
 }
 
-func buildFromTemplate(t *testing.T, template string, cfg *config.Config) {
+func buildFromTemplate(t *testing.T, template string, cfg *config.BuildConfig) {
 	templatePath := filepath.Join(cfg.Output, "template.json")
 	if err := os.WriteFile(templatePath, []byte(template), 0644); err != nil {
 		t.Fatal(err)
@@ -52,7 +58,7 @@ func assertJSONField(t *testing.T, result map[string]any, field, want string) {
 }
 
 // testConfig provides standard config
-var testConfig = config.Config{
+var testConfig = config.BuildConfig{
 	Template: "",
 	Output:   "",
 	Prefix:   "$",
@@ -62,10 +68,21 @@ var testConfig = config.Config{
 	Spaces:   true,
 }
 
+var testBuildTemplateConfig = config.BuildTemplateConfig{
+	Input:   "",
+	Output:  "",
+	Prefix:  "$",
+	Format:  "hex",
+	Variant: "moon",
+	Plain:   false,
+	Commas:  true,
+	Spaces:  true,
+}
+
 // testColor provides a standard color
 var testColor = &color.Color{
-	HSL: color.HSL{2, 55, 83},
-	RGB: color.RGB{235, 188, 186},
+	HSL: color.HSL{H: 2, S: 55, L: 83},
+	RGB: color.RGB{R: 235, G: 188, B: 186},
 }
 
 // testTemplate provides a standard template
@@ -222,8 +239,7 @@ func TestAlphaFormatting(t *testing.T) {
 }
 
 func TestAlphaVariableFormats(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	templateContent := `{
         "base": "$base",
@@ -295,8 +311,7 @@ func TestAlphaVariableFormats(t *testing.T) {
 }
 
 func TestVariantGeneration(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	cfg := testConfig
 	cfg.Output = tmpDir
@@ -322,8 +337,7 @@ func TestVariantGeneration(t *testing.T) {
 }
 
 func TestVariantSpecificValues(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	templateContent := `{
         "accent": "$(#ebbcba|#c4a7e7|#286983)",
@@ -359,8 +373,7 @@ func TestVariantSpecificValues(t *testing.T) {
 }
 
 func TestAccents(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	templateContent := `{
         "accentname": "$accentname",
@@ -413,11 +426,13 @@ func TestAccents(t *testing.T) {
 }
 
 func TestDirectories(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	templateDir := filepath.Join(tmpDir, "template")
-	os.Mkdir(templateDir, 0755)
+	err := os.Mkdir(templateDir, 0755)
+	if err != nil {
+		t.Fatal(err)
+	}
 	templatePath := filepath.Join(templateDir, "template.json")
 	template2Path := filepath.Join(templateDir, "template2.json")
 	if err := os.WriteFile(templatePath, []byte(testTemplate), 0644); err != nil {
@@ -456,8 +471,7 @@ func TestDirectories(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	tmpDir, cleanup := setupTest(t)
-	defer cleanup()
+	tmpDir := setupTest(t)
 
 	fileContent := `{
   "base": "#232136",
@@ -498,17 +512,16 @@ func TestCreate(t *testing.T) {
   "dawn-name": "Rosé Pine Dawn"
 }`
 
-	filePath := filepath.Join(tmpDir, "template.json")
+	filePath := filepath.Join(tmpDir, "input.json")
 	if err := os.WriteFile(filePath, []byte(fileContent), 0644); err != nil {
 		t.Fatal(err)
 	}
 
-	cfg := testConfig
+	cfg := testBuildTemplateConfig
 	cfg.Output = tmpDir
-	cfg.Template = filePath
-	cfg.Create = "moon"
+	cfg.Input = filePath
 
-	if err := Build(&cfg); err != nil {
+	if err := BuildTemplate(&cfg); err != nil {
 		t.Fatal(err)
 	}
 

@@ -27,63 +27,11 @@ brew install rose-pine/tap/bloom
 
 Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`. Already have a theme? You can [create a template](#create-a-template) from an existing theme.
 
-<!-- HELP_START -->
-<!-- DO NOT EDIT BELOW THIS LINE! This section is auto-generated. -->
+See
+- [cli documentation](./bloom_doc/bloom.md)
+- [process a template](./bloom_doc/bloom_build.md)
+- [create a template from a theme](./bloom_doc/bloom_build-template.md)
 
-```
-$ bloom --help
-
-  🌱 Bloom v2.2.0 - The Rosé Pine theme generator
-
-  Usage
-    $ bloom [options] <template>
-
-  Options
-    -o, --output <path>     Directory for generated files (default: dist)
-    -p, --prefix <string>   Color variable prefix (default: $)
-    -f, --format <format>   Color output format (default: hex)
-    -c, --create <variant>  Create template from existing theme (default: main)
-                            Variants: main, moon, dawn
-
-    --plain                 Remove decorators from color values
-    --no-commas             Remove commas from color values
-    --no-spaces             Remove spaces from color values
-
-    -h, --help              Show help
-    -v, --version           Show bloom version
-
-  Formats
-    hex                     #ebbcba
-    hex --plain             ebbcba
-    hsl                     hsl(2, 55%, 83%)
-    hsl --plain             2, 55%, 83%
-    hsl-css                 hsl(2deg 55% 83%)
-    hsl-css --plain         2deg 55% 83%
-    hsl-array               [2, 0.55, 0.83]
-    hsl-array --plain       2, 0.55, 0.83
-    rgb                     rgb(235, 188, 186)
-    rgb --plain             235, 188, 186
-    rgb-css                 rgb(235 188 186)
-    rgb-css --plain         235 188 186
-    rgb-array               [235, 188, 186]
-    rgb-array --plain       235, 188, 186
-    ansi                    235;188;186
-
-  Examples
-    $ bloom template.yaml
-    $ bloom --format hsl --output ./themes template.json
-    $ bloom --create dawn my-theme.toml
-```
-
-<!-- HELP_END -->
-
-## Create a template
-
-If you have an existing theme:
-
-```sh
-rose-pine-bloom --create dawn --format hex my-theme.toml
-```
 
 ### Variables
 
