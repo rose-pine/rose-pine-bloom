@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.2.0...v3.0.0) (2025-08-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* use cobra cli ([#72](https://github.com/rose-pine/rose-pine-bloom/issues/72))
+* use decimals instead of percentages in `hsl-array` format ([#50](https://github.com/rose-pine/rose-pine-bloom/issues/50))
+* Format names have been simplified:
+    - `hex-ns` is now `hex --plain`
+    - `hsl-function` is now `hsl`
+    - `rgb-function` is now `rgb`
+
+### Features
+
+* add version flag ([#54](https://github.com/rose-pine/rose-pine-bloom/issues/54)) ([9bb4046](https://github.com/rose-pine/rose-pine-bloom/commit/9bb40468f1cdbd82c5dbfd539c88fa6873201601))
+* manage meta files ([#55](https://github.com/rose-pine/rose-pine-bloom/issues/55)) ([8e30040](https://github.com/rose-pine/rose-pine-bloom/commit/8e30040705cef1fe9a4040bc8f5165040039faba))
+* nix shell ([#69](https://github.com/rose-pine/rose-pine-bloom/issues/69)) ([a13f7b3](https://github.com/rose-pine/rose-pine-bloom/commit/a13f7b3c5c370a8798a1d328c40fd1bcb6b55882))
+* remove duplicated formats ([#49](https://github.com/rose-pine/rose-pine-bloom/issues/49)) ([85c2762](https://github.com/rose-pine/rose-pine-bloom/commit/85c27625fc14b8d9d24c22f4544b64be498db082))
+* use cobra cli ([#72](https://github.com/rose-pine/rose-pine-bloom/issues/72)) ([59a1e0f](https://github.com/rose-pine/rose-pine-bloom/commit/59a1e0f52ee3b93edbbed71c54b671764374f1f0))
+* use decimals instead of percentages in `hsl-array` format ([#50](https://github.com/rose-pine/rose-pine-bloom/issues/50)) ([48768df](https://github.com/rose-pine/rose-pine-bloom/commit/48768df426fd564d3bdc96f19e1629fe536188fa))
+
+
+### Bug Fixes
+
+* exit after displaying version with -v flag ([#56](https://github.com/rose-pine/rose-pine-bloom/issues/56)) ([5977561](https://github.com/rose-pine/rose-pine-bloom/commit/59775615ca05e065b6e3a04d0823698debec54a2))
+
+
+### Performance Improvements
+
+* optimize color formatting ([#57](https://github.com/rose-pine/rose-pine-bloom/issues/57)) ([14d94c7](https://github.com/rose-pine/rose-pine-bloom/commit/14d94c7136a2ee11abbe263fc3ea8da72311fb7d))
+
 ## [2.2.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.1.0...v2.2.0) (2025-07-02)
 
 
