@@ -1,12 +1,22 @@
 package config
 
-type Config struct {
+type BuildConfig struct {
 	Template string
 	Output   string
 	Prefix   string
 	Format   string
-	Create   string
 	Plain    bool
 	Commas   bool
 	Spaces   bool
+}
+
+type BuildTemplateConfig struct {
+	Input   string
+	Output  string
+	Variant string
+	Prefix  string
+	Format  string
+	Plain   bool
+	Commas  bool
+	Spaces  bool
 }
