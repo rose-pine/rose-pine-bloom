@@ -110,30 +110,30 @@ func createTemplates(cfg *TemplateOptions) error {
 	variant := getVariant(cfg.Variant)
 
 	for _, file := range files {
-		content, err := os.ReadFile(file)
+		rawContent, err := os.ReadFile(file)
 		if err != nil {
 			return err
 		}
 
-		result := string(content)
-		matchFound := false
+		content := string(rawContent)
+
+		data := []string{}
 
 		// Replace colors with variables
 		for colorName, c := range variant.Colors.Iter() {
 			colorValue := color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
-			before := result
-			result = strings.ReplaceAll(result, colorValue, cfg.Prefix+colorName)
-			if before != result {
-				matchFound = true
-			}
+			data = append(data, colorValue, cfg.Prefix+colorName)
 		}
 
 		// Replace metadata
-		result = strings.ReplaceAll(result, variant.Id, cfg.Prefix+"id")
-		result = strings.ReplaceAll(result, variant.Name, cfg.Prefix+"name")
-		result = strings.ReplaceAll(result, variant.Description, cfg.Prefix+"description")
+		data = append(data, variant.Id, cfg.Prefix+"id")
+		data = append(data, variant.Name, cfg.Prefix+"name")
+		data = append(data, variant.Description, cfg.Prefix+"description")
 
-		if !matchFound {
+		replacer := strings.NewReplacer(data...)
+		result := replacer.Replace(content)
+
+		if content == result {
 			fmt.Printf("\033[33mNo matches for specified format (%s). Available formats:\n\033[0m", cfg.Format)
 			table, err := color.FormatsTable()
 			if err != nil {
@@ -157,22 +157,28 @@ func createTemplates(cfg *TemplateOptions) error {
 }
 
 func processTemplate(content string, cfg *Options, variant color.VariantMeta, accent string) string {
-	result := content
+	data := []string{}
 
 	// Replace metadata
-	result = strings.ReplaceAll(result, cfg.Prefix+"id", variant.Id)
-	result = strings.ReplaceAll(result, cfg.Prefix+"name", variant.Name)
-	result = strings.ReplaceAll(result, cfg.Prefix+"type", variant.Appearance)
-	result = strings.ReplaceAll(result, cfg.Prefix+"appearance", variant.Appearance)
-	result = strings.ReplaceAll(result, cfg.Prefix+"description", variant.Description)
+	data = append(data, cfg.Prefix+"id", variant.Id)
+	data = append(data, cfg.Prefix+"name", variant.Name)
+	data = append(data, cfg.Prefix+"type", variant.Appearance)
+	data = append(data, cfg.Prefix+"appearance", variant.Appearance)
+	data = append(data, cfg.Prefix+"description", variant.Description)
 
 	// Replace accent variables
 	if accent != "" {
-		result = strings.ReplaceAll(result, cfg.Prefix+"accentname", accent)
-		result = strings.ReplaceAll(result, cfg.Prefix+"accent", cfg.Prefix+accent)
+		data = append(data, cfg.Prefix+"accentname", accent)
 
-		if color, ok := variant.Colors.Get(accent); ok && color.On != "" {
-			result = strings.ReplaceAll(result, cfg.Prefix+"onaccent", cfg.Prefix+color.On)
+		if c, ok := variant.Colors.Get(accent); ok {
+			accentColor := color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
+			data = append(data, cfg.Prefix+"accent", accentColor)
+			if c.On != "" {
+				if oc, ok := variant.Colors.Get(c.On); ok {
+					accentOnColor := color.FormatColor(oc, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
+					data = append(data, cfg.Prefix+"onaccent", accentOnColor)
+				}
+			}
 		}
 	}
 
@@ -182,17 +188,26 @@ func processTemplate(content string, cfg *Options, variant color.VariantMeta, ac
 
 		// Handle alpha variants (e.g. $base/50)
 		alphaRegex := regexp.MustCompile(regexp.QuoteMeta(varName) + `/(\d+)`)
-		result = alphaRegex.ReplaceAllStringFunc(result, func(match string) string {
-			alpha, _ := strconv.ParseFloat(alphaRegex.FindStringSubmatch(match)[1], 64)
+		matches := alphaRegex.FindAllStringSubmatch(content, -1)
+		seen := make(map[string]bool)
+		for _, match := range matches {
+			if seen[match[0]] {
+				continue
+			}
+			seen[match[0]] = true
+			alpha, _ := strconv.ParseFloat(match[1], 64)
 			colorCopy := *c
 			normalizedAlpha := alpha / 100
 			colorCopy.Alpha = &normalizedAlpha
-			return color.FormatColor(&colorCopy, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
-		})
+			data = append(data, match[0], color.FormatColor(&colorCopy, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
+		}
 
 		// Replace regular color variable
-		result = strings.ReplaceAll(result, varName, color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
+		data = append(data, varName, color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces))
 	}
+
+	replacer := strings.NewReplacer(data...)
+	result := replacer.Replace(content)
 
 	// Process variant-specific values $(main|moon|dawn)
 	result = variantValueRegex.ReplaceAllStringFunc(result, func(match string) string {
