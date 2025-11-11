@@ -235,17 +235,14 @@ func getTemplateFiles(templatePath string) ([]string, error) {
 	}
 
 	if info.IsDir() {
-		err := filepath.Walk(templatePath, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if !info.IsDir() {
-				files = append(files, path)
-			}
-			return nil
-		})
+		entries, err := os.ReadDir(templatePath)
 		if err != nil {
 			return nil, err
+		}
+		for _, entry := range entries {
+			if !entry.IsDir() {
+				files = append(files, filepath.Join(templatePath, entry.Name()))
+			}
 		}
 	} else {
 		files = append(files, templatePath)
@@ -275,13 +272,12 @@ func buildOutputPath(cfg *config.BuildConfig, templatePath string, variant color
 
 	// Handle directory templates
 	if templateInfo, err := os.Stat(cfg.Template); err == nil && templateInfo.IsDir() {
-		dir, _ := strings.CutPrefix(filepath.Dir(templatePath), filepath.Clean(cfg.Template))
 		if accent != "" {
-			outputDir = filepath.Join(cfg.Output, accent, variant.Id) + dir
+			outputFile = variant.Id + "-" + accent + ext
 		} else {
-			outputDir = filepath.Join(cfg.Output, variant.Id) + dir
+			outputFile = variant.Id + ext
 		}
-		outputFile = filepath.Base(templatePath)
+		outputDir = cfg.Output
 	}
 
 	return filepath.Join(outputDir, outputFile)
