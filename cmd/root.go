@@ -3,8 +3,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/rose-pine/rose-pine-bloom/version"
 	"github.com/spf13/cobra"
+)
+
+var (
+	// version will be set at build time using -ldflags
+	version = "dev"
 )
 
 var rootCmd = &cobra.Command{
@@ -19,7 +23,7 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	rootCmd.Version = version.GetCurrentVersion()
+	rootCmd.Version = version
 
 	err := rootCmd.Execute()
 	if err != nil {
