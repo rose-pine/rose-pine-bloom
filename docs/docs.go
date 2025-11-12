@@ -15,7 +15,7 @@ const (
 	endMarker   = "<!-- BLOOM_BUILD_END -->"
 )
 
-func EnsureReadmeWithBuildCommand(cmd, version string) error {
+func EnsureReadme() error {
 	fileName, err := findAndNormalizeFile("README.md")
 	if err != nil {
 		return err
@@ -26,12 +26,7 @@ func EnsureReadmeWithBuildCommand(cmd, version string) error {
 	}
 	contentStr := string(content)
 
-	versionSuffix := ""
-	if version != "" {
-		versionSuffix = "@" + version
-	}
-
-	section := fmt.Sprintf("%s\nThis theme was built using [rose-pine-bloom](https://github.com/rose-pine/rose-pine-bloom):\n\n```sh\n%s\n```\n\nInstall via [goblin](https://goblin.run):\n\n```sh\ncurl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom%s | sh\n```\n%s", startMarker, cmd, versionSuffix, endMarker)
+	section := fmt.Sprintf("%s\nThis theme was built using [bloom](https://github.com/rose-pine/rose-pine-bloom):\n\n```sh\nbloom build <template>\n```\n%s", startMarker, endMarker)
 
 	markerRe := regexp.MustCompile(
 		regexp.QuoteMeta(startMarker) + `(?s).*?` + regexp.QuoteMeta(endMarker),

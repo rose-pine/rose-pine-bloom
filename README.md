@@ -19,8 +19,24 @@ Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
 ## Install
 
+### Homebrew
+
 ```sh
 brew install rose-pine/tap/bloom
+```
+
+### Releases
+
+Download the latest release from https://github.com/rose-pine/rose-pine-bloom/releases or use [goblin.run](https://goblin.run):
+
+```sh
+curl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom | OUT=bloom sh
+```
+
+### Build
+
+```sh
+go build -o $(go env GOPATH)/bin/bloom github.com/rose-pine/rose-pine-bloom
 ```
 
 ## Usage
