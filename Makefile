@@ -17,7 +17,6 @@ test:
 fmt:
 	go fmt ./...
 
-
 .PHONY: check
 check:
 	golangci-lint run ./...
