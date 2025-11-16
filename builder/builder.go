@@ -11,12 +11,34 @@ import (
 	"strings"
 
 	"github.com/rose-pine/rose-pine-bloom/color"
-	"github.com/rose-pine/rose-pine-bloom/config"
 )
+
+// Options contains configuration for building themes from templates.
+type Options struct {
+	Template string
+	Output   string
+	Prefix   string
+	Format   string
+	Plain    bool
+	Commas   bool
+	Spaces   bool
+}
+
+// TemplateOptions contains configuration for creating templates from existing theme files.
+type TemplateOptions struct {
+	Input   string
+	Output  string
+	Variant string
+	Prefix  string
+	Format  string
+	Plain   bool
+	Commas  bool
+	Spaces  bool
+}
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func BuildTemplate(cfg *config.BuildTemplateConfig) error {
+func BuildTemplate(cfg *TemplateOptions) error {
 	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -24,7 +46,7 @@ func BuildTemplate(cfg *config.BuildTemplateConfig) error {
 	return createTemplates(cfg)
 }
 
-func Build(cfg *config.BuildConfig) error {
+func Build(cfg *Options) error {
 	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -32,7 +54,7 @@ func Build(cfg *config.BuildConfig) error {
 	return generateThemes(cfg)
 }
 
-func generateThemes(cfg *config.BuildConfig) error {
+func generateThemes(cfg *Options) error {
 	templates, err := getTemplateFiles(cfg.Template)
 	if err != nil {
 		return err
@@ -64,7 +86,7 @@ func generateThemes(cfg *config.BuildConfig) error {
 	return nil
 }
 
-func generateThemeFile(cfg *config.BuildConfig, templatePath string, content []byte, variant color.VariantMeta, accent string) error {
+func generateThemeFile(cfg *Options, templatePath string, content []byte, variant color.VariantMeta, accent string) error {
 	result := processTemplate(string(content), cfg, variant, accent)
 
 	if filepath.Ext(templatePath) == ".json" {
@@ -79,7 +101,7 @@ func generateThemeFile(cfg *config.BuildConfig, templatePath string, content []b
 	return writeFile(outputPath, []byte(result))
 }
 
-func createTemplates(cfg *config.BuildTemplateConfig) error {
+func createTemplates(cfg *TemplateOptions) error {
 	files, err := getTemplateFiles(cfg.Input)
 	if err != nil {
 		return err
@@ -134,7 +156,7 @@ func createTemplates(cfg *config.BuildTemplateConfig) error {
 	return nil
 }
 
-func processTemplate(content string, cfg *config.BuildConfig, variant color.VariantMeta, accent string) string {
+func processTemplate(content string, cfg *Options, variant color.VariantMeta, accent string) string {
 	result := content
 
 	// Replace metadata
@@ -242,7 +264,7 @@ func writeFile(outputPath string, content []byte) error {
 	return os.WriteFile(outputPath, content, 0644)
 }
 
-func buildOutputPath(cfg *config.BuildConfig, templatePath string, variant color.VariantMeta, accent string) string {
+func buildOutputPath(cfg *Options, templatePath string, variant color.VariantMeta, accent string) string {
 	ext := filepath.Ext(templatePath)
 	var outputFile, outputDir string
 

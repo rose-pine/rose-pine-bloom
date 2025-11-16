@@ -8,7 +8,6 @@ import (
 
 	"github.com/rose-pine/rose-pine-bloom/builder"
 	"github.com/rose-pine/rose-pine-bloom/color"
-	"github.com/rose-pine/rose-pine-bloom/config"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +32,7 @@ var buildCmd = &cobra.Command{
 
 		fmt.Printf("Building themes from %s...\n", template)
 
-		err := builder.Build(&config.BuildConfig{
+		err := builder.Build(&builder.Options{
 			Template: template,
 			Output:   outputDir,
 			Prefix:   prefix,
