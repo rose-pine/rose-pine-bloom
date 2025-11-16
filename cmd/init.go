@@ -29,18 +29,19 @@ var initCmd = &cobra.Command{
 	Short: "Initialise new theme",
 	Args:  cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Creating theme files...")
+		fmt.Println("Initialising theme...")
 
 		if err := ensureReadme(); err != nil {
-			fmt.Fprintf(os.Stderr, "Error creating README: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
 		} else {
-			fmt.Println("Created README.md")
+			fmt.Println("Updated README.md")
 		}
 
-		if err := ensureLicense(); err != nil {
-			fmt.Fprintf(os.Stderr, "Error creating LICENSE: %v\n", err)
-		} else {
-			fmt.Println("Created LICENSE")
+		licenseCreated, err := ensureLicense()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error updating LICENSE: %v\n", err)
+		} else if licenseCreated {
+			fmt.Println("Updated LICENSE")
 		}
 
 		if len(args) > 0 {
@@ -97,14 +98,14 @@ func ensureReadme() error {
 	return os.WriteFile(fileName, []byte(contentStr), 0644)
 }
 
-func ensureLicense() error {
+func ensureLicense() (bool, error) {
 	fileName, err := findAndNormalizeFile("LICENSE")
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if existingContent, err := os.ReadFile(fileName); err == nil && len(existingContent) > 0 {
-		return nil
+		return false, nil
 	}
 
 	year := time.Now().Year()
@@ -130,7 +131,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `, year)
-	return os.WriteFile(fileName, []byte(contentStr), 0644)
+	return true, os.WriteFile(fileName, []byte(contentStr), 0644)
 }
 
 func findAndNormalizeFile(targetName string) (string, error) {
@@ -153,7 +154,7 @@ func findAndNormalizeFile(targetName string) (string, error) {
 			return "", err
 		}
 
-		fmt.Printf("renamed %s to %s\n", actualName, targetName)
+		fmt.Printf("Renamed %s to %s\n", actualName, targetName)
 		return targetName, nil
 	}
 
