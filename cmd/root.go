@@ -8,15 +8,15 @@ import (
 
 var version = "dev"
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "bloom",
 	Short: "Generate Rosé Pine theme files from templates",
 }
 
 func Execute() {
-	rootCmd.Version = version
+	RootCmd.Version = version
 
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}

@@ -41,14 +41,21 @@ go build -o $(go env GOPATH)/bin/bloom github.com/rose-pine/rose-pine-bloom
 
 ## Usage
 
-Start by creating a template file. This will look similar to your desired theme file, replacing colour values with Rosé Pine variables. For example, `#ebbcba` would now be `$rose`. Already have a theme? You can [create a template](#create-a-template) from an existing theme.
+> See our [full documentation](./docs/bloom.md) for more information.
 
-See
-- [cli documentation](./bloom_doc/bloom.md)
-- [process a template](./bloom_doc/bloom_build.md)
-- [create a template from a theme](./bloom_doc/bloom_build-template.md)
+For existing themes, use `bloom init` ([docs](./docs/bloom_init.md)) to create a template, for example:
 
+```sh
+bloom init theme.json
+# This will create a template.json file in the same directory
+```
 
+To build your themes, use `bloom build` ([docs](./docs/bloom_build.md)):
+
+```sh
+bloom build template.json
+```
+ 
 ### Variables
 
 > By default, variables are prefixed with `$`
@@ -120,12 +127,6 @@ It is possible to use variables inside of this syntax as well:
 ## Contributing
 
 We welcome and appreciate contributions of any kind. Please create an issue for any proposed changes.
-
-### Build documentation
-
-```sh
-make docs
-```
 
 ## Related
 

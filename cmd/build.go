@@ -52,14 +52,14 @@ var buildCmd = &cobra.Command{
 }
 
 func init() {
-	buildCmd.Flags().StringVarP(&outputDir, "output", "o", "dist", "Output directory")
-	buildCmd.Flags().StringVarP(&prefix, "prefix", "p", "$", "Variable prefix")
+	buildCmd.Flags().StringVarP(&outputDir, "output", "o", "dist", "output directory")
+	buildCmd.Flags().StringVarP(&prefix, "prefix", "p", "$", "variable prefix")
 	buildCmd.Flags().StringVarP(&format, "format", "f", "hex", formatFlagUsage())
-	buildCmd.Flags().BoolVar(&plain, "plain", false, "Remove decorators")
-	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "Remove commas")
-	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "Remove spaces")
+	buildCmd.Flags().BoolVar(&plain, "plain", false, "remove decorators")
+	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "remove commas")
+	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
 
-	rootCmd.AddCommand(buildCmd)
+	RootCmd.AddCommand(buildCmd)
 }
 
 func formatFlagUsage() string {
@@ -68,7 +68,7 @@ func formatFlagUsage() string {
 		fmt.Printf("Error generating format table: %v", err)
 		os.Exit(1)
 	}
-	return fmt.Sprintf("Color format:\n%s", table)
+	return fmt.Sprintf("color format:\n%s", table)
 }
 
 func validateFormat(format string) error {
