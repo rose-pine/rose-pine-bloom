@@ -12,12 +12,9 @@ var initCmd = &cobra.Command{
 	Short: "Project initialization",
 	Long:  `Creates files to start a new Rosé Pine theme project.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO the command is not clear at this point
-		buildCmd := "bloom TODO"
-		if err := docs.EnsureReadmeWithBuildCommand(buildCmd, version); err != nil {
+		if err := docs.EnsureReadme(); err != nil {
 			fmt.Println("unable to update README:", err)
 		}
-
 		if err := docs.EnsureLicense(); err != nil {
 			fmt.Println("unable to update LICENSE:", err)
 		}
