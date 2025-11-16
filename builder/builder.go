@@ -16,25 +16,6 @@ import (
 
 var variantValueRegex = regexp.MustCompile(`\$\((.*?)\|(.*?)\|(.*?)\)`)
 
-func FindTemplate() (string, error) {
-	files, err := os.ReadDir(".")
-	if err != nil {
-		return "", fmt.Errorf("failed to read current directory: %w", err)
-	}
-
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		name := file.Name()
-		base := name[:len(name)-len(filepath.Ext(name))]
-		if base == "template" {
-			return name, nil
-		}
-	}
-	return "", fmt.Errorf("unable to find template file")
-}
-
 func BuildTemplate(cfg *config.BuildTemplateConfig) error {
 	if err := os.MkdirAll(cfg.Output, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)

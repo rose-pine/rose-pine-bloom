@@ -15,27 +15,16 @@ var buildCmd = &cobra.Command{
 	Long: `Builds the theme files from templates.
 
 	This command processes the theme templates and generates the final theme files that can be used in applications.
-	The template argument is optional; if not provided, the command will search for a template file in the current directory.
+	The template argument specifies the template file or directory to process.
 	If the template argument is a directory, it will process all templates in that directory.`,
-	Args: cobra.MaximumNArgs(1),
+	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return validateFormat(format)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		template := ""
-		var err error
+		template := args[0]
 
-		if len(args) > 0 {
-			template = args[0]
-		} else {
-			template, err = builder.FindTemplate()
-			if err != nil {
-				fmt.Println("Error finding template:", err)
-				os.Exit(1)
-			}
-		}
-
-		err = builder.Build(&config.BuildConfig{
+		err := builder.Build(&config.BuildConfig{
 			Template: template,
 			Output:   outputDir,
 			Prefix:   prefix,
