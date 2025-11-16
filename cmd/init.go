@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/rose-pine/rose-pine-bloom/builder"
-	"github.com/rose-pine/rose-pine-bloom/config"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +47,7 @@ var initCmd = &cobra.Command{
 			themeFile := args[0]
 			fmt.Printf("Creating template from %s...\n", themeFile)
 
-			err := builder.BuildTemplate(&config.BuildTemplateConfig{
+			err := builder.BuildTemplate(&builder.TemplateOptions{
 				Input:   themeFile,
 				Output:  output,
 				Variant: variant,

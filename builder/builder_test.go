@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/rose-pine/rose-pine-bloom/color"
-	"github.com/rose-pine/rose-pine-bloom/config"
 )
 
 func setupTest(t *testing.T) string {
@@ -24,7 +23,7 @@ func setupTest(t *testing.T) string {
 	return tmpDir
 }
 
-func buildFromTemplate(t *testing.T, template string, cfg *config.BuildConfig) {
+func buildFromTemplate(t *testing.T, template string, cfg *Options) {
 	templatePath := filepath.Join(cfg.Output, "template.json")
 	if err := os.WriteFile(templatePath, []byte(template), 0644); err != nil {
 		t.Fatal(err)
@@ -58,7 +57,7 @@ func assertJSONField(t *testing.T, result map[string]any, field, want string) {
 }
 
 // testConfig provides standard config
-var testConfig = config.BuildConfig{
+var testConfig = Options{
 	Template: "",
 	Output:   "",
 	Prefix:   "$",
@@ -68,7 +67,7 @@ var testConfig = config.BuildConfig{
 	Spaces:   true,
 }
 
-var testBuildTemplateConfig = config.BuildTemplateConfig{
+var testBuildTemplateConfig = TemplateOptions{
 	Input:   "",
 	Output:  "",
 	Variant: "moon",
