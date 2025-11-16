@@ -71,9 +71,9 @@ var testConfig = config.BuildConfig{
 var testBuildTemplateConfig = config.BuildTemplateConfig{
 	Input:   "",
 	Output:  "",
+	Variant: "moon",
 	Prefix:  "$",
 	Format:  "hex",
-	Variant: "moon",
 	Plain:   false,
 	Commas:  true,
 	Spaces:  true,
@@ -135,7 +135,6 @@ var testVariants = []struct {
 }
 
 func TestColorFormatting(t *testing.T) {
-
 	tests := []struct {
 		name   string
 		format color.ColorFormat
