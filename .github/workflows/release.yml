@@ -44,8 +44,7 @@ jobs:
           ext=""
           if [ "${{ matrix.os }}" = "windows" ]; then ext=".exe"; fi
           VERSION="${{ needs.release-please.outputs.tag_name }}"
-          LDFLAGS="-ldflags -X github.com/rose-pine/rose-pine-bloom/cmd.version=${VERSION}"
-          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build ${LDFLAGS} -o dist/${FILENAME}${ext}
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -ldflags "-X github.com/rose-pine/rose-pine-bloom/cmd.version=${VERSION}" -o dist/${FILENAME}${ext}
       - name: Upload to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
