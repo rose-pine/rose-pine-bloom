@@ -334,6 +334,17 @@ func TestVariantGeneration(t *testing.T) {
 	}
 }
 
+func BenchmarkBuild(b *testing.B) {
+	testContent := ""
+	fileSizeMultiplier := 20 // Adjust this value to increase/decrease the size of the template
+	for range fileSizeMultiplier {
+		testContent += testTemplate + "\n"
+	}
+	for b.Loop() {
+		processTemplate(testContent, &testConfig, color.MainVariantMeta, "")
+	}
+}
+
 func TestVariantSpecificValues(t *testing.T) {
 	tmpDir := setupTest(t)
 
