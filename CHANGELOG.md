@@ -1,5 +1,45 @@
 # Changelog
 
+## [3.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.2.0...v3.0.0) (2025-11-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove doc command ([#80](https://github.com/rose-pine/rose-pine-bloom/issues/80))
+* require explicit template ([#75](https://github.com/rose-pine/rose-pine-bloom/issues/75))
+* use cobra cli ([#72](https://github.com/rose-pine/rose-pine-bloom/issues/72))
+* use decimals instead of percentages in `hsl-array` format ([#50](https://github.com/rose-pine/rose-pine-bloom/issues/50))
+* Format names have been simplified:
+    - `hex-ns` is now `hex --plain`
+    - `hsl-function` is now `hsl`
+    - `rgb-function` is now `rgb`
+
+### Features
+
+* add version flag ([#54](https://github.com/rose-pine/rose-pine-bloom/issues/54)) ([9bb4046](https://github.com/rose-pine/rose-pine-bloom/commit/9bb40468f1cdbd82c5dbfd539c88fa6873201601))
+* consolidate build command with logging ([#77](https://github.com/rose-pine/rose-pine-bloom/issues/77)) ([78497b3](https://github.com/rose-pine/rose-pine-bloom/commit/78497b3b45fa8ab59d77f1c5bda6649fb1caf6a2))
+* manage meta files ([#55](https://github.com/rose-pine/rose-pine-bloom/issues/55)) ([8e30040](https://github.com/rose-pine/rose-pine-bloom/commit/8e30040705cef1fe9a4040bc8f5165040039faba))
+* nix shell ([#69](https://github.com/rose-pine/rose-pine-bloom/issues/69)) ([a13f7b3](https://github.com/rose-pine/rose-pine-bloom/commit/a13f7b3c5c370a8798a1d328c40fd1bcb6b55882))
+* remove doc command ([#80](https://github.com/rose-pine/rose-pine-bloom/issues/80)) ([66bfd71](https://github.com/rose-pine/rose-pine-bloom/commit/66bfd71e86015bd8aa7751bac694900e9fd64d1c))
+* remove duplicated formats ([#49](https://github.com/rose-pine/rose-pine-bloom/issues/49)) ([85c2762](https://github.com/rose-pine/rose-pine-bloom/commit/85c27625fc14b8d9d24c22f4544b64be498db082))
+* require explicit template ([#75](https://github.com/rose-pine/rose-pine-bloom/issues/75)) ([f64f59c](https://github.com/rose-pine/rose-pine-bloom/commit/f64f59cc50cd8f0e9cc3fca3395dcfbd5c7359a4))
+* set version during build ([#68](https://github.com/rose-pine/rose-pine-bloom/issues/68)) ([b52e3d5](https://github.com/rose-pine/rose-pine-bloom/commit/b52e3d5163fa9dacbc858663b93da7778bff2f9d))
+* use appropriate install/build commands ([#76](https://github.com/rose-pine/rose-pine-bloom/issues/76)) ([7aab83e](https://github.com/rose-pine/rose-pine-bloom/commit/7aab83e69c4a069cea0d4525fc8150e3ce27983a))
+* use cobra cli ([#72](https://github.com/rose-pine/rose-pine-bloom/issues/72)) ([59a1e0f](https://github.com/rose-pine/rose-pine-bloom/commit/59a1e0f52ee3b93edbbed71c54b671764374f1f0))
+* use decimals instead of percentages in `hsl-array` format ([#50](https://github.com/rose-pine/rose-pine-bloom/issues/50)) ([48768df](https://github.com/rose-pine/rose-pine-bloom/commit/48768df426fd564d3bdc96f19e1629fe536188fa))
+
+
+### Bug Fixes
+
+* exit after displaying version with -v flag ([#56](https://github.com/rose-pine/rose-pine-bloom/issues/56)) ([5977561](https://github.com/rose-pine/rose-pine-bloom/commit/59775615ca05e065b6e3a04d0823698debec54a2))
+* reuse existing license during init ([#79](https://github.com/rose-pine/rose-pine-bloom/issues/79)) ([6356690](https://github.com/rose-pine/rose-pine-bloom/commit/6356690d1436afa3d7ea8668094ae83076042fbb))
+
+
+### Performance Improvements
+
+* don't process entire string for every variable ([#73](https://github.com/rose-pine/rose-pine-bloom/issues/73)) ([bf1592a](https://github.com/rose-pine/rose-pine-bloom/commit/bf1592affa38e4dc956cb3ab2eb0d4d346be119b))
+* optimize color formatting ([#57](https://github.com/rose-pine/rose-pine-bloom/issues/57)) ([14d94c7](https://github.com/rose-pine/rose-pine-bloom/commit/14d94c7136a2ee11abbe263fc3ea8da72311fb7d))
+
 ## [2.2.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.1.0...v2.2.0) (2025-07-02)
 
 
