@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/rose-pine/rose-pine-bloom/compare/v3.0.0...v3.0.1) (2025-11-17)
+
+
+### Bug Fixes
+
+* malformed ldflags ([#82](https://github.com/rose-pine/rose-pine-bloom/issues/82)) ([778cedd](https://github.com/rose-pine/rose-pine-bloom/commit/778ceddcaf4b7d31a2c7710f52a41d2796d79607))
+
 ## [3.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v2.2.0...v3.0.0) (2025-11-17)
 
 
