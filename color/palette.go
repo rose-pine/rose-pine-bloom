@@ -42,6 +42,25 @@ var Accents = []string{
 	"love", "gold", "rose", "pine", "foam", "iris",
 }
 
+var colorAliases = map[string]string{
+	"black":         "overlay",
+	"brightBlack":   "muted",
+	"red":           "love",
+	"brightRed":     "love",
+	"green":         "pine",
+	"brightGreen":   "pine",
+	"yellow":        "gold",
+	"brightYellow":  "gold",
+	"blue":          "foam",
+	"brightBlue":    "foam",
+	"magenta":       "iris",
+	"brightMagenta": "iris",
+	"cyan":          "rose",
+	"brightCyan":    "rose",
+	"white":         "text",
+	"brightWhite":   "text",
+}
+
 var (
 	MainPalette = Palette{
 		Base: Color{
@@ -286,6 +305,10 @@ var Variants = []VariantMeta{
 }
 
 func (p *Palette) Get(role string) (*Color, bool) {
+	if aliasTarget, isAlias := colorAliases[role]; isAlias {
+		return p.Get(aliasTarget)
+	}
+
 	switch role {
 	case "base":
 		return &p.Base, true
@@ -368,6 +391,15 @@ func (p *Palette) Iter() iter.Seq2[string, *Color] {
 		}
 		if !yield("highlightHigh", &p.HighlightHigh) {
 			return
+		}
+
+		// Add aliases
+		for alias, target := range colorAliases {
+			if color, ok := p.Get(target); ok {
+				if !yield(alias, color) {
+					return
+				}
+			}
 		}
 	}
 }
