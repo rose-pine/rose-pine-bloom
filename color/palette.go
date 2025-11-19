@@ -28,6 +28,14 @@ type Palette struct {
 	HighlightLow  Color
 	HighlightMed  Color
 	HighlightHigh Color
+	BrightBlack   Color
+	BrightRed     Color
+	BrightGreen   Color
+	BrightYellow  Color
+	BrightBlue    Color
+	BrightMagenta Color
+	BrightCyan    Color
+	BrightWhite   Color
 }
 
 type VariantMeta struct {
@@ -40,6 +48,17 @@ type VariantMeta struct {
 
 var Accents = []string{
 	"love", "gold", "rose", "pine", "foam", "iris",
+}
+
+var colorAliases = map[string]string{
+	"black":   "overlay",
+	"red":     "love",
+	"green":   "pine",
+	"yellow":  "gold",
+	"blue":    "foam",
+	"magenta": "iris",
+	"cyan":    "rose",
+	"white":   "text",
 }
 
 var (
@@ -110,6 +129,38 @@ var (
 			HSL: HSL{245, 13, 36},
 			RGB: RGB{82, 79, 103},
 		},
+		BrightBlack: Color{
+			HSL: HSL{249, 7, 31},
+			RGB: RGB{71, 67, 93},
+		},
+		BrightRed: Color{
+			HSL: HSL{340, 100, 80},
+			RGB: RGB{255, 152, 186},
+		},
+		BrightGreen: Color{
+			HSL: HSL{199, 39, 54},
+			RGB: RGB{91, 154, 183},
+		},
+		BrightYellow: Color{
+			HSL: HSL{48, 100, 81},
+			RGB: RGB{255, 235, 158},
+		},
+		BrightBlue: Color{
+			HSL: HSL{186, 100, 89},
+			RGB: RGB{197, 249, 255},
+		},
+		BrightMagenta: Color{
+			HSL: HSL{278, 100, 91},
+			RGB: RGB{238, 208, 255},
+		},
+		BrightCyan: Color{
+			HSL: HSL{4, 100, 94},
+			RGB: RGB{255, 229, 227},
+		},
+		BrightWhite: Color{
+			HSL: HSL{300, 100, 99},
+			RGB: RGB{254, 252, 255},
+		},
 	}
 
 	MoonPalette = Palette{
@@ -178,6 +229,38 @@ var (
 		HighlightHigh: Color{
 			HSL: HSL{249, 15, 38},
 			RGB: RGB{86, 82, 110},
+		},
+		BrightBlack: Color{
+			HSL: HSL{249, 7, 31},
+			RGB: RGB{71, 67, 93},
+		},
+		BrightRed: Color{
+			HSL: HSL{340, 100, 80},
+			RGB: RGB{255, 152, 186},
+		},
+		BrightGreen: Color{
+			HSL: HSL{200, 42, 58},
+			RGB: RGB{95, 166, 195},
+		},
+		BrightYellow: Color{
+			HSL: HSL{48, 100, 81},
+			RGB: RGB{255, 235, 158},
+		},
+		BrightBlue: Color{
+			HSL: HSL{186, 100, 89},
+			RGB: RGB{197, 249, 255},
+		},
+		BrightMagenta: Color{
+			HSL: HSL{278, 100, 91},
+			RGB: RGB{238, 208, 255},
+		},
+		BrightCyan: Color{
+			HSL: HSL{6, 89, 90},
+			RGB: RGB{245, 197, 194},
+		},
+		BrightWhite: Color{
+			HSL: HSL{300, 100, 99},
+			RGB: RGB{254, 252, 255},
 		},
 	}
 
@@ -248,6 +331,38 @@ var (
 			HSL: HSL{315, 4, 80},
 			RGB: RGB{206, 202, 205},
 		},
+		BrightBlack: Color{
+			HSL: HSL{249, 15, 30},
+			RGB: RGB{70, 66, 87},
+		},
+		BrightRed: Color{
+			HSL: HSL{343, 45, 45},
+			RGB: RGB{166, 78, 103},
+		},
+		BrightGreen: Color{
+			HSL: HSL{197, 60, 30},
+			RGB: RGB{31, 92, 122},
+		},
+		BrightYellow: Color{
+			HSL: HSL{35, 75, 45},
+			RGB: RGB{199, 133, 57},
+		},
+		BrightBlue: Color{
+			HSL: HSL{189, 40, 35},
+			RGB: RGB{54, 104, 115},
+		},
+		BrightMagenta: Color{
+			HSL: HSL{267, 30, 45},
+			RGB: RGB{109, 89, 140},
+		},
+		BrightCyan: Color{
+			HSL: HSL{2, 60, 50},
+			RGB: RGB{204, 102, 96},
+		},
+		BrightWhite: Color{
+			HSL: HSL{248, 25, 25},
+			RGB: RGB{54, 50, 75},
+		},
 	}
 )
 
@@ -286,6 +401,10 @@ var Variants = []VariantMeta{
 }
 
 func (p *Palette) Get(role string) (*Color, bool) {
+	if aliasTarget, isAlias := colorAliases[role]; isAlias {
+		return p.Get(aliasTarget)
+	}
+
 	switch role {
 	case "base":
 		return &p.Base, true
@@ -317,6 +436,22 @@ func (p *Palette) Get(role string) (*Color, bool) {
 		return &p.HighlightMed, true
 	case "highlightHigh":
 		return &p.HighlightHigh, true
+	case "brightBlack":
+		return &p.BrightBlack, true
+	case "brightRed":
+		return &p.BrightRed, true
+	case "brightGreen":
+		return &p.BrightGreen, true
+	case "brightYellow":
+		return &p.BrightYellow, true
+	case "brightBlue":
+		return &p.BrightBlue, true
+	case "brightMagenta":
+		return &p.BrightMagenta, true
+	case "brightCyan":
+		return &p.BrightCyan, true
+	case "brightWhite":
+		return &p.BrightWhite, true
 	default:
 		return nil, false
 	}
@@ -368,6 +503,39 @@ func (p *Palette) Iter() iter.Seq2[string, *Color] {
 		}
 		if !yield("highlightHigh", &p.HighlightHigh) {
 			return
+		}
+		if !yield("brightBlack", &p.BrightBlack) {
+			return
+		}
+		if !yield("brightRed", &p.BrightRed) {
+			return
+		}
+		if !yield("brightGreen", &p.BrightGreen) {
+			return
+		}
+		if !yield("brightYellow", &p.BrightYellow) {
+			return
+		}
+		if !yield("brightBlue", &p.BrightBlue) {
+			return
+		}
+		if !yield("brightMagenta", &p.BrightMagenta) {
+			return
+		}
+		if !yield("brightCyan", &p.BrightCyan) {
+			return
+		}
+		if !yield("brightWhite", &p.BrightWhite) {
+			return
+		}
+
+		// Add aliases
+		for alias, target := range colorAliases {
+			if color, ok := p.Get(target); ok {
+				if !yield(alias, color) {
+					return
+				}
+			}
 		}
 	}
 }
