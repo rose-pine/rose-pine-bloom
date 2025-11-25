@@ -25,6 +25,14 @@ Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 brew install rose-pine/tap/bloom
 ```
 
+### AUR
+
+[AUR](https://aur.archlinux.org/packages/rose-pine-bloom)
+
+```sh
+yay -S rose-pine-bloom # or any other AUR helper
+```
+
 ### Releases
 
 Download the latest release from https://github.com/rose-pine/rose-pine-bloom/releases or use [goblin.run](https://goblin.run):
