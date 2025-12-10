@@ -21,16 +21,20 @@ Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
 ### Homebrew
 
+A [Homebrew](https://brew.sh) formula is available from our official tap:
+
 ```sh
 brew install rose-pine/tap/bloom
 ```
 
-### AUR
+### Arch Linux
 
-[AUR](https://aur.archlinux.org/packages/rose-pine-bloom)
+Use your favourite AUR helper or build from source per the [AUR instructions](https://wiki.archlinux.org/title/Arch_User_Repository#Installing_and_upgrading_packages):
 
 ```sh
-yay -S rose-pine-bloom # or any other AUR helper
+# Community maintained
+# https://aur.archlinux.org/packages/rose-pine-bloom
+yay -S rose-pine-bloom
 ```
 
 ### Releases
@@ -42,6 +46,8 @@ curl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom | OUT=bloom sh
 ```
 
 ### Build
+
+With [Go](https://go.dev/doc/install) installed:
 
 ```sh
 go build -o $(go env GOPATH)/bin/bloom github.com/rose-pine/rose-pine-bloom
@@ -63,7 +69,7 @@ To build your themes, use `bloom build` ([docs](./docs/bloom_build.md)):
 ```sh
 bloom build template.json
 ```
- 
+
 ### Variables
 
 > By default, variables are prefixed with `$`
