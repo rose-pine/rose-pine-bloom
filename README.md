@@ -21,7 +21,7 @@ Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
 ### Homebrew
 
-A [Homebrew](https://brew.sh) formula is available from our official tap:
+A [Homebrew](https://brew.sh) formula is available from our [official tap](https://github.com/rose-pine/homebrew-tap):
 
 ```sh
 brew install rose-pine/tap/bloom
@@ -39,7 +39,7 @@ yay -S rose-pine-bloom
 
 ### Releases
 
-Download the latest release from https://github.com/rose-pine/rose-pine-bloom/releases or use [goblin.run](https://goblin.run):
+Download one of the prebuilt [releases](https://github.com/rose-pine/rose-pine-bloom/releases) or use [goblin.run](https://goblin.run):
 
 ```sh
 curl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom | OUT=bloom sh
