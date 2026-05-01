@@ -38,7 +38,7 @@
             ];
           };
 
-          vendorHash = "sha256-NW40XkNXAYJ6Y/lPNcKDTNSGljlA9kl4FpQSVCMrfw0=";
+          vendorHash = "sha256-LSy43oMhDnAySHXnF1ZsBgm7Whlq1rw5XQaUcBDBhg4=";
 
           meta.mainProgram = "rose-pine-bloom";
         };
