@@ -31,10 +31,6 @@
               ./builder
               ./cmd
               ./color
-              ./config
-              ./template
-              ./version
-              ./docs
             ];
           };
 
