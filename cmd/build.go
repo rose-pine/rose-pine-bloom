@@ -58,7 +58,7 @@ func init() {
 	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "remove commas")
 	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
 
-	RootCmd.AddCommand(buildCmd)
+	rootCmd.AddCommand(buildCmd)
 }
 
 func formatFlagUsage() string {
