@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"slices"
-	"strings"
 
 	"github.com/rose-pine/rose-pine-bloom/builder"
 	"github.com/rose-pine/rose-pine-bloom/color"
@@ -24,11 +23,13 @@ var buildCmd = &cobra.Command{
 	Use:   "build <template>",
 	Short: "Generate theme files from template",
 	Args:  cobra.ExactArgs(1),
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return validateFormat(format)
-	},
 	Run: func(cmd *cobra.Command, args []string) {
 		template := args[0]
+
+		if !slices.Contains(color.AllFormats, format) {
+			fmt.Fprintf(os.Stderr, "invalid format %q\n", format)
+			os.Exit(1)
+		}
 
 		fmt.Printf("Building themes from %s...\n", template)
 
@@ -53,26 +54,10 @@ var buildCmd = &cobra.Command{
 func init() {
 	buildCmd.Flags().StringVarP(&outputDir, "output", "o", "dist", "output directory")
 	buildCmd.Flags().StringVarP(&prefix, "prefix", "p", "$", "variable prefix")
-	buildCmd.Flags().StringVarP(&format, "format", "f", "hex", formatFlagUsage())
-	buildCmd.Flags().BoolVar(&plain, "plain", false, "remove decorators")
+	buildCmd.Flags().StringVarP(&format, "format", "f", "hex", "hex, hsl, hsl-css, hsl-array, rgb, rgb-css, rgb-array, ansi")
+	buildCmd.Flags().BoolVar(&plain, "plain", false, "strip wrappers (#, rgb(), hsl(), brackets) from output")
 	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "remove commas")
 	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
 
 	rootCmd.AddCommand(buildCmd)
-}
-
-func formatFlagUsage() string {
-	table, err := color.FormatsTable()
-	if err != nil {
-		fmt.Printf("Error generating format table: %v", err)
-		os.Exit(1)
-	}
-	return fmt.Sprintf("color format:\n%s", table)
-}
-
-func validateFormat(format string) error {
-	if slices.Contains(color.AllFormats, format) {
-		return nil
-	}
-	return fmt.Errorf("invalid format '%s'. Valid formats: %s", format, strings.Join(color.AllFormats, ", "))
 }

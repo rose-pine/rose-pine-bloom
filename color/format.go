@@ -1,53 +1,9 @@
 package color
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 )
-
-type format struct {
-	Name    string
-	Example string
-}
-
-var formats = [...]format{
-	{Name: "hex", Example: "#ebbcba"},
-	{Name: "hex --plain", Example: "ebbcba"},
-
-	{Name: "hsl", Example: "hsl(2, 55%, 83%)"},
-	{Name: "hsl --plain", Example: "2, 55%, 83%"},
-	{Name: "hsl-css", Example: "hsl(2deg 55% 83%)"},
-	{Name: "hsl-css --plain", Example: "2deg 55% 83%"},
-	{Name: "hsl-array", Example: "[2, 0.55, 0.83]"},
-	{Name: "hsl-array --plain", Example: "2, 0.55, 0.83"},
-
-	{Name: "rgb", Example: "rgb(235, 188, 186)"},
-	{Name: "rgb --plain", Example: "235, 188, 186"},
-	{Name: "rgb-css", Example: "rgb(235 188 186)"},
-	{Name: "rgb-css --plain", Example: "235 188 186"},
-	{Name: "rgb-array", Example: "[235, 188, 186]"},
-	{Name: "rgb-array --plain", Example: "235, 188, 186"},
-
-	{Name: "ansi", Example: "235;188;186"},
-}
-
-func FormatsTable() (string, error) {
-	var sb strings.Builder
-	w := tabwriter.NewWriter(&sb, 1, 1, 1, ' ', 0)
-	for _, f := range formats {
-		_, err := fmt.Fprintf(w, "    %-23s %s\n", f.Name, f.Example)
-		if err != nil {
-			return "", fmt.Errorf("failed to write format: %w", err)
-		}
-	}
-	err := w.Flush()
-	if err != nil {
-		return "", fmt.Errorf("failed to flush tabwriter: %w", err)
-	}
-	return sb.String(), nil
-}
 
 type RGB struct {
 	R, G, B uint8
