@@ -1,10 +1,6 @@
 .PHONY: all
 all: format build test
 
-.PHONY: docs
-docs:
-	go generate
-
 .PHONY: build
 build:
 	go build -o bloom .
@@ -24,4 +20,3 @@ check:
 .PHONY: clean
 clean:
 	rm -f bloom
-	rm -rf docs/*.md
