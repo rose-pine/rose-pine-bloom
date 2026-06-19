@@ -2,8 +2,10 @@ package builder
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/rose-pine/rose-pine-bloom/color"
@@ -345,6 +347,13 @@ func BenchmarkBuild(b *testing.B) {
 	}
 }
 
+func BenchmarkDetectFormatOptions(b *testing.B) {
+	content := `{"base": "#191724", "love": "#eb6f92"}`
+	for b.Loop() {
+		detectFormatOptions(content, color.MainVariantMeta)
+	}
+}
+
 func TestVariantSpecificValues(t *testing.T) {
 	tmpDir := setupTest(t)
 
@@ -476,6 +485,182 @@ func TestDirectories(t *testing.T) {
 				}
 			})
 		}
+	}
+}
+
+func TestDetectFormatOptions(t *testing.T) {
+	colors := func(base, love string) string {
+		return fmt.Sprintf(`{"base": "%s", "love": "%s"}`, base, love)
+	}
+
+	tests := []struct {
+		name       string
+		content    string
+		wantFormat color.ColorFormat
+		wantPlain  bool
+		wantCommas bool
+		wantSpaces bool
+	}{
+		{
+			name:       "hex with hash",
+			content:    colors("#191724", "#eb6f92"),
+			wantFormat: color.FormatHex,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "hex plain",
+			content:    colors("191724", "eb6f92"),
+			wantFormat: color.FormatHex,
+			wantPlain:  true,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "rgb function",
+			content:    colors("rgb(25, 23, 36)", "rgb(235, 111, 146)"),
+			wantFormat: color.FormatRGB,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "rgb no spaces",
+			content:    colors("rgb(25,23,36)", "rgb(235,111,146)"),
+			wantFormat: color.FormatRGB,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: false,
+		},
+		{
+			name:       "rgb no commas",
+			content:    colors("rgb(25 23 36)", "rgb(235 111 146)"),
+			wantFormat: color.FormatRGB,
+			wantPlain:  false,
+			wantCommas: false,
+			wantSpaces: true,
+		},
+		{
+			name:       "hsl function",
+			content:    colors("hsl(249, 22%, 12%)", "hsl(343, 76%, 68%)"),
+			wantFormat: color.FormatHSL,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "hsl no spaces",
+			content:    colors("hsl(249,22%,12%)", "hsl(343,76%,68%)"),
+			wantFormat: color.FormatHSL,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: false,
+		},
+		{
+			name:       "hsl css",
+			content:    colors("hsl(249deg 22% 12%)", "hsl(343deg 76% 68%)"),
+			wantFormat: color.FormatHSLCSS,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "ansi",
+			content:    colors("25;23;36", "235;111;146"),
+			wantFormat: color.FormatAnsi,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+		{
+			name:       "fallback on no match",
+			content:    "no colors here at all",
+			wantFormat: color.FormatHex,
+			wantPlain:  false,
+			wantCommas: true,
+			wantSpaces: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotFormat, gotPlain, gotCommas, gotSpaces := detectFormatOptions(tt.content, color.MainVariantMeta)
+			if gotFormat != tt.wantFormat {
+				t.Errorf("format = %q, want %q", gotFormat, tt.wantFormat)
+			}
+			if gotPlain != tt.wantPlain {
+				t.Errorf("plain = %v, want %v", gotPlain, tt.wantPlain)
+			}
+			if gotCommas != tt.wantCommas {
+				t.Errorf("commas = %v, want %v", gotCommas, tt.wantCommas)
+			}
+			if gotSpaces != tt.wantSpaces {
+				t.Errorf("spaces = %v, want %v", gotSpaces, tt.wantSpaces)
+			}
+		})
+	}
+}
+
+func TestCreateAutoDetect(t *testing.T) {
+	tests := []struct {
+		name    string
+		variant string
+		input   string
+		format  string
+		wantVal string
+	}{
+		{
+			name:    "auto-detect hex",
+			variant: "moon",
+			input:   `"base": "#232136"`,
+			format:  "",
+			wantVal: "$base",
+		},
+		{
+			name:    "auto-detect hsl",
+			variant: "moon",
+			input:   `"base": "hsl(246, 24%, 17%)"`,
+			format:  "",
+			wantVal: "$base",
+		},
+		{
+			name:    "auto-detect rgb",
+			variant: "moon",
+			input:   `"base": "rgb(35, 33, 54)"`,
+			format:  "",
+			wantVal: "$base",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := setupTest(t)
+
+			fileContent := "{\n  " + tt.input + "\n}"
+			filePath := filepath.Join(tmpDir, "input.json")
+			if err := os.WriteFile(filePath, []byte(fileContent), 0644); err != nil {
+				t.Fatal(err)
+			}
+
+			cfg := testBuildTemplateConfig
+			cfg.Output = tmpDir
+			cfg.Input = filePath
+			cfg.Format = tt.format
+			cfg.Variant = tt.variant
+
+			if err := BuildTemplate(&cfg); err != nil {
+				t.Fatal(err)
+			}
+
+			content, err := os.ReadFile(filepath.Join(tmpDir, "template.json"))
+			if err != nil {
+				t.Fatalf("Failed to read generated file: %v", err)
+			}
+			if !strings.Contains(string(content), tt.wantVal) {
+				t.Errorf("generated template should contain %q, got:\n%s", tt.wantVal, string(content))
+			}
+		})
 	}
 }
 

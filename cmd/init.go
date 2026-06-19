@@ -26,11 +26,28 @@ const (
 var initCmd = &cobra.Command{
 	Use:   "init [theme-file]",
 	Short: "Initialise new theme",
-	Args:  cobra.MaximumNArgs(1),
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Initialising theme...")
 
-		if err := ensureReadme(); err != nil {
+		themeFile := args[0]
+		fmt.Printf("Creating template from %s...\n", themeFile)
+
+		opts := &builder.TemplateOptions{
+			Input:   themeFile,
+			Output:  output,
+			Variant: variant,
+			Prefix:  prefix,
+		}
+		if err := builder.BuildTemplate(opts); err != nil {
+			fmt.Fprintf(os.Stderr, "Error creating template: %v\n", err)
+			os.Exit(1)
+		}
+
+		templatePath := opts.TemplatePath
+		fmt.Printf("Template created in %s\n", output)
+
+		if err := ensureReadme(templatePath, prefix); err != nil {
 			fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
 		} else {
 			fmt.Println("Updated README.md")
@@ -43,33 +60,15 @@ var initCmd = &cobra.Command{
 			fmt.Println("Updated LICENSE")
 		}
 
-		if len(args) > 0 {
-			themeFile := args[0]
-			fmt.Printf("Creating template from %s...\n", themeFile)
-
-			err := builder.BuildTemplate(&builder.TemplateOptions{
-				Input:   themeFile,
-				Output:  output,
-				Variant: variant,
-				Prefix:  "$",
-				Format:  "hex",
-				Plain:   false,
-				Commas:  true,
-				Spaces:  true,
-			})
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error creating template: %v\n", err)
-				os.Exit(1)
-			}
-
-			fmt.Printf("Template created in %s\n", output)
-		}
-
 		fmt.Println("Theme initialised")
 	},
 }
 
-func ensureReadme() error {
+func readmeSection(cmdLine string) string {
+	return fmt.Sprintf("%s\nThis theme was built using [bloom](https://github.com/rose-pine/rose-pine-bloom):\n\n```sh\n%s\n```\n%s", startMarker, cmdLine, endMarker)
+}
+
+func updateReadme(section string) error {
 	fileName, err := findAndNormalizeFile("README.md")
 	if err != nil {
 		return err
@@ -79,8 +78,6 @@ func ensureReadme() error {
 		return err
 	}
 	contentStr := string(content)
-
-	section := fmt.Sprintf("%s\nThis theme was built using [bloom](https://github.com/rose-pine/rose-pine-bloom):\n\n```sh\nbloom build <template>\n```\n%s", startMarker, endMarker)
 
 	markerRe := regexp.MustCompile(
 		regexp.QuoteMeta(startMarker) + `(?s).*?` + regexp.QuoteMeta(endMarker),
@@ -95,6 +92,12 @@ func ensureReadme() error {
 	}
 
 	return os.WriteFile(fileName, []byte(contentStr), 0644)
+}
+
+func ensureReadme(templatePath, prefix string) error {
+	cmdLine := "bloom build " + templatePath
+	cmdLine += " --prefix " + prefix
+	return updateReadme(readmeSection(cmdLine))
 }
 
 func ensureLicense() (bool, error) {
@@ -185,5 +188,6 @@ func isGitRepo() bool {
 func init() {
 	initCmd.Flags().StringVarP(&variant, "variant", "v", "main", "theme variant (main, moon, dawn)")
 	initCmd.Flags().StringVarP(&output, "output", "o", ".", "template output directory")
+	initCmd.Flags().StringVarP(&prefix, "prefix", "p", "$", "variable prefix")
 	rootCmd.AddCommand(initCmd)
 }
