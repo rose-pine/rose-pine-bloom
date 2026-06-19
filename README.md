@@ -5,15 +5,7 @@
 
 <p align="center">All natural pine, faux fur and a bit of soho vibes for the classy minimalist</p>
 
-<p align="center">
-    <a href="https://github.com/rose-pine/rose-pine-theme">
-        <img src="https://img.shields.io/badge/community-rosé%20pine-26233a?labelColor=191724&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjUwIiBoZWlnaHQ9IjIzNyIgdmlld0JveD0iMCAwIDI1MCAyMzciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xNjEuMjI3IDE2MS4yNTFDMTMyLjE1NCAxNjkuMDQxIDExNC45MDEgMTk4LjkyNCAxMjIuNjkxIDIyNy45OTdDMTIzLjkyNSAyMzIuNjAzIDEyOC42NTkgMjM1LjMzNiAxMzMuMjY0IDIzNC4xMDJMMTg1LjkwNyAyMTkuOTk2QzIxOS41ODUgMjEwLjk3MiAyMzkuNTcgMTc2LjM1NCAyMzAuNTQ2IDE0Mi42NzdMMTYxLjIyNyAxNjEuMjUxWiIgZmlsbD0iIzI0NjI3QiIvPgo8cGF0aCBkPSJNODguMTgzNiAxNTkuOTg4QzExNy4yNTcgMTY3Ljc3OCAxMzQuNTEgMTk3LjY2MiAxMjYuNzIgMjI2LjczNUMxMjUuNDg2IDIzMS4zNCAxMjAuNzUyIDIzNC4wNzMgMTE2LjE0NyAyMzIuODM5TDYzLjUwNDEgMjE4LjczM0MyOS44MjY0IDIwOS43MSA5Ljg0MDk0IDE3NS4wOTIgMTguODY0OSAxNDEuNDE0TDg4LjE4MzYgMTU5Ljk4OFoiIGZpbGw9IiMyNDYyN0IiLz4KPHBhdGggZD0iTTE4Ni44NjcgMTcyLjk4QzE1Mi4wMDIgMTcyLjk4IDEyMy43MzcgMjAxLjI0NSAxMjMuNzM3IDIzNi4xMTFIMTg2Ljg3QzIyMS43MzYgMjM2LjExMSAyNTAgMjA3Ljg0NiAyNTAgMTcyLjk4TDE4Ni44NjcgMTcyLjk4WiIgZmlsbD0iIzMxNzQ4RiIvPgo8cGF0aCBkPSJNNjMuMTMyNyAxNzIuOThDOTcuOTk4NCAxNzIuOTggMTI2LjI2MyAyMDEuMjQ1IDEyNi4yNjMgMjM2LjExMUg2My4xM0MyOC4yNjQyIDIzNi4xMTEgLTEuNTI0MDNlLTA2IDIwNy44NDYgMCAxNzIuOThMNjMuMTMyNyAxNzIuOThaIiBmaWxsPSIjMzE3NDhGIi8+CjxwYXRoIGQ9Ik0xNzEuNzE3IDc1LjEyNjNDMTcxLjcxNyAxMDEuMjc2IDE1MC41MTggMTIyLjQ3NSAxMjQuMzY5IDEyMi40NzVDOTguMjE4OCAxMjIuNDc1IDc3LjAyMDIgMTAxLjI3NiA3Ny4wMjAyIDc1LjEyNjNDNzcuMDIwMiA0OC45NzY0IDk4LjIxODggMjcuNzc3OCAxMjQuMzY5IDI3Ljc3NzhDMTUwLjUxOCAyNy43Nzc4IDE3MS43MTcgNDguOTc2NCAxNzEuNzE3IDc1LjEyNjNaIiBmaWxsPSIjRUJCQ0JBIi8+CjxwYXRoIGQ9Ik0xNDQuMjE3IDg2LjIzNzlDMTYxLjY0OSA1Ni4wNDMyIDE1MS4zMDMgMTcuNDMyOSAxMjEuMTA4IDBMMTA2LjA2IDI2LjA2NDRDODguNjI3IDU2LjI1OSA5OC45NzM2IDk0Ljg2OTQgMTI5LjE2OCAxMTIuMzAyTDE0NC4yMTcgODYuMjM3OVoiIGZpbGw9IiNFQkJDQkEiLz4KPHBhdGggZD0iTTEyNS4yOTkgNjAuOTc4OUMxMTYuMjc1IDI3LjMwMTIgODEuNjU3NSA3LjMxNTY3IDQ3Ljk3OTcgMTYuMzM5Nkw2NC4zMTk3IDc3LjMyMTFDNzMuMzQzNiAxMTAuOTk5IDEwNy45NjEgMTMwLjk4NCAxNDEuNjM5IDEyMS45NkwxMjUuMjk5IDYwLjk3ODlaIiBmaWxsPSIjRUJCQ0JBIi8+CjxwYXRoIGQ9Ik0xMjQuOTI2IDYwLjk3ODlDMTMzLjk1IDI3LjMwMTIgMTY4LjU2NyA3LjMxNTY3IDIwMi4yNDUgMTYuMzM5NkwxODUuOTA1IDc3LjMyMTFDMTc2Ljg4MSAxMTAuOTk5IDE0Mi4yNjMgMTMwLjk4NCAxMDguNTg2IDEyMS45NkwxMjQuOTI2IDYwLjk3ODlaIiBmaWxsPSIjRUJCQ0JBIi8+Cjwvc3ZnPgo=&style=for-the-badge" />
-    </a>
-</p>
-
-> Bloom new Rosé Pine themes
-
-## About
+---
 
 Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
@@ -21,127 +13,117 @@ Bloom is an opinionated theme generator, matching the Rosé Pine style guide.
 
 ### Homebrew
 
-A [Homebrew](https://brew.sh) formula is available from our [official tap](https://github.com/rose-pine/homebrew-tap):
-
 ```sh
 brew install rose-pine/tap/bloom
 ```
 
-### Arch Linux
-
-Use your favourite AUR helper or build from source per the [AUR instructions](https://wiki.archlinux.org/title/Arch_User_Repository#Installing_and_upgrading_packages):
+### Other methods
 
 ```sh
-# Community maintained
-# https://aur.archlinux.org/packages/rose-pine-bloom
+# Goblin (zero-dependency)
+curl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom | OUT=bloom sh
+
+# Go
+go install github.com/rose-pine/rose-pine-bloom@latest
+
+# Arch Linux (community AUR)
 yay -S rose-pine-bloom
 ```
 
-### Releases
-
-Download one of the prebuilt [releases](https://github.com/rose-pine/rose-pine-bloom/releases) or use [goblin.run](https://goblin.run):
-
-```sh
-curl -sf http://goblin.run/github.com/rose-pine/rose-pine-bloom | OUT=bloom sh
-```
-
-### Build
-
-With [Go](https://go.dev/doc/install) installed:
-
-```sh
-go build -o $(go env GOPATH)/bin/bloom github.com/rose-pine/rose-pine-bloom
-```
+Pre-built binaries are also available on the [releases page](https://github.com/rose-pine/rose-pine-bloom/releases).
 
 ## Usage
 
-> See our [full documentation](./docs/bloom.md) for more information.
+Create a template:
 
-For existing themes, use `bloom init` ([docs](./docs/bloom_init.md)) to create a template, for example:
-
-```sh
-bloom init theme.json
-# This will create a template.json file in the same directory
+```yaml
+# template.yaml
+name: $name
+background: $base
+foreground: $rose
 ```
 
-To build your themes, use `bloom build` ([docs](./docs/bloom_build.md)):
+Build it:
 
 ```sh
-bloom build template.json
+bloom build template.yaml
 ```
+
+If you already have a theme, convert it with `bloom init theme.json`. You can also build from a directory: `bloom build templates/`.
+
+## Templates
 
 ### Variables
 
-> By default, variables are prefixed with `$`
+By default, variables are prefixed with `$`.
 
-Our [palette](https://rosepinetheme.com/palette) is available by name, e.g. "love" or "highlightMed", as well as metadata related values mentioned below.
+| Variable       | Resolves to                                                                  |
+| -------------- | ---------------------------------------------------------------------------- |
+| `$id`          | `rose-pine`, `rose-pine-moon`, `rose-pine-dawn`                              |
+| `$name`        | `Rosé Pine`, `Rosé Pine Moon`, `Rosé Pine Dawn`                              |
+| `$appearance`  | `dark`, `dark`, `light`                                                      |
+| `$description` | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
 
-| Variable    | Value <main,moon,dawn>                                                       |
-| ----------- | ---------------------------------------------------------------------------- |
-| id          | rose-pine<-moon,-dawn>                                                       |
-| name        | Rosé Pine <Moon,Dawn>                                                        |
-| appearance  | <dark,dark,light>                                                            |
-| description | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
+Every colour in the [Rosé Pine palette](https://rosepinetheme.com/palette) is available as a variable — `$base`, `$surface`, `$overlay`, `$muted`, `$subtle`, `$text`, `$love`, `$gold`, `$rose`, `$pine`, `$foam`, `$iris`, `$highlightLow`, `$highlightMed`, `$highlightHigh`. Control opacity by appending a value, e.g. `$love/10` for 10% opacity.
 
 ### Accents
 
-Specify an `$accent` or `$accentname` variable to generate a theme for every accent:
+Using `$accent` generates variants for each accent colour. The accent name is appended to the filename, e.g. `rose-pine-gold.yaml`.
 
-```jsonc
-// template.json
-{ "accent": "$accent", "name": "$accentname" }
+| Variable      | Description                         |
+| ------------- | ----------------------------------- |
+| `$accent`     | Accent colour value                 |
+| `$onaccent`   | Contrasting foreground colour       |
+| `$accentname` | Lowercase accent name (e.g. `gold`) |
 
-// rose-pine-love.json
-{ "accent": "#eb6f92", "name": "love" }
+### Variant values
 
-// rose-pine-gold.json
-{ "accent": "#f6c177", "name": "gold" }
+For variant-specific values, use the `$(main|moon|dawn)` syntax. Variables are also allowed inside the variant values.
 
-...
+- `priority: $(10|20|30)` → `priority: 10` in rose-pine, `20` in rose-pine-moon, `30` in rose-pine-dawn
+- `background: $($rose|$pine|$gold)` → `background: #ebbcba` in rose-pine, `#3e8fb0` in rose-pine-moon, `#ea9d34` in rose-pine-dawn
 
-// rose-pine-moon-rose.json
-{ "accent": "#ea9a97", "name": "rose" }
+## Options
 
-// rose-pine-moon-pine.json
-{ "accent": "#3e8fb0", "name": "pine" }
+### Prefix
 
-...
+Change variable prefix:
 
-// rose-pine-dawn-foam.json
-{ "accent": "#56949f", "name": "foam" }
-
-// rose-pine-dawn-iris.json
-{ "accent": "#907aa9", "name": "iris" }
+```sh
+bloom build template.json --prefix @
 ```
 
-### Using custom values per variant
+### Output
 
-Use different values for each variant, formatted as `$(main|moon|dawn)`:
+Change the output destination:
 
-```jsonc
-// template.json
-{ "order": "$(Caffè|Cappuccino|Marocchino)" }
-
-// rose-pine.json
-{ "order": "Caffè" }
-
-// rose-pine-moon.json
-{ "order": "Cappuccino" }
-
-// rose-pine-dawn.json
-{ "order": "Marocchino" }
+```sh
+bloom build template.json --out themes
 ```
 
-It is possible to use variables inside of this syntax as well:
+### Format
 
-```jsonc
-{ "background": "$($rose|$foam|$iris)" }
+Specify one of the supported formats:
+
+```sh
+bloom build template.json --format <format>
 ```
+
+Available formats:
+
+| Name        | Example              |
+| ----------- | -------------------- |
+| `hex`       | `#ebbcba`            |
+| `hsl`       | `hsl(2, 55%, 83%)`   |
+| `hsl-css`   | `hsl(2deg 55% 83%)`  |
+| `hsl-array` | `[2, 0.55, 0.83]`    |
+| `rgb`       | `rgb(235, 188, 186)` |
+| `rgb-css`   | `rgb(235 188 186)`   |
+| `rgb-array` | `[235, 188, 186]`    |
+| `ansi`      | `235;188;186`        |
+
+Commas and spaces can be removed by passing `--no-commas` and `--no-spaces`. Decorators (#, rgb(), hsl(), brackets) can be removed by passing `--plain`.
 
 ## Contributing
 
 We welcome and appreciate contributions of any kind. Please create an issue for any proposed changes.
-
-## Related
-
-- [rose-pine/build](https://github.com/rose-pine/build) - Node.js-based theme generator for Rosé Pine

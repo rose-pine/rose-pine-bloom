@@ -185,5 +185,5 @@ func isGitRepo() bool {
 func init() {
 	initCmd.Flags().StringVarP(&variant, "variant", "v", "main", "theme variant (main, moon, dawn)")
 	initCmd.Flags().StringVarP(&output, "output", "o", ".", "template output directory")
-	RootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(initCmd)
 }
