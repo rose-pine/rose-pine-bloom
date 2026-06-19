@@ -17,7 +17,7 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: googleapis/release-please-action@v4
         id: release
         with:
@@ -34,18 +34,18 @@ jobs:
     env:
       FILENAME: rose-pine-bloom-${{ matrix.os }}-${{ matrix.arch }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          go-version: 1.26.4
-      - name: Build
+          go-version: stable
+      - name: build
         run: |
           mkdir -p dist
           ext=""
           if [ "${{ matrix.os }}" = "windows" ]; then ext=".exe"; fi
           VERSION="${{ needs.release-please.outputs.tag_name }}"
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -ldflags "-X github.com/rose-pine/rose-pine-bloom/cmd.version=${VERSION}" -o dist/${FILENAME}${ext}
-      - name: Upload to GitHub Release
+      - name: upload
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
