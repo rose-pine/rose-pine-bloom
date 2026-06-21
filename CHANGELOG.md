@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v3.0.1...v3.1.0) (2026-06-21)
+
+
+### Features
+
+* auto-detect format flags during init ([#92](https://github.com/rose-pine/rose-pine-bloom/issues/92)) ([46fa1a6](https://github.com/rose-pine/rose-pine-bloom/commit/46fa1a66155cc6d655f4be4af296f95b10c4032f))
+* nix flake ([#88](https://github.com/rose-pine/rose-pine-bloom/issues/88)) ([1073716](https://github.com/rose-pine/rose-pine-bloom/commit/10737167c207a594eccc04d22135c4c6809d5578))
+
+
+### Bug Fixes
+
+* go modules vendor hash ([#90](https://github.com/rose-pine/rose-pine-bloom/issues/90)) ([97bf5e3](https://github.com/rose-pine/rose-pine-bloom/commit/97bf5e33275c9bb690ca937a977392a080152511))
+
 ## [3.0.1](https://github.com/rose-pine/rose-pine-bloom/compare/v3.0.0...v3.0.1) (2025-11-17)
 
 
