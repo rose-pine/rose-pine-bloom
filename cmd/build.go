@@ -48,6 +48,26 @@ var buildCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Themes generated in %s\n", outputDir)
+
+		cmdLine := "bloom build " + template
+		cmdLine += " --output " + outputDir
+		cmdLine += " --prefix " + prefix
+		cmdLine += " --format " + format
+		if plain {
+			cmdLine += " --plain"
+		}
+		if noCommas {
+			cmdLine += " --no-commas"
+		}
+		if noSpaces {
+			cmdLine += " --no-spaces"
+		}
+
+		if err := updateReadme(readmeSection(cmdLine)); err != nil {
+			fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
+		} else {
+			fmt.Println("Updated README.md")
+		}
 	},
 }
 

@@ -32,6 +32,9 @@ type TemplateOptions struct {
 	Plain   bool
 	Commas  bool
 	Spaces  bool
+
+	DetectedFormat string
+	TemplatePath   string
 }
 
 const (
@@ -104,6 +107,35 @@ func generateThemeFile(cfg *Options, templatePath string, content []byte, varian
 	return writeFile(outputPath, []byte(result))
 }
 
+func detectFormatOptions(content string, variant color.VariantMeta) (color.ColorFormat, bool, bool, bool) {
+	bestFmt := color.ColorFormat("hex")
+	bestPlain, bestCommas, bestSpaces := false, true, true
+	bestCount := 0
+
+	for _, f := range color.AllFormats {
+		fmt := color.ColorFormat(f)
+		for _, plain := range []bool{false, true} {
+			for _, spaces := range []bool{true, false} {
+				for _, commas := range []bool{true, false} {
+					count := 0
+					for _, c := range variant.Colors {
+						val := color.FormatColor(c, fmt, plain, commas, spaces)
+						if strings.Contains(content, val) {
+							count++
+						}
+					}
+					if count > bestCount {
+						bestFmt, bestPlain, bestCommas, bestSpaces = fmt, plain, commas, spaces
+						bestCount = count
+					}
+				}
+			}
+		}
+	}
+
+	return bestFmt, bestPlain, bestCommas, bestSpaces
+}
+
 func createTemplates(cfg *TemplateOptions) error {
 	files, err := templateFiles(cfg.Input)
 	if err != nil {
@@ -125,10 +157,18 @@ func createTemplates(cfg *TemplateOptions) error {
 		}
 
 		content := string(raw)
+
+		formatStr, plain, commas, spaces := cfg.Format, cfg.Plain, cfg.Commas, cfg.Spaces
+		if formatStr == "" {
+			var df color.ColorFormat
+			df, plain, commas, spaces = detectFormatOptions(content, variant)
+			formatStr = string(df)
+		}
+
 		data := []string{}
 
 		for name, c := range variant.Colors {
-			val := color.FormatColor(c, color.ColorFormat(cfg.Format), cfg.Plain, cfg.Commas, cfg.Spaces)
+			val := color.FormatColor(c, color.ColorFormat(formatStr), plain, commas, spaces)
 			data = append(data, val, cfg.Prefix+name)
 		}
 
@@ -139,12 +179,15 @@ func createTemplates(cfg *TemplateOptions) error {
 		result := strings.NewReplacer(data...).Replace(content)
 
 		if content == result {
-			fmt.Printf("%sNo matches for format %q. Available formats:\n  %s%s\n", warnColor, cfg.Format, strings.Join(color.AllFormats, ", "), resetColor)
+			fmt.Printf("%sNo matches for format %q. Available formats:\n  %s%s\n", warnColor, formatStr, strings.Join(color.AllFormats, ", "), resetColor)
 		}
 
 		ext := filepath.Ext(file)
 		outputFile := "template" + ext
 		outputPath := filepath.Join(cfg.Output, outputFile)
+
+		cfg.DetectedFormat = formatStr
+		cfg.TemplatePath = outputPath
 
 		if err := writeFile(outputPath, []byte(result)); err != nil {
 			return err
