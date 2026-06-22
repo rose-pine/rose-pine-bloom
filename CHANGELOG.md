@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v3.1.0...v4.0.0) (2026-06-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* flatten template directory output ([#93](https://github.com/rose-pine/rose-pine-bloom/issues/93))
+
+### Features
+
+* flatten template directory output ([#93](https://github.com/rose-pine/rose-pine-bloom/issues/93)) ([d9010fd](https://github.com/rose-pine/rose-pine-bloom/commit/d9010fd4cdcab523a8f6f3beae29a7e6bd62c4d8))
+
 ## [3.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v3.0.1...v3.1.0) (2026-06-21)
 
 
