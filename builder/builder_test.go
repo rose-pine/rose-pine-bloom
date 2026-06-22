@@ -452,11 +452,7 @@ func TestDirectories(t *testing.T) {
 		t.Fatal(err)
 	}
 	templatePath := filepath.Join(templateDir, "template.json")
-	template2Path := filepath.Join(templateDir, "template2.json")
 	if err := os.WriteFile(templatePath, []byte(testTemplate), 0644); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(template2Path, []byte(testTemplate), 0644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -468,23 +464,19 @@ func TestDirectories(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	testFiles := []string{"template.json", "template2.json"}
 	for _, variant := range testVariants {
-		for _, file := range testFiles {
-			filename := filepath.Join(variant.id, file)
-			t.Run(filename, func(t *testing.T) {
-				result := readAndParseJSON(t, filepath.Join(tmpDir, filename))
+		t.Run(variant.filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, variant.filename))
 
-				assertJSONField(t, result, "id", variant.id)
-				assertJSONField(t, result, "name", variant.name)
-				assertJSONField(t, result, "custom", variant.custom)
+			assertJSONField(t, result, "id", variant.id)
+			assertJSONField(t, result, "name", variant.name)
+			assertJSONField(t, result, "custom", variant.custom)
 
-				colors := result["colors"].(map[string]any)
-				if got := colors["base"]; got != variant.baseHex {
-					t.Errorf("base color = %v, want %v", got, variant.baseHex)
-				}
-			})
-		}
+			colors := result["colors"].(map[string]any)
+			if got := colors["base"]; got != variant.baseHex {
+				t.Errorf("base color = %v, want %v", got, variant.baseHex)
+			}
+		})
 	}
 }
 

@@ -297,11 +297,11 @@ func buildOutputPath(cfg *Options, templatePath string, variant color.VariantMet
 	ext := filepath.Ext(templatePath)
 
 	if info, err := os.Stat(cfg.Template); err == nil && info.IsDir() {
-		rel, _ := strings.CutPrefix(filepath.Dir(templatePath), filepath.Clean(cfg.Template))
+		ext := filepath.Ext(templatePath)
 		if accent != "" {
-			return filepath.Join(cfg.Output, accent, variant.Id, rel, filepath.Base(templatePath))
+			return filepath.Join(cfg.Output, variant.Id+"-"+accent+ext)
 		}
-		return filepath.Join(cfg.Output, variant.Id, rel, filepath.Base(templatePath))
+		return filepath.Join(cfg.Output, variant.Id+ext)
 	}
 
 	if accent != "" {
