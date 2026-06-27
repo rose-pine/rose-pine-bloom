@@ -21,6 +21,12 @@ type Color struct {
 	On    string   `json:"on,omitempty"`
 }
 
+func (c *Color) WithAlpha(alpha *float64) Color {
+	copied := *c
+	copied.Alpha = alpha
+	return copied
+}
+
 const hex = "0123456789abcdef"
 
 func hexComponent(c uint8) (byte, byte) {

@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	outputDir string
-	prefix    string
-	format    string
-	plain     bool
-	noCommas  bool
-	noSpaces  bool
+	outDir   string
+	prefix   string
+	format   string
+	plain    bool
+	noCommas bool
+	noSpaces bool
 )
 
 var buildCmd = &cobra.Command{
@@ -31,27 +31,31 @@ var buildCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		if len(prefix) != 1 {
+			fmt.Fprintf(os.Stderr, "invalid prefix, must be exactly one character long\n")
+			os.Exit(1)
+		}
+
 		fmt.Printf("Building themes from %s...\n", template)
 
-		err := builder.Build(&builder.Options{
-			Template: template,
-			Output:   outputDir,
-			Prefix:   prefix,
-			Format:   format,
-			Plain:    plain,
-			Commas:   !noCommas,
-			Spaces:   !noSpaces,
-		})
+		opts := builder.BuildOpts{
+			Prefix:        rune(prefix[0]),
+			DefaultFormat: color.ColorFormat(format),
+			Plain:         plain,
+			Commas:        !noCommas,
+			Spaces:        !noSpaces,
+		}
+		err := builder.Build(template, outDir, &opts)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error building themes: %v\n", err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("Themes generated in %s\n", outputDir)
+		fmt.Printf("Themes generated in %s\n", outDir)
 
 		cmdLine := "bloom build " + template
-		cmdLine += " --output " + outputDir
-		cmdLine += " --prefix " + prefix
+		cmdLine += " --output " + outDir
+		cmdLine += " --prefix " + string(prefix)
 		cmdLine += " --format " + format
 		if plain {
 			cmdLine += " --plain"
@@ -72,7 +76,7 @@ var buildCmd = &cobra.Command{
 }
 
 func init() {
-	buildCmd.Flags().StringVarP(&outputDir, "output", "o", "dist", "output directory")
+	buildCmd.Flags().StringVarP(&outDir, "output", "o", "dist", "output directory")
 	buildCmd.Flags().StringVarP(&prefix, "prefix", "p", "$", "variable prefix")
 	buildCmd.Flags().StringVarP(&format, "format", "f", "hex", "hex, hsl, hsl-css, hsl-array, rgb, rgb-css, rgb-array, ansi")
 	buildCmd.Flags().BoolVar(&plain, "plain", false, "strip wrappers (#, rgb(), hsl(), brackets) from output")
