@@ -49,7 +49,7 @@ Build it:
 bloom build template.yaml
 ```
 
-If you already have a theme, convert it with `bloom init theme.json`. You can also build from a directory: `bloom build templates/`.
+If you already have a theme, convert it with `bloom init theme.yaml`. You can also build from a directory: `bloom build templates/`.
 
 ## Templates
 
@@ -90,7 +90,7 @@ For variant-specific values, use the `$(main|moon|dawn)` syntax. Variables are a
 Change variable prefix:
 
 ```sh
-bloom build template.json --prefix @
+bloom build template.yaml --prefix @
 ```
 
 ### Output
@@ -98,7 +98,7 @@ bloom build template.json --prefix @
 Change the output destination:
 
 ```sh
-bloom build template.json --out themes
+bloom build template.yaml --out themes
 ```
 
 ### Format
@@ -106,7 +106,7 @@ bloom build template.json --out themes
 Specify one of the supported formats:
 
 ```sh
-bloom build template.json --format <format>
+bloom build template.yaml --format <format>
 ```
 
 Available formats:
