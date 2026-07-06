@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -43,9 +44,8 @@ var initCmd = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Error creating template: %v\n", err)
 			os.Exit(1)
 		}
-
-		templatePath := opts.TemplatePath
 		fmt.Printf("Template created in %s\n", output)
+		templatePath := filepath.Join(output, "template"+filepath.Ext(themeFile))
 
 		if err := ensureReadme(templatePath, prefix); err != nil {
 			fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)

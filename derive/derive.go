@@ -19,9 +19,6 @@ type DeriveOpts struct {
 	Plain   bool
 	Commas  bool
 	Spaces  bool
-
-	DetectedFormat string
-	TemplatePath   string
 }
 
 const (
@@ -116,20 +113,13 @@ func createTemplates(opts *DeriveOpts) error {
 		outputFile := "template" + ext
 		outputPath := filepath.Join(opts.Output, outputFile)
 
-		opts.DetectedFormat = formatStr
-		opts.TemplatePath = outputPath
-
-		if err := writeFile(outputPath, []byte(result)); err != nil {
+		if err := os.MkdirAll(filepath.Dir(outputPath), 0o755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(outputPath, []byte(result), 0o644); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-func writeFile(outputPath string, content []byte) error {
-	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
-		return err
-	}
-	return os.WriteFile(outputPath, content, 0644)
 }
