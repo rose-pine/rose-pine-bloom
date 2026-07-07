@@ -57,20 +57,16 @@ func buildOutPath(templatePath string, outputPath string, variant color.VariantM
 	return filepath.Join(outputPath, variant.Id+ext)
 }
 
-func writeFile(path string, content []byte) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
-	return os.WriteFile(path, content, 0o644)
-}
-
 func writeTemplateFile(path string, content string) error {
 	result, err := postProcessTemplate(path, content)
 	if err != nil {
 		return fmt.Errorf("post-processing hook failed: %w", err)
 	}
 
-	return writeFile(path, ([]byte)(result))
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(path, []byte(result), 0o644)
 }
 
 func hasAccentCapture(captures []Capture) bool {
