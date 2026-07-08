@@ -99,10 +99,10 @@ func Build(templatePath string, outPath string, opts *BuildOpts) error {
 		return fmt.Errorf("failed to discover templates: %w", err)
 	}
 
-	for _, templatePath := range templates {
-		bytes, err := os.ReadFile(templatePath)
+	for _, path := range templates {
+		bytes, err := os.ReadFile(path)
 		if err != nil {
-			return fmt.Errorf("failed to read template at `%s`: %w", templatePath, err)
+			return fmt.Errorf("failed to read template at `%s`: %w", path, err)
 		}
 		content := string(bytes)
 		captures, err := Scan(content, scannerOpts)
@@ -121,7 +121,7 @@ func Build(templatePath string, outPath string, opts *BuildOpts) error {
 				if err != nil {
 					return err
 				}
-				if err := writeTemplateFile(buildOutPath(templatePath, outPath, variant, accent), result); err != nil {
+				if err := writeTemplateFile(buildOutPath(path, outPath, variant, accent), result); err != nil {
 					return err
 				}
 			}
