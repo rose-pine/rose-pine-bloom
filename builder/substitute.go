@@ -44,7 +44,7 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 
 				case "onaccent":
 					if accentColor.On == "" {
-						return "", fmt.Errorf("accent color `%s` does not support onaccent", accentColor.On)
+						return "", fmt.Errorf("accent color `%s` does not support onaccent", accentName)
 					}
 					if onAccentColor, ok := variant.Colors[accentColor.On]; ok {
 						clr = onAccentColor
