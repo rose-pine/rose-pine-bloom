@@ -11,12 +11,13 @@ import (
 )
 
 var (
-	outDir   string
-	prefix   string
-	format   string
-	plain    bool
-	noCommas bool
-	noSpaces bool
+	outDir           string
+	prefix           string
+	format           string
+	plain            bool
+	noCommas         bool
+	noSpaces         bool
+	skipReadmeUpdate bool
 )
 
 var buildCmd = &cobra.Command{
@@ -53,24 +54,26 @@ var buildCmd = &cobra.Command{
 
 		fmt.Printf("Themes generated in %s\n", outDir)
 
-		cmdLine := "bloom build " + template
-		cmdLine += " --output " + outDir
-		cmdLine += " --prefix " + string(prefix)
-		cmdLine += " --format " + format
-		if plain {
-			cmdLine += " --plain"
-		}
-		if noCommas {
-			cmdLine += " --no-commas"
-		}
-		if noSpaces {
-			cmdLine += " --no-spaces"
-		}
+		if !skipReadmeUpdate {
+			cmdLine := "bloom build " + template
+			cmdLine += " --output " + outDir
+			cmdLine += " --prefix " + string(prefix)
+			cmdLine += " --format " + format
+			if plain {
+				cmdLine += " --plain"
+			}
+			if noCommas {
+				cmdLine += " --no-commas"
+			}
+			if noSpaces {
+				cmdLine += " --no-spaces"
+			}
 
-		if err := updateReadme(readmeSection(cmdLine)); err != nil {
-			fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
-		} else {
-			fmt.Println("Updated README.md")
+			if err := updateReadme(readmeSection(cmdLine)); err != nil {
+				fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
+			} else {
+				fmt.Println("Updated README.md")
+			}
 		}
 	},
 }
@@ -82,6 +85,7 @@ func init() {
 	buildCmd.Flags().BoolVar(&plain, "plain", false, "strip wrappers (#, rgb(), hsl(), brackets) from output")
 	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "remove commas")
 	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
+	buildCmd.Flags().BoolVar(&skipReadmeUpdate, "skip-readme-update", false, "don't update README.md")
 
 	rootCmd.AddCommand(buildCmd)
 }
