@@ -17,9 +17,13 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: stable
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
+      - name: lint
+        # Run even if the formatting check failed, so that both sets of
+        # problems are reported in a single CI run.
+        if: ${{ !cancelled() }}
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9
         with:
-          version: latest
+          # If you change this, make sure to also update scripts/golangci-lint-shim.sh
+          version: v2.13.2
       - name: test
         run: go test -v ./...
