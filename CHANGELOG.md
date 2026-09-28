@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.1.0](https://github.com/rose-pine/rose-pine-bloom/compare/v4.0.0...v4.1.0) (2026-09-28)
+
+
+### Features
+
+* add option to skip updating README ([#99](https://github.com/rose-pine/rose-pine-bloom/issues/99)) ([9f28b80](https://github.com/rose-pine/rose-pine-bloom/commit/9f28b809beec48f62ff8bda3be5940b66d25096f))
+* add palette shades ([#98](https://github.com/rose-pine/rose-pine-bloom/issues/98)) ([e728487](https://github.com/rose-pine/rose-pine-bloom/commit/e728487814c7ac4ccbf099913a56c2fa47bed6e3))
+
+
+### Bug Fixes
+
+* **ci:** use latest golangci-lint ([bc75c12](https://github.com/rose-pine/rose-pine-bloom/commit/bc75c127f5b15a6a74496602ddc23ee6af3709e9))
+
 ## [4.0.0](https://github.com/rose-pine/rose-pine-bloom/compare/v3.1.0...v4.0.0) (2026-06-22)
 
 
