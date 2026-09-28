@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/rose-pine/rose-pine-bloom/color"
 )
 
 var roleKeys = []string{
@@ -41,6 +43,7 @@ type (
 		span  span
 		role  string
 		alpha *float64
+		shade *int
 	}
 	MetaCapture    struct{ span }
 	VariantCapture struct {
@@ -65,9 +68,9 @@ func isAsciiDigit(b byte) bool {
 }
 
 type Scanner struct {
-	Content     string
-	Opts        ScannerOpts
-	pos         uint
+	Content string
+	Opts    ScannerOpts
+	pos     uint
 }
 
 func (s *Scanner) curr() (byte, bool) {
@@ -138,9 +141,16 @@ func (s *Scanner) scanKey(keys []string) (string, bool) {
 func (s *Scanner) scanVariantCapture(outerStartPos uint) (VariantCapture, error) {
 	s.advance()
 	start := s.pos
-	s.scanUntil(')')
+	if !s.scanUntil(')') {
+		return VariantCapture{}, fmt.Errorf("unterminated variant capture")
+	}
+
 	content := s.Content[start:s.pos]
-	parts := strings.SplitN(content, "|", 3)
+	parts := strings.Split(content, "|")
+	if len(parts) != 3 {
+		return VariantCapture{}, fmt.Errorf("invalid variant capture: expected exactly three values separated by `|`")
+	}
+
 	s.advance()
 
 	mainCaptures, err := Scan(parts[0], s.Opts)
@@ -166,30 +176,73 @@ func (s *Scanner) scanVariantCapture(outerStartPos uint) (VariantCapture, error)
 	}, nil
 }
 
+func (s *Scanner) scanInteger(minLen int, maxLen int) (int, error) {
+	start := s.pos
+	for {
+		curr, _ := s.curr()
+		if !isAsciiDigit(curr) {
+			break
+		}
+
+		s.advance()
+	}
+
+	text := s.Content[start:s.pos]
+
+	if len(text) > maxLen || len(text) < minLen {
+		return 0, fmt.Errorf("invalid integer length %d, expected a length between %d and %d", len(text), minLen, maxLen)
+	}
+
+	parsed, err := strconv.ParseInt(text, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse integer: `%s`", text)
+	}
+
+	return int(parsed), nil
+}
+
 func (s *Scanner) scanRoleCapture(start uint, role string) (RoleCapture, error) {
+	var shade *int
+	if curr, _ := s.curr(); curr == '-' {
+		s.advance()
+		shadeVal, err := s.scanInteger(2, 3)
+		if err != nil {
+			return RoleCapture{}, fmt.Errorf("failed to parse role shade: %w", err)
+		}
+		if _, err := color.GetShadeIndex(shadeVal); err != nil {
+			return RoleCapture{}, fmt.Errorf("failed to parse role shade: %w", err)
+		}
+
+		shade = &shadeVal
+	}
+
 	var alpha *float64
 	if curr, _ := s.curr(); curr == '/' {
 		if peeked, _ := s.peek(); isAsciiDigit(peeked) {
 			s.advance()
-			alphaStart := s.pos
-			for {
-				if curr, _ := s.curr(); isAsciiDigit(curr) {
-					s.advance()
-				} else {
-					break
-				}
+
+			alphaVal, err := s.scanInteger(1, 3)
+			if err != nil {
+				return RoleCapture{}, fmt.Errorf("failed to parse role alpha value: %w", err)
 			}
-			parsed, err := strconv.ParseInt(s.Content[alphaStart:s.pos], 10, 32)
-			if err == nil {
-				value := float64(parsed) / 100
-				alpha = &value
+
+			if alphaVal < 0 || alphaVal > 100 {
+				return RoleCapture{}, fmt.Errorf("failed to parse role alpha value: expected value between 0 and 100")
 			}
+
+			value := float64(alphaVal) / 100
+			alpha = &value
+		} else {
+			return RoleCapture{}, fmt.Errorf("expected alpha value following slash")
 		}
 	}
+	span := span{start, s.pos - start}
+
 	return RoleCapture{
-		span:  span{start, s.pos - start},
-		role:  role,
-		alpha: alpha,
+		span,
+		role,
+		alpha,
+		shade,
 	}, nil
 }
 

@@ -8,18 +8,18 @@ import (
 )
 
 func substituteCaptures(content string, captures []Capture, variant color.VariantMeta, opts *BuildOpts, accentName string) (string, error) {
-	var palette color.Palette
+	var shades color.PaletteShades
 	var buf strings.Builder
 
 	buf.Grow(len(content))
 
 	switch variant.Id {
 	case "rose-pine":
-		palette = color.MainPalette
+		shades = color.MainPaletteShades
 	case "rose-pine-moon":
-		palette = color.MoonPalette
+		shades = color.MoonPaletteShades
 	case "rose-pine-dawn":
-		palette = color.DawnPalette
+		shades = color.DawnPaletteShades
 	default:
 		return "", fmt.Errorf("unknown variant `%s`", variant.Id)
 	}
@@ -30,8 +30,7 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 
 		switch c := capture.(type) {
 		case RoleCapture:
-			var clr *color.Color
-
+			roleName := c.role
 			if c.role == "accent" || c.role == "onaccent" {
 				accentColor, ok := variant.Colors[accentName]
 				if !ok {
@@ -40,29 +39,31 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 
 				switch c.role {
 				case "accent":
-					clr = accentColor
-
+					roleName = accentName
 				case "onaccent":
 					if accentColor.On == "" {
 						return "", fmt.Errorf("accent color `%s` does not support onaccent", accentName)
 					}
-					if onAccentColor, ok := variant.Colors[accentColor.On]; ok {
-						clr = onAccentColor
-					} else {
-						return "", fmt.Errorf("invalid role value `%s` for onaccent", accentColor.On)
-					}
+					roleName = accentColor.On
 				}
-			} else {
-				clr = palette[c.role]
 			}
 
-			if clr == nil {
-				return "", fmt.Errorf("no such role: `%s`", c.role)
+			roleShades, ok := shades[roleName]
+			if !ok {
+				return "", fmt.Errorf("no such role: `%s`", roleName)
 			}
-			withAlpha := clr.WithAlpha(c.alpha)
-			clr = &withAlpha
 
-			formatted := color.FormatColor(clr, opts.DefaultFormat, opts.Plain, opts.Commas, opts.Spaces)
+			shadeIndex := roleShades.Base
+			if c.shade != nil {
+				idx, err := color.GetShadeIndex(*c.shade)
+				if err != nil {
+					return "", fmt.Errorf("invalid shade value `%d` for role `%s`: %w", *c.shade, roleName, err)
+				}
+				shadeIndex = idx
+			}
+
+			clr := roleShades.Colors[shadeIndex].WithAlpha(c.alpha)
+			formatted := color.FormatColor(&clr, opts.DefaultFormat, opts.Plain, opts.Commas, opts.Spaces)
 			buf.WriteString(formatted)
 
 		case MetaCapture:

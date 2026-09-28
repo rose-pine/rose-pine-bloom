@@ -64,7 +64,16 @@ By default, variables are prefixed with `$`.
 | `$appearance`  | `dark`, `dark`, `light`                                                      |
 | `$description` | All natural pine, faux fur and a bit of soho vibes for the classy minimalist |
 
-Every colour in the [Rosé Pine palette](https://rosepinetheme.com/palette) is available as a variable — `$base`, `$surface`, `$overlay`, `$muted`, `$subtle`, `$text`, `$love`, `$gold`, `$rose`, `$pine`, `$foam`, `$iris`, `$highlightLow`, `$highlightMed`, `$highlightHigh`. Control opacity by appending a value, e.g. `$love/10` for 10% opacity.
+Every colour in the [Rosé Pine palette](https://rosepinetheme.com/palette) is available as a variable — `$base`, `$surface`, `$overlay`, `$muted`, `$subtle`, `$text`, `$love`, `$gold`, `$rose`, `$pine`, `$foam`, `$iris`, `$highlightLow`, `$highlightMed`, `$highlightHigh`.
+
+You can request shades with a Tailwind-style suffix:
+
+- `$rose-50`
+- `$rose-100`
+- ...
+- `$rose-900`
+
+Control opacity by appending a value, e.g. `$love/10` for 10% opacity.
 
 ### Accents
 

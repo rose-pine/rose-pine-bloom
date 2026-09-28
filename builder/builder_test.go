@@ -288,6 +288,68 @@ func TestAlphaVariableFormats(t *testing.T) {
 	}
 }
 
+func TestColorShading(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templateContent := `{
+        "base": "$base",
+        "base050": "$base-50",
+        "base500": "$base-500",
+        "base900": "$base-900",
+        "love300alpha": "$love-300/50"
+    }`
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	buildFromTemplate(t, templateContent, templatePath, tmpDir, &testOpts)
+
+	tests := []struct {
+		filename     string
+		base         string
+		base050      string
+		base500      string
+		base900      string
+		love300alpha string
+	}{
+		{"rose-pine.json", "#191724", "#181622", "#5f5889", "#b8b4cf", "#c51b4b80"},
+		{"rose-pine-moon.json", "#232136", "#1f1d2f", "#544f82", "#adaacb", "#c51b4b80"},
+		{"rose-pine-dawn.json", "#faf4ed", "#38250f", "#d29a5b", "#faf4ed", "#8a425780"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, tt.filename))
+
+			assertJSONField(t, result, "base", tt.base)
+			assertJSONField(t, result, "base050", tt.base050)
+			assertJSONField(t, result, "base500", tt.base500)
+			assertJSONField(t, result, "base900", tt.base900)
+			assertJSONField(t, result, "love300alpha", tt.love300alpha)
+		})
+	}
+}
+
+func TestBaseShadeMatchesRole(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templateContent := `{
+        "love": "$love",
+        "love700": "$love-700",
+        "love600": "$love-600"
+    }`
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	buildFromTemplate(t, templateContent, templatePath, tmpDir, &testOpts)
+
+	result := readAndParseJSON(t, filepath.Join(tmpDir, "rose-pine.json"))
+
+	if result["love"] != result["love700"] {
+		t.Errorf("love-700 = %v, want base shade %v", result["love700"], result["love"])
+	}
+	if result["love"] == result["love600"] {
+		t.Errorf("love-600 = %v, expected it to differ from base shade", result["love600"])
+	}
+}
+
 func TestVariantGeneration(t *testing.T) {
 	tmpDir := setupTest(t)
 
@@ -407,6 +469,36 @@ func TestAccents(t *testing.T) {
 			assertJSONField(t, result, "accentname", v.accentname)
 			assertJSONField(t, result, "accent", v.accent)
 			assertJSONField(t, result, "onaccent", v.onaccent)
+		})
+	}
+}
+
+func TestAccentCaptureInsideVariantValues(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templateContent := `{
+        "accent": "$($accent|$accent|$accent)",
+        "onaccent": "$($onaccent|$onaccent|$onaccent)"
+    }`
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	buildFromTemplate(t, templateContent, templatePath, tmpDir, &testOpts)
+
+	tests := []struct {
+		filename string
+		accent   string
+		onaccent string
+	}{
+		{filename: "rose-pine/rose-pine-love.json", accent: "#eb6f92", onaccent: "#e0def4"},
+		{filename: "rose-pine-moon/rose-pine-moon-love.json", accent: "#eb6f92", onaccent: "#e0def4"},
+		{filename: "rose-pine-dawn/rose-pine-dawn-love.json", accent: "#b4637a", onaccent: "#fffaf3"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, tt.filename))
+			assertJSONField(t, result, "accent", tt.accent)
+			assertJSONField(t, result, "onaccent", tt.onaccent)
 		})
 	}
 }

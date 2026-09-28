@@ -41,7 +41,6 @@ func BenchmarkDetectFormatOptions(b *testing.B) {
 	}
 }
 
-
 func TestDetectFormatOptions(t *testing.T) {
 	colors := func(base, love string) string {
 		return fmt.Sprintf(`{"base": "%s", "love": "%s"}`, base, love)

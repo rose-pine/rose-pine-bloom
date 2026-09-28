@@ -71,8 +71,15 @@ func writeTemplateFile(path string, content string) error {
 
 func hasAccentCapture(captures []Capture) bool {
 	for _, capture := range captures {
-		if rc, ok := capture.(RoleCapture); ok && (rc.role == "accent" || rc.role == "onaccent") {
-			return true
+		switch c := capture.(type) {
+		case RoleCapture:
+			if c.role == "accent" || c.role == "onaccent" {
+				return true
+			}
+		case VariantCapture:
+			if hasAccentCapture(c.main.captures) || hasAccentCapture(c.moon.captures) || hasAccentCapture(c.dawn.captures) {
+				return true
+			}
 		}
 	}
 	return false
@@ -119,10 +126,12 @@ func Build(templatePath string, outPath string, opts *BuildOpts) error {
 			for _, accent := range accents {
 				result, err := substituteCaptures(content, captures, variant, opts, accent)
 				if err != nil {
-					return err
+					return fmt.Errorf("failed to render template `%s` for variant `%s` (accent `%s`): %w", path, variant.Id, accent, err)
 				}
-				if err := writeTemplateFile(buildOutPath(path, outPath, variant, accent), result); err != nil {
-					return err
+
+				outFile := buildOutPath(path, outPath, variant, accent)
+				if err := writeTemplateFile(outFile, result); err != nil {
+					return fmt.Errorf("failed to write output file `%s`: %w", outFile, err)
 				}
 			}
 		}
