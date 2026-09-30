@@ -17,6 +17,7 @@ var (
 	plain            bool
 	noCommas         bool
 	noSpaces         bool
+	single           bool
 	skipReadmeUpdate bool
 )
 
@@ -45,6 +46,7 @@ var buildCmd = &cobra.Command{
 			Plain:         plain,
 			Commas:        !noCommas,
 			Spaces:        !noSpaces,
+			Single:        single,
 		}
 		err := builder.Build(template, outDir, &opts)
 		if err != nil {
@@ -68,6 +70,9 @@ var buildCmd = &cobra.Command{
 			if noSpaces {
 				cmdLine += " --no-spaces"
 			}
+			if single {
+				cmdLine += " --single"
+			}
 
 			if err := updateReadme(readmeSection(cmdLine)); err != nil {
 				fmt.Fprintf(os.Stderr, "Error updating README: %v\n", err)
@@ -86,6 +91,7 @@ func init() {
 	buildCmd.Flags().BoolVar(&noCommas, "no-commas", false, "remove commas")
 	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
 	buildCmd.Flags().BoolVar(&skipReadmeUpdate, "skip-readme-update", false, "don't update README.md")
+	buildCmd.Flags().BoolVar(&single, "single", false, "build one file containing all variants")
 
 	rootCmd.AddCommand(buildCmd)
 }

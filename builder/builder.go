@@ -16,6 +16,7 @@ type BuildOpts struct {
 	Plain         bool
 	Commas        bool
 	Spaces        bool
+	Single        bool
 }
 
 func DiscoverTemplates(path string) ([]string, error) {
@@ -41,7 +42,7 @@ func DiscoverTemplates(path string) ([]string, error) {
 	return files, err
 }
 
-func buildOutPath(templatePath string, outputPath string, variant color.VariantMeta, accent string) string {
+func buildOutPath(templatePath string, outputPath string, variant *color.VariantMeta, accent string) string {
 	ext := filepath.Ext(templatePath)
 
 	if info, err := os.Stat(templatePath); err == nil && info.IsDir() {
@@ -77,8 +78,10 @@ func hasAccentCapture(captures []Capture) bool {
 				return true
 			}
 		case VariantCapture:
-			if hasAccentCapture(c.main.captures) || hasAccentCapture(c.moon.captures) || hasAccentCapture(c.dawn.captures) {
-				return true
+			for _, arm := range c.arms {
+				if hasAccentCapture(arm.captures) {
+					return true
+				}
 			}
 		}
 	}
@@ -114,7 +117,20 @@ func Build(templatePath string, outPath string, opts *BuildOpts) error {
 		content := string(bytes)
 		captures, err := Scan(content, scannerOpts)
 		if err != nil {
-			return fmt.Errorf("failed to scan template: %w", err)
+			return fmt.Errorf("failed to scan template at `%s`: %w", path, err)
+		}
+
+		if opts.Single {
+			result, err := substituteCaptures(content, captures, nil, opts, "")
+			if err != nil {
+				return fmt.Errorf("failed to render template `%s`: %w", path, err)
+			}
+
+			outFile := filepath.Join(outPath, "rose-pine"+filepath.Ext(path))
+			if err := writeTemplateFile(outFile, result); err != nil {
+				return fmt.Errorf("failed to write output file `%s`: %w", outFile, err)
+			}
+			continue
 		}
 
 		needsAccent := hasAccentCapture(captures)

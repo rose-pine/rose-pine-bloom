@@ -7,22 +7,40 @@ import (
 	"github.com/rose-pine/rose-pine-bloom/color"
 )
 
-func substituteCaptures(content string, captures []Capture, variant color.VariantMeta, opts *BuildOpts, accentName string) (string, error) {
-	var shades color.PaletteShades
+func (opts *BuildOpts) varName(name string) string {
+	return string(opts.Prefix) + name
+}
+
+func qualifiedForms(opts *BuildOpts, name string) string {
+	forms := make([]string, 0, len(variantKeys))
+	for _, key := range variantKeys {
+		forms = append(forms, opts.varName(key+"-"+name))
+	}
+	if len(forms) == 0 {
+		return ""
+	}
+	return strings.Join(forms[:len(forms)-1], ", ") + " or " + forms[len(forms)-1]
+}
+
+func roleVariant(qualifier string, name string, opts *BuildOpts, variant *color.VariantMeta) (*color.VariantMeta, error) {
+	if qualifier == "" {
+		if opts.Single {
+			return nil, fmt.Errorf("variant prefix required: %s (use %s)", opts.varName(name), qualifiedForms(opts, name))
+		}
+		if variant == nil {
+			return nil, fmt.Errorf("internal error: no variant to resolve %s against", opts.varName(name))
+		}
+
+		return variant, nil
+	}
+
+	return color.VariantsByKey[qualifier], nil
+}
+
+func substituteCaptures(content string, captures []Capture, variant *color.VariantMeta, opts *BuildOpts, accentName string) (string, error) {
 	var buf strings.Builder
 
 	buf.Grow(len(content))
-
-	switch variant.Id {
-	case "rose-pine":
-		shades = color.MainPaletteShades
-	case "rose-pine-moon":
-		shades = color.MoonPaletteShades
-	case "rose-pine-dawn":
-		shades = color.DawnPaletteShades
-	default:
-		return "", fmt.Errorf("unknown variant `%s`", variant.Id)
-	}
 
 	for _, capture := range captures {
 		start, length := Span(capture)
@@ -30,9 +48,18 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 
 		switch c := capture.(type) {
 		case RoleCapture:
+			target, err := roleVariant(c.qualifier, c.role, opts, variant)
+			if err != nil {
+				return "", err
+			}
+
 			roleName := c.role
 			if c.role == "accent" || c.role == "onaccent" {
-				accentColor, ok := variant.Colors[accentName]
+				if opts.Single {
+					return "", fmt.Errorf("%s is not supported in single-file mode, use %s-<name>", opts.varName(c.qualifier+"-"+c.role), opts.varName(c.qualifier))
+				}
+
+				accentColor, ok := target.Colors[accentName]
 				if !ok {
 					return "", fmt.Errorf("unknown accent color `%s`", accentName)
 				}
@@ -48,7 +75,7 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 				}
 			}
 
-			roleShades, ok := shades[roleName]
+			roleShades, ok := target.Shades[roleName]
 			if !ok {
 				return "", fmt.Errorf("no such role: `%s`", roleName)
 			}
@@ -67,31 +94,36 @@ func substituteCaptures(content string, captures []Capture, variant color.Varian
 			buf.WriteString(formatted)
 
 		case MetaCapture:
-			switch text[1:] {
+			target, err := roleVariant(c.qualifier, c.key, opts, variant)
+			if err != nil {
+				return "", err
+			}
+
+			switch c.key {
 			case "id":
-				buf.WriteString(variant.Id)
+				buf.WriteString(target.Id)
 			case "name":
-				buf.WriteString(variant.Name)
+				buf.WriteString(target.Name)
 			case "appearance":
-				buf.WriteString(variant.Appearance)
+				buf.WriteString(target.Appearance)
 			case "type":
-				buf.WriteString(variant.Appearance)
+				buf.WriteString(target.Appearance)
 			case "description":
-				buf.WriteString(variant.Description)
+				buf.WriteString(target.Description)
 			case "accentname":
+				if opts.Single {
+					return "", fmt.Errorf("%s is not supported in single-file mode", opts.varName(c.qualifier+"-accentname"))
+				}
 				buf.WriteString(accentName)
 			}
 
 		case VariantCapture:
-			var inner variantArm
-			switch variant.Id {
-			case "rose-pine":
-				inner = c.main
-			case "rose-pine-moon":
-				inner = c.moon
-			case "rose-pine-dawn":
-				inner = c.dawn
+			if opts.Single {
+				return "", fmt.Errorf("variant values are not supported in single-file mode, use %s instead", qualifiedForms(opts, "..."))
 			}
+
+			inner := c.arms[variant.Key]
+
 			output, err := substituteCaptures(inner.content, inner.captures, variant, opts, accentName)
 			if err != nil {
 				return "", err

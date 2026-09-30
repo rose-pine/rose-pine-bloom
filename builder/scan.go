@@ -20,6 +20,14 @@ var metaKeys = []string{
 	"id", "name", "appearance", "type", "description", "accentname",
 }
 
+var variantKeys = func() []string {
+	keys := make([]string, 0, len(color.Variants))
+	for _, variant := range color.Variants {
+		keys = append(keys, variant.Key)
+	}
+	return keys
+}()
+
 type ScannerOpts struct {
 	Prefix rune
 }
@@ -40,15 +48,20 @@ type variantArm struct {
 
 type (
 	RoleCapture struct {
-		span  span
-		role  string
-		alpha *float64
-		shade *int
+		span      span
+		qualifier string
+		role      string
+		alpha     *float64
+		shade     *int
 	}
-	MetaCapture    struct{ span }
+	MetaCapture struct {
+		span
+		qualifier string
+		key       string
+	}
 	VariantCapture struct {
-		span             span
-		main, moon, dawn variantArm
+		span span
+		arms map[string]variantArm
 	}
 	TextCapture struct{ span }
 )
@@ -147,32 +160,24 @@ func (s *Scanner) scanVariantCapture(outerStartPos uint) (VariantCapture, error)
 
 	content := s.Content[start:s.pos]
 	parts := strings.Split(content, "|")
-	if len(parts) != 3 {
-		return VariantCapture{}, fmt.Errorf("invalid variant capture: expected exactly three values separated by `|`")
-	}
-
 	s.advance()
 
-	mainCaptures, err := Scan(parts[0], s.Opts)
-	if err != nil {
-		return VariantCapture{}, err
+	if len(parts) != len(variantKeys) {
+		return VariantCapture{}, fmt.Errorf("variant value %c(%s) needs %d alternatives, got %d", s.Opts.Prefix, content, len(variantKeys), len(parts))
 	}
 
-	moonCaptures, err := Scan(parts[1], s.Opts)
-	if err != nil {
-		return VariantCapture{}, err
-	}
-
-	dawnCaptures, err := Scan(parts[2], s.Opts)
-	if err != nil {
-		return VariantCapture{}, err
+	arms := make(map[string]variantArm, len(parts))
+	for i, key := range variantKeys {
+		captures, err := Scan(parts[i], s.Opts)
+		if err != nil {
+			return VariantCapture{}, err
+		}
+		arms[key] = variantArm{content: parts[i], captures: captures}
 	}
 
 	return VariantCapture{
 		span: span{outerStartPos, s.pos - outerStartPos},
-		main: variantArm{content: parts[0], captures: mainCaptures},
-		moon: variantArm{content: parts[1], captures: moonCaptures},
-		dawn: variantArm{content: parts[2], captures: dawnCaptures},
+		arms: arms,
 	}, nil
 }
 
@@ -201,7 +206,29 @@ func (s *Scanner) scanInteger(minLen int, maxLen int) (int, error) {
 	return int(parsed), nil
 }
 
-func (s *Scanner) scanRoleCapture(start uint, role string) (RoleCapture, error) {
+func (s *Scanner) scanVariantQualifier() (string, bool) {
+	src := s.remaining()
+	for _, key := range variantKeys {
+		token := key + "-"
+		if strings.HasPrefix(src, token) {
+			s.advanceN(len(token))
+			return key, true
+		}
+	}
+	return "", false
+}
+
+func (s *Scanner) tokenAfter(start uint) string {
+	rest := s.Content[start+1:]
+	if idx := strings.IndexFunc(rest, func(r rune) bool {
+		return !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-'
+	}); idx != -1 {
+		return rest[:idx]
+	}
+	return rest
+}
+
+func (s *Scanner) scanRoleCapture(start uint, qualifier string, role string) (RoleCapture, error) {
 	var shade *int
 	if curr, _ := s.curr(); curr == '-' {
 		s.advance()
@@ -236,13 +263,14 @@ func (s *Scanner) scanRoleCapture(start uint, role string) (RoleCapture, error) 
 			return RoleCapture{}, fmt.Errorf("expected alpha value following slash")
 		}
 	}
-	span := span{start, s.pos - start}
+	roleSpan := span{start, s.pos - start}
 
 	return RoleCapture{
-		span,
-		role,
-		alpha,
-		shade,
+		span:      roleSpan,
+		qualifier: qualifier,
+		role:      role,
+		alpha:     alpha,
+		shade:     shade,
 	}, nil
 }
 
@@ -257,25 +285,27 @@ func (s *Scanner) scanCapture() (Capture, bool, error) {
 			return vc, true, err
 		}
 
-		if _, found := s.scanKey(metaKeys); found {
-			return MetaCapture{span{start, s.pos - start}}, true, nil
+		if qualifier, found := s.scanVariantQualifier(); found {
+			if key, found := s.scanKey(metaKeys); found {
+				return MetaCapture{span: span{start, s.pos - start}, qualifier: qualifier, key: key}, true, nil
+			}
+			if role, found := s.scanKey(roleKeys); found {
+				rc, err := s.scanRoleCapture(start, qualifier, role)
+				return rc, true, err
+			}
+			return nil, false, fmt.Errorf("unknown variable %c%s", s.Opts.Prefix, s.tokenAfter(start))
+		}
+
+		if key, found := s.scanKey(metaKeys); found {
+			return MetaCapture{span: span{start, s.pos - start}, key: key}, true, nil
 		}
 
 		if role, found := s.scanKey(roleKeys); found {
-			rc, err := s.scanRoleCapture(start, role)
+			rc, err := s.scanRoleCapture(start, "", role)
 			return rc, true, err
 		}
 
-		unknown := strings.IndexFunc(s.remaining(), func(r rune) bool {
-			return !unicode.IsLetter(r) && !unicode.IsDigit(r)
-		})
-		var key string
-		if unknown == -1 {
-			key = s.remaining()
-		} else {
-			key = s.remaining()[:unknown]
-		}
-		return nil, false, fmt.Errorf("unknown variable %c%s", s.Opts.Prefix, key)
+		return nil, false, fmt.Errorf("unknown variable %c%s", s.Opts.Prefix, s.tokenAfter(start))
 
 	} else {
 		if !s.advanceToPrefix() {

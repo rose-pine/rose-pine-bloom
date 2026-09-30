@@ -4,10 +4,12 @@ type Palette map[string]*Color
 
 type VariantMeta struct {
 	Id          string
+	Key         string
 	Name        string
 	Appearance  string
 	Description string
 	Colors      Palette
+	Shades      PaletteShades
 }
 
 var Accents = []string{
@@ -73,31 +75,45 @@ const description = "All natural pine, faux fur and a bit of soho vibes for the 
 var (
 	MainVariantMeta = VariantMeta{
 		Id:          "rose-pine",
+		Key:         "main",
 		Name:        "Rosé Pine",
 		Appearance:  "dark",
 		Description: description,
 		Colors:      MainPalette,
+		Shades:      MainPaletteShades,
 	}
 
 	MoonVariantMeta = VariantMeta{
 		Id:          "rose-pine-moon",
+		Key:         "moon",
 		Name:        "Rosé Pine Moon",
 		Appearance:  "dark",
 		Description: description,
 		Colors:      MoonPalette,
+		Shades:      MoonPaletteShades,
 	}
 
 	DawnVariantMeta = VariantMeta{
 		Id:          "rose-pine-dawn",
+		Key:         "dawn",
 		Name:        "Rosé Pine Dawn",
 		Appearance:  "light",
 		Description: description,
 		Colors:      DawnPalette,
+		Shades:      DawnPaletteShades,
 	}
 )
 
-var Variants = []VariantMeta{
-	MainVariantMeta,
-	MoonVariantMeta,
-	DawnVariantMeta,
+var Variants = []*VariantMeta{
+	&MainVariantMeta,
+	&MoonVariantMeta,
+	&DawnVariantMeta,
 }
+
+var VariantsByKey = func() map[string]*VariantMeta {
+	byKey := make(map[string]*VariantMeta, len(Variants))
+	for _, variant := range Variants {
+		byKey[variant.Key] = variant
+	}
+	return byKey
+}()

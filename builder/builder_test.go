@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/rose-pine/rose-pine-bloom/color"
@@ -384,7 +385,7 @@ func BenchmarkBuild(b *testing.B) {
 	}
 	captures, _ := Scan(testContent, ScannerOpts{Prefix: testOpts.Prefix})
 	for b.Loop() {
-		_, _ = substituteCaptures(testContent, captures, color.MainVariantMeta, &testOpts, "")
+		_, _ = substituteCaptures(testContent, captures, &color.MainVariantMeta, &testOpts, "")
 	}
 }
 
@@ -578,7 +579,7 @@ func TestDiscoverTemplates(t *testing.T) {
 }
 
 func TestBuildOutPath(t *testing.T) {
-	variant := color.MainVariantMeta // rose-pine
+	variant := &color.MainVariantMeta // rose-pine
 
 	tests := []struct {
 		name         string
@@ -609,6 +610,159 @@ func TestBuildOutPath(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("buildOutPath() = %q, want %q", got, tt.want)
 			}
+		})
+	}
+}
+
+const singleFileTemplate = `{
+    "themes": [
+        { "id": "$main-id", "name": "$main-name", "appearance": "$main-appearance", "palette": { "base": "$main-base" } },
+        { "id": "$moon-id", "name": "$moon-name", "appearance": "$moon-appearance", "palette": { "base": "$moon-base", "love": "$moon-love/20" } },
+        { "id": "$dawn-id", "name": "$dawn-name", "appearance": "$dawn-appearance", "palette": { "base": "$dawn-base" } }
+    ]
+}`
+
+func TestSingleFile(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	opts := testOpts
+	opts.Single = true
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	outPath := filepath.Join(tmpDir, "out")
+	buildFromTemplate(t, singleFileTemplate, templatePath, outPath, &opts)
+
+	result := readAndParseJSON(t, filepath.Join(outPath, "rose-pine.json"))
+
+	themes, ok := result["themes"].([]any)
+	if !ok || len(themes) != len(testVariants) {
+		t.Fatalf("themes = %v, want %d entries", result["themes"], len(testVariants))
+	}
+
+	for i, v := range testVariants {
+		t.Run(v.id, func(t *testing.T) {
+			theme := themes[i].(map[string]any)
+			if theme["id"] != v.id {
+				t.Errorf("id = %v, want %v", theme["id"], v.id)
+			}
+			if theme["name"] != v.name {
+				t.Errorf("name = %v, want %v", theme["name"], v.name)
+			}
+			if theme["appearance"] != v.appearance {
+				t.Errorf("appearance = %v, want %v", theme["appearance"], v.appearance)
+			}
+			palette := theme["palette"].(map[string]any)
+			if palette["base"] != v.baseHex {
+				t.Errorf("base = %v, want %v", palette["base"], v.baseHex)
+			}
+		})
+	}
+
+	moon := themes[1].(map[string]any)["palette"].(map[string]any)
+	if moon["love"] != "#eb6f9233" {
+		t.Errorf("moon love/20 = %v, want %v", moon["love"], "#eb6f9233")
+	}
+}
+
+func TestSingleFileErrorNamesFailingTemplate(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templateDir := filepath.Join(tmpDir, "templates")
+	if err := os.Mkdir(templateDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	ok := filepath.Join(templateDir, "ok.json")
+	if err := os.WriteFile(ok, []byte(`{"base": "$main-base"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	bad := filepath.Join(templateDir, "bad.json")
+	if err := os.WriteFile(bad, []byte(`{"base": "$base"}`), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	opts := testOpts
+	opts.Single = true
+
+	err := Build(templateDir, filepath.Join(tmpDir, "out"), &opts)
+	if err == nil {
+		t.Fatal("expected an error, got nil")
+	}
+	if !strings.Contains(err.Error(), "bad.json") {
+		t.Errorf("error = %v, want it to name the failing template", err)
+	}
+}
+
+func TestSingleFileErrors(t *testing.T) {
+	tests := []struct {
+		name     string
+		template string
+		single   bool
+		want     string
+	}{
+		{"unqualified role", `{"a": "$base"}`, true, "variant prefix required"},
+		{"unqualified meta", `{"a": "$id"}`, true, "variant prefix required"},
+		{"variant values", `{"a": "$(10|20|30)"}`, true, "variant values are not supported"},
+		{"too few arms", `{"a": "$(10|20)"}`, false, "needs 3 alternatives"},
+		{"qualified accent", `{"a": "$main-accent"}`, true, "$main-accent is not supported in single-file mode"},
+		{"qualified onaccent", `{"a": "$moon-onaccent"}`, true, "$moon-onaccent is not supported in single-file mode"},
+		{"qualified accentname", `{"a": "$main-accentname"}`, true, "$main-accentname is not supported in single-file mode"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tmpDir := setupTest(t)
+
+			opts := testOpts
+			opts.Single = tt.single
+
+			templatePath := filepath.Join(tmpDir, "template.json")
+			if err := os.WriteFile(templatePath, []byte(tt.template), 0644); err != nil {
+				t.Fatal(err)
+			}
+
+			err := Build(templatePath, tmpDir, &opts)
+			if err == nil {
+				t.Fatal("expected an error, got nil")
+			}
+			if !strings.Contains(err.Error(), tt.want) {
+				t.Errorf("error = %v, want it to contain %q", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestQualifiedVariablesInMultiFileBuild(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	buildFromTemplate(t, `{"base": "$main-base", "name": "$dawn-name", "unqualified": "$id"}`, templatePath, tmpDir, &testOpts)
+
+	for _, v := range testVariants {
+		t.Run(v.filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, v.filename))
+
+			assertJSONField(t, result, "base", "#191724")
+			assertJSONField(t, result, "name", "Rosé Pine Dawn")
+			assertJSONField(t, result, "unqualified", v.id)
+		})
+	}
+}
+
+func TestQualifiedAccentInMultiFileBuild(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	buildFromTemplate(t, `{"accent": "$main-accent"}`, templatePath, tmpDir, &testOpts)
+
+	for _, filename := range []string{
+		"rose-pine/rose-pine-rose.json",
+		"rose-pine-moon/rose-pine-moon-rose.json",
+		"rose-pine-dawn/rose-pine-dawn-rose.json",
+	} {
+		t.Run(filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, filename))
+			assertJSONField(t, result, "accent", "#ebbcba")
 		})
 	}
 }
