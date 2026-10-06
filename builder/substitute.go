@@ -89,7 +89,12 @@ func substituteCaptures(content string, captures []Capture, variant *color.Varia
 				shadeIndex = idx
 			}
 
-			clr := roleShades.Colors[shadeIndex].WithAlpha(c.alpha)
+			clr := roleShades.Colors[shadeIndex]
+			if opts.Blend && c.alpha != nil {
+				clr = color.Blend(target.Colors["base"], &clr, *c.alpha)
+			} else {
+				clr = clr.WithAlpha(c.alpha)
+			}
 			formatted := color.FormatColor(&clr, opts.DefaultFormat, opts.Plain, opts.Commas, opts.Spaces)
 			buf.WriteString(formatted)
 

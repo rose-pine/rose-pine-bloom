@@ -18,6 +18,7 @@ var (
 	noCommas         bool
 	noSpaces         bool
 	single           bool
+	blend            bool
 	skipReadmeUpdate bool
 )
 
@@ -47,6 +48,7 @@ var buildCmd = &cobra.Command{
 			Commas:        !noCommas,
 			Spaces:        !noSpaces,
 			Single:        single,
+			Blend:         blend,
 		}
 		err := builder.Build(template, outDir, &opts)
 		if err != nil {
@@ -59,7 +61,8 @@ var buildCmd = &cobra.Command{
 		if !skipReadmeUpdate {
 			cmdLine := "bloom build " + template
 			cmdLine += " --output " + outDir
-			cmdLine += " --prefix " + string(prefix)
+			// Wrap prefix in single quotes due to ambiguity with fish shell variables
+			cmdLine += " --prefix '" + string(prefix) + "'"
 			cmdLine += " --format " + format
 			if plain {
 				cmdLine += " --plain"
@@ -72,6 +75,9 @@ var buildCmd = &cobra.Command{
 			}
 			if single {
 				cmdLine += " --single"
+			}
+			if blend {
+				cmdLine += " --blend"
 			}
 
 			if err := updateReadme(readmeSection(cmdLine)); err != nil {
@@ -92,6 +98,7 @@ func init() {
 	buildCmd.Flags().BoolVar(&noSpaces, "no-spaces", false, "remove spaces")
 	buildCmd.Flags().BoolVar(&skipReadmeUpdate, "skip-readme-update", false, "don't update README.md")
 	buildCmd.Flags().BoolVar(&single, "single", false, "build one file containing all variants")
+	buildCmd.Flags().BoolVar(&blend, "blend", false, "blend colours onto the base colour")
 
 	rootCmd.AddCommand(buildCmd)
 }

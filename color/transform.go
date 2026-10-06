@@ -1,9 +1,23 @@
 package color
 
+import "math"
+
 const (
 	maxLightness = 100
 	maxSteps     = 10
 )
+
+func Blend(base *Color, color *Color, alpha float64) Color {
+	return ColorFromRGB(RGB{
+		R: blendComponent(base.RGB.R, color.RGB.R, alpha),
+		G: blendComponent(base.RGB.G, color.RGB.G, alpha),
+		B: blendComponent(base.RGB.B, color.RGB.B, alpha),
+	})
+}
+
+func blendComponent(base uint8, color uint8, alpha float64) uint8 {
+	return uint8(math.Round(float64(base)*(1-alpha) + float64(color)*alpha))
+}
 
 func Lighten(color *Color, steps uint8) Color {
 	stepSize := (maxLightness - color.HSL.L) / maxSteps

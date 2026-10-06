@@ -96,7 +96,8 @@ func updateReadme(section string) error {
 
 func ensureReadme(templatePath, prefix string) error {
 	cmdLine := "bloom build " + templatePath
-	cmdLine += " --prefix " + prefix
+	// Wrap prefix in single quotes due to ambiguity with fish shell variables
+	cmdLine += " --prefix '" + prefix + "'"
 	return updateReadme(readmeSection(cmdLine))
 }
 

@@ -20,14 +20,14 @@ func TestEnsureReadme(t *testing.T) {
 			existing:     "",
 			templatePath: "template.json",
 			prefix:       "$",
-			wantLines:    []string{"bloom build template.json --prefix $"},
+			wantLines:    []string{"bloom build template.json --prefix '$'"},
 		},
 		{
 			name:         "existing readme without marker",
 			existing:     "# My Theme\n\nSome description\n",
 			templatePath: "template.json",
 			prefix:       "$",
-			wantLines:    []string{"bloom build template.json --prefix $"},
+			wantLines:    []string{"bloom build template.json --prefix '$'"},
 		},
 		{
 			name: "existing readme with marker",
@@ -38,7 +38,7 @@ func TestEnsureReadme(t *testing.T) {
 				"<!-- BLOOM_BUILD_END -->\n",
 			templatePath: "templates/new-template.json",
 			prefix:       "$",
-			wantLines:    []string{"templates/new-template.json", "--prefix $"},
+			wantLines:    []string{"templates/new-template.json", "--prefix '$'"},
 			notWantLines: []string{"old-template.json"},
 		},
 		{
@@ -46,7 +46,7 @@ func TestEnsureReadme(t *testing.T) {
 			existing:     "",
 			templatePath: "template.json",
 			prefix:       "#",
-			wantLines:    []string{"bloom build template.json --prefix #"},
+			wantLines:    []string{"bloom build template.json --prefix '#'"},
 		},
 	}
 

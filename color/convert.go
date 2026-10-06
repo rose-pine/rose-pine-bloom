@@ -36,9 +36,54 @@ func hslToRgb(hsl *HSL) RGB {
 	}
 }
 
+func rgbToHsl(rgb *RGB) HSL {
+	r := float64(rgb.R) / 255.0
+	g := float64(rgb.G) / 255.0
+	b := float64(rgb.B) / 255.0
+
+	max := math.Max(r, math.Max(g, b))
+	min := math.Min(r, math.Min(g, b))
+	l := (max + min) / 2
+
+	var h, s float64
+	if d := max - min; d != 0 {
+		if l > 0.5 {
+			s = d / (2 - max - min)
+		} else {
+			s = d / (max + min)
+		}
+
+		switch {
+		case r == max:
+			h = (g - b) / d
+			if g < b {
+				h += 6
+			}
+		case g == max:
+			h = (b-r)/d + 2
+		default:
+			h = (r-g)/d + 4
+		}
+		h *= 60
+	}
+
+	return HSL{
+		H: uint16(math.Round(math.Mod(h, 360))),
+		S: uint8(math.Round(s * 100)),
+		L: uint8(math.Round(l * 100)),
+	}
+}
+
 func ColorFromHSL(hsl HSL) Color {
 	return Color{
 		HSL: hsl,
 		RGB: hslToRgb(&hsl),
+	}
+}
+
+func ColorFromRGB(rgb RGB) Color {
+	return Color{
+		HSL: rgbToHsl(&rgb),
+		RGB: rgb,
 	}
 }

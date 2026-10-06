@@ -17,6 +17,7 @@ type BuildOpts struct {
 	Commas        bool
 	Spaces        bool
 	Single        bool
+	Blend         bool
 }
 
 func DiscoverTemplates(path string) ([]string, error) {

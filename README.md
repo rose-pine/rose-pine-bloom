@@ -79,7 +79,9 @@ You can request shades with a Tailwind-style suffix:
 - ...
 - `$rose-900`
 
-Control opacity by appending a value, e.g. `$love/10` for 10% opacity.
+Control opacity by appending a value, e.g. `$love/10` for 10% opacity. Use
+`--blend` where opacities are not supported; this will blend values onto the
+base colour, creating new colour values.
 
 ### Accents
 

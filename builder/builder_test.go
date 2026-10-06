@@ -329,6 +329,36 @@ func TestColorShading(t *testing.T) {
 	}
 }
 
+func TestBlend(t *testing.T) {
+	tmpDir := setupTest(t)
+
+	templateContent := `{
+        "love50": "$love/50"
+    }`
+
+	templatePath := filepath.Join(tmpDir, "template.json")
+	opts := testOpts
+	opts.Blend = true
+	buildFromTemplate(t, templateContent, templatePath, tmpDir, &opts)
+
+	tests := []struct {
+		filename string
+		love50   string
+	}{
+		{"rose-pine.json", "#82435b"},
+		{"rose-pine-moon.json", "#874864"},
+		{"rose-pine-dawn.json", "#d7acb4"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.filename, func(t *testing.T) {
+			result := readAndParseJSON(t, filepath.Join(tmpDir, tt.filename))
+
+			assertJSONField(t, result, "love50", tt.love50)
+		})
+	}
+}
+
 func TestBaseShadeMatchesRole(t *testing.T) {
 	tmpDir := setupTest(t)
 
