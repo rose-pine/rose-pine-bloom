@@ -56,7 +56,7 @@ var DawnPalette = Palette{
 	"overlay":       {HSL: HSL{25, 36, 92}, RGB: RGB{242, 233, 225}},
 	"muted":         {HSL: HSL{254, 9, 61}, RGB: RGB{152, 147, 165}},
 	"subtle":        {HSL: HSL{249, 13, 52}, RGB: RGB{121, 117, 147}},
-	"text":          {HSL: HSL{248, 19, 40}, RGB: RGB{87, 82, 121}},
+	"text":          {HSL: HSL{248, 19, 32}, RGB: RGB{70, 66, 97}},
 	"love":          {HSL: HSL{343, 35, 55}, RGB: RGB{180, 99, 122}, On: "surface"},
 	"gold":          {HSL: HSL{35, 81, 56}, RGB: RGB{234, 157, 52}, On: "surface"},
 	"rose":          {HSL: HSL{2, 55, 67}, RGB: RGB{215, 130, 126}, On: "surface"},
